@@ -138,6 +138,13 @@ namespace RedlineLegends.Editor
             return chunks;
         }
 
+        /// <summary>Two triangles for the strip quad (a,b) -> (c,d): a,c are the "from" edge, b,d the "to" edge.</summary>
+        private static void Face(List<int> tris, int a, int b, int c, int d)
+        {
+            tris.Add(a); tris.Add(c); tris.Add(b);
+            tris.Add(b); tris.Add(c); tris.Add(d);
+        }
+
         private static void Quad(List<int> tris, int a, int b, int c, int d)
         {
             // a-b-c-d counter-clockwise seen from above: (a, d, b) (b, d, c) wound for Unity's clockwise front faces
@@ -177,22 +184,37 @@ namespace RedlineLegends.Editor
                             if (prevIdx >= total) prevIdx = 0;
                             u += Vector3.Distance(samples[prevIdx].Position, s.Position) / 4f;
                         }
-                        Vector3 basePos = s.Position + s.Right * side * (s.HalfWidth + offsetFromEdge);
-                        // Slight inward lean so a car that climbs the wall is pushed back down.
-                        Vector3 top = basePos + Vector3.up * height - s.Right * side * 0.15f;
-                        verts.Add(basePos - Vector3.up * 0.2f);
-                        verts.Add(top);
-                        uvs.Add(new Vector2(u, 0f));
-                        uvs.Add(new Vector2(u, 1f));
+                        // Extruded wall: inner face, top and outer face, so it is solid from both
+                        // sides (a single-sided ribbon lets a fast car pass through from behind).
+                        const float thickness = 0.5f;
+                        Vector3 inner = s.Position + s.Right * side * (s.HalfWidth + offsetFromEdge);
+                        Vector3 outer = inner + s.Right * side * thickness;
+                        Vector3 innerTop = inner + Vector3.up * height - s.Right * side * 0.1f;
+                        Vector3 outerTop = outer + Vector3.up * height;
+                        verts.Add(inner - Vector3.up * 0.2f);   // 0 inner bottom
+                        verts.Add(innerTop);                    // 1 inner top
+                        verts.Add(outerTop);                    // 2 outer top
+                        verts.Add(outer - Vector3.up * 0.2f);   // 3 outer bottom
+                        uvs.Add(new Vector2(u, 0f)); uvs.Add(new Vector2(u, 1f)); uvs.Add(new Vector2(u, 1f)); uvs.Add(new Vector2(u, 0f));
                         if (k > 0)
                         {
-                            int a = (k - 1) * 2, b = k * 2;
-                            // Face the track: winding depends on the side.
-                            if (side < 0) { tris.Add(a); tris.Add(b); tris.Add(a + 1); tris.Add(a + 1); tris.Add(b); tris.Add(b + 1); }
-                            else { tris.Add(a); tris.Add(a + 1); tris.Add(b); tris.Add(b); tris.Add(a + 1); tris.Add(b + 1); }
+                            int a = (k - 1) * 4, b = k * 4;
+                            // Winding depends on the side so faces point away from the wall's core.
+                            if (side < 0)
+                            {
+                                Face(tris, a, b, a + 1, b + 1);         // inner face (toward track)
+                                Face(tris, a + 1, b + 1, a + 2, b + 2); // top
+                                Face(tris, a + 2, b + 2, a + 3, b + 3); // outer face
+                            }
+                            else
+                            {
+                                Face(tris, b, a, b + 1, a + 1);
+                                Face(tris, b + 1, a + 1, b + 2, a + 2);
+                                Face(tris, b + 2, a + 2, b + 3, a + 3);
+                            }
                         }
                     }
-                    if (verts.Count < 4) continue;
+                    if (verts.Count < 8) continue;
                     var mesh = new Mesh { name = meshPrefix + "_Barrier" + (side < 0 ? "L" : "R") + chunkIndex };
                     mesh.SetVertices(verts);
                     mesh.SetUVs(0, uvs);

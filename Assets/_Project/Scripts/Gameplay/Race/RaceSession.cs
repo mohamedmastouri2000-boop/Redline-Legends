@@ -527,12 +527,27 @@ namespace RedlineLegends.Race
                 pos = slot.position;
                 rot = slot.rotation;
             }
-            // Offset AI resets sideways so two respawns never overlap.
-            if (!r.IsLocalPlayer) pos += rot * Vector3.right * ((r.Spec.Id.Value % 3) - 1) * 3f;
+            // Never drop a car onto another one: step back along the track until the spot is clear.
+            for (int attempt = 0; attempt < 6 && IsOccupied(pos, r); attempt++)
+                pos -= rot * Vector3.forward * 7f;
             r.Vehicle.Teleport(pos, rot);
+            r.Vehicle.HoldBrakes = false;
             r.StoppedTime = 0f;
             r.WrongWayTime = 0f;
             if (r.IsLocalPlayer) cameraRig?.SnapBehind();
+        }
+
+        private bool IsOccupied(Vector3 pos, RacerState self)
+        {
+            for (int i = 0; i < _racers.Count; i++)
+            {
+                var other = _racers[i];
+                if (other == self || other.Vehicle == null) continue;
+                Vector3 d = other.Vehicle.transform.position - pos;
+                d.y = 0f;
+                if (d.sqrMagnitude < 36f) return true;
+            }
+            return false;
         }
 
         public void Pause()

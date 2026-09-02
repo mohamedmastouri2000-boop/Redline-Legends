@@ -52,6 +52,7 @@ namespace RedlineLegends.Tests
             Assert.IsNotNull(evt, "First career event missing.");
             int creditsBefore = profile.Credits;
             int attemptsBefore = progression.FindEvent(evt.Id)?.Attempts ?? 0;
+            int bestBefore = progression.FindEvent(evt.Id)?.BestPosition ?? 0;
 
             var request = new RaceLaunchBuilder(catalog, garage, profile).Build(evt, out string reason);
             Assert.IsNotNull(request, "Launch request failed: " + reason);
@@ -129,7 +130,8 @@ namespace RedlineLegends.Tests
             var progress = progression.FindEvent(evt.Id);
             Assert.IsNotNull(progress, "Event progress was not recorded.");
             Assert.AreEqual(attemptsBefore + 1, progress.Attempts);
-            Assert.AreEqual(playerResult.Position, progress.BestPosition == 0 ? playerResult.Position : Mathf.Min(progress.BestPosition, playerResult.Position));
+            int expectedBest = bestBefore == 0 ? playerResult.Position : Mathf.Min(bestBefore, playerResult.Position);
+            Assert.AreEqual(expectedBest, progress.BestPosition, "Best position must only improve.");
 
             // Reload the save from disk: the reward must have been persisted.
             var config = Services.Get<GameConfig>();

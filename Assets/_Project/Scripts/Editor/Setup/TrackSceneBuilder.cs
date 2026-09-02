@@ -125,7 +125,8 @@ namespace RedlineLegends.Editor
                 linePoints[i] = samples[i].Position + Vector3.up * 0.05f;
                 lineWidths[i] = samples[i].HalfWidth;
             }
-            var racingLine = RacingLine.Build(linePoints, lineWidths, true, 1.0f, 75f);
+            // 0.8 g leaves margin under the street cars' ~1.0 lateral grip; profiles scale from there.
+            var racingLine = RacingLine.Build(linePoints, lineWidths, true, 0.8f, 75f);
 
             var layoutGo = new GameObject("TrackLayout");
             var layout = layoutGo.AddComponent<TrackLayout>();

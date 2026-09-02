@@ -40,17 +40,19 @@ namespace RedlineLegends.Tests
             var box = car.GetComponent<BoxCollider>();
             if (box == null) return "(no box)";
             var t = car.transform;
-            int count = Physics.OverlapBoxNonAlloc(t.TransformPoint(box.center), box.size * 0.55f, OverlapBuffer, t.rotation,
-                ~GameLayers.VehicleMask, QueryTriggerInteraction.Ignore);
-            if (count == 0) return "nothing";
+            int count = Physics.OverlapBoxNonAlloc(t.TransformPoint(box.center), box.size * 0.6f, OverlapBuffer, t.rotation,
+                ~0, QueryTriggerInteraction.Ignore);
             var sb = new StringBuilder();
+            int listed = 0;
             for (int i = 0; i < count; i++)
             {
-                if (i > 0) sb.Append(", ");
                 var c = OverlapBuffer[i];
+                if (c.attachedRigidbody == car.Body) continue;
+                if (listed > 0) sb.Append(", ");
                 sb.Append(c.name).Append('(').Append(c.GetType().Name).Append(" layer ").Append(c.gameObject.layer).Append(')');
+                listed++;
             }
-            return sb.ToString();
+            return listed == 0 ? "nothing" : sb.ToString();
         }
     }
 }

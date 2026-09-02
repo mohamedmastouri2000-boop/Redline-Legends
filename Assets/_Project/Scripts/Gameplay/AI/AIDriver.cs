@@ -34,6 +34,7 @@ namespace RedlineLegends.AI
         private Mistake _mistake;
         private float _stuckTimer;
         private float _reverseTimer;
+        private float _recoveryCooldown;
         private float _overtakeSide;
         private float _overtakeTimer;
         private readonly RaycastHit[] _hits = new RaycastHit[4];
@@ -127,13 +128,17 @@ namespace RedlineLegends.AI
             // Tyres already sliding: back off proportionally to how sharp the driver is.
             if (tel.MaxSlip > 0.6f) desiredThrottle *= Mathf.Lerp(0.5f, 0.85f, throttleQuality);
 
-            // ---- stuck recovery: reverse briefly then continue
-            bool wantsToMove = desiredThrottle > 0.4f;
-            if (speed < 0.8f && wantsToMove && _reverseTimer <= 0f) _stuckTimer += dt; else if (_reverseTimer <= 0f) _stuckTimer = 0f;
-            if (_stuckTimer > 2.5f)
+            // ---- stuck recovery: reverse briefly then continue (never while deliberately braking,
+            // and with a cooldown so a slow launch behind traffic does not loop into reversing)
+            _recoveryCooldown -= dt;
+            bool wantsToMove = desiredThrottle > 0.4f && desiredBrake < 0.3f;
+            if (speed < 0.8f && wantsToMove && _reverseTimer <= 0f && _recoveryCooldown <= 0f) _stuckTimer += dt;
+            else if (_reverseTimer <= 0f) _stuckTimer = 0f;
+            if (_stuckTimer > 3f)
             {
                 _reverseTimer = 1.6f;
                 _stuckTimer = 0f;
+                _recoveryCooldown = 4f;
             }
             if (_reverseTimer > 0f)
             {
@@ -194,10 +199,11 @@ namespace RedlineLegends.AI
                 float dist = hit.distance;
                 float otherSpeed = Vector3.Dot(rb.linearVelocity, fwd);
                 float closing = speed - otherSpeed;
-                // Aggressive drivers tolerate a smaller gap before braking.
+                // Aggressive drivers tolerate a smaller gap before braking. Crawling behind a car
+                // that is also launching is not a braking situation.
                 float safeGap = Mathf.Lerp(9f, 4f, aggression) + closing * 0.6f;
-                if (closing > 0.5f && dist < safeGap)
-                    aheadBrake = Mathf.Max(aheadBrake, Mathf.Clamp01((safeGap - dist) / safeGap));
+                if (closing > 0.5f && dist < safeGap && speed > 3f)
+                    aheadBrake = Mathf.Max(aheadBrake, Mathf.Clamp01((safeGap - dist) / safeGap) * Mathf.Clamp01((speed - 3f) / 4f));
                 if (closing > 1.5f && _overtakeTimer <= 0f)
                 {
                     // Pass on the side with more room relative to the line.
