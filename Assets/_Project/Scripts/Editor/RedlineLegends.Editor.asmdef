@@ -1,0 +1,25 @@
+{
+    "name": "RedlineLegends.Editor",
+    "rootNamespace": "RedlineLegends.Editor",
+    "references": [
+        "RedlineLegends.Domain",
+        "RedlineLegends.Gameplay",
+        "RedlineLegends.UI",
+        "Unity.InputSystem",
+        "Unity.RenderPipelines.Universal.Runtime",
+        "Unity.RenderPipelines.Universal.Editor",
+        "Unity.RenderPipelines.Core.Runtime",
+        "Unity.TextMeshPro"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

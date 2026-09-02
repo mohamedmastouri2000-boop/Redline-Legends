@@ -1,0 +1,19 @@
+{
+    "name": "RedlineLegends.UI",
+    "rootNamespace": "RedlineLegends",
+    "references": [
+        "RedlineLegends.Domain",
+        "RedlineLegends.Gameplay",
+        "Unity.InputSystem",
+        "Unity.TextMeshPro"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
