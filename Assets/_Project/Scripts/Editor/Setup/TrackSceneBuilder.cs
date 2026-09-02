@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using RedlineLegends.Cameras;
 using RedlineLegends.Core;
+using RedlineLegends.DragRace;
 using RedlineLegends.Race;
 using RedlineLegends.Tracks;
 using RedlineLegends.UI;
@@ -19,11 +20,140 @@ namespace RedlineLegends.Editor
         public static string SunsetLoopPath => EditorPaths.Scenes + "/" + ContentGenerator.CircuitSceneName + ".unity";
         private const string TrackMeshFolder = EditorPaths.Root + "/Tracks/SunsetLoop";
 
+        public static string HarborStripPath => EditorPaths.Scenes + "/" + ContentGenerator.DragSceneName + ".unity";
+        private const string StripMeshFolder = EditorPaths.Root + "/Tracks/HarborStrip";
+
         public static void BuildAll()
         {
             BuildProvingGround();
             BuildSunsetLoop();
+            BuildHarborStrip();
             Debug.Log("[Setup] Track scenes generated.");
+        }
+
+        /// <summary>Harbor Strip: a floodlit night drag strip with a half-mile run and 250 m of run-off.</summary>
+        public static void BuildHarborStrip()
+        {
+            var scene = SceneBuilder.NewScene();
+            var moon = SceneBuilder.CreateSun(new Vector3(35f, -60f, 0f), new Color(0.55f, 0.65f, 0.9f), 0.35f, true);
+            var nightSky = EditorPaths.GetOrCreateMaterial(EditorPaths.Materials + "/Sky_Night.mat", Shader.Find("Skybox/Procedural"));
+            nightSky.SetFloat("_SunSize", 0.02f);
+            nightSky.SetFloat("_AtmosphereThickness", 0.4f);
+            nightSky.SetColor("_SkyTint", new Color(0.05f, 0.07f, 0.15f));
+            nightSky.SetColor("_GroundColor", new Color(0.03f, 0.03f, 0.05f));
+            nightSky.SetFloat("_Exposure", 0.45f);
+            EditorUtility.SetDirty(nightSky);
+            SceneBuilder.ApplyLighting(moon);
+            RenderSettings.skybox = nightSky;
+            RenderSettings.ambientIntensity = 0.35f;
+            RenderSettings.fog = true;
+            RenderSettings.fogMode = FogMode.Exponential;
+            RenderSettings.fogColor = new Color(0.03f, 0.04f, 0.07f);
+            RenderSettings.fogDensity = 0.0025f;
+            SceneBuilder.CreateGlobalVolume();
+            EditorPaths.EnsureFolder(StripMeshFolder);
+            foreach (var guid in AssetDatabase.FindAssets("t:Mesh", new[] { StripMeshFolder }))
+                AssetDatabase.DeleteAsset(AssetDatabase.GUIDToAssetPath(guid));
+
+            Vector3[] control = { new Vector3(0f, 0f, -80f), new Vector3(0f, 0f, 300f), new Vector3(0f, 0f, 700f), new Vector3(0f, 0f, 1080f) };
+            var halfWidths = new[] { 8f, 8f, 8f, 8f };
+            var samples = TrackMeshBuilder.SampleSpline(control, halfWidths, false, 6f);
+
+            var road = MaterialFactory.Opaque("Strip_Asphalt", new Color(0.15f, 0.15f, 0.16f), 0f, 0.5f);
+            road.mainTexture = GetOrCreateCheckerTexture();
+            EditorUtility.SetDirty(road);
+            var kerb = MaterialFactory.Opaque("Strip_Edge", new Color(0.8f, 0.8f, 0.75f), 0f, 0.4f);
+            var barrier = MaterialFactory.Opaque("Strip_Barrier", new Color(0.3f, 0.32f, 0.36f), 0.3f, 0.5f);
+            var ground = MaterialFactory.Opaque("Strip_Ground", new Color(0.09f, 0.09f, 0.1f), 0f, 0.3f);
+            var lamp = MaterialFactory.Emissive("Strip_Lamp", Color.white, new Color(4f, 3.8f, 3.2f));
+            var post = MaterialFactory.Opaque("Strip_Post", new Color(0.25f, 0.25f, 0.27f), 0.6f, 0.5f);
+            var crate = MaterialFactory.Opaque("Strip_Container", new Color(0.55f, 0.25f, 0.18f), 0.2f, 0.45f);
+
+            var trackRoot = new GameObject("Track");
+            TrackMeshBuilder.BuildRoad(trackRoot.transform, samples, false, 40, road, kerb, StripMeshFolder, "HarborStrip", GameLayers.Track);
+            TrackMeshBuilder.BuildBarriers(trackRoot.transform, samples, false, 2.5f, 1.1f, barrier, GameLayers.Track, StripMeshFolder, "HarborStrip");
+            Wall(trackRoot.transform, "EndWall", new Vector3(0f, 1.5f, 1085f), new Vector3(24f, 3f, 1f), barrier);
+            Wall(trackRoot.transform, "BackWall", new Vector3(0f, 1.5f, -88f), new Vector3(24f, 3f, 1f), barrier);
+
+            var groundPlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+            groundPlane.name = "Ground";
+            groundPlane.transform.SetParent(trackRoot.transform, false);
+            groundPlane.transform.position = new Vector3(0f, -0.05f, 500f);
+            groundPlane.transform.localScale = new Vector3(60f, 1f, 140f);
+            groundPlane.GetComponent<MeshRenderer>().sharedMaterial = ground;
+            groundPlane.isStatic = true;
+            groundPlane.layer = GameLayers.Track;
+
+            // Floodlight posts every 60 m; four real spot lights near the start, emissive heads elsewhere.
+            var lights = new GameObject("Floodlights");
+            lights.transform.SetParent(trackRoot.transform, false);
+            for (int i = 0; i < 18; i++)
+            {
+                float z = -60f + i * 60f;
+                for (int side = -1; side <= 1; side += 2)
+                {
+                    var pole = Wall(lights.transform, "Post" + i + (side < 0 ? "L" : "R"), new Vector3(side * 13f, 6f, z), new Vector3(0.35f, 12f, 0.35f), post);
+                    var head = Wall(lights.transform, "Lamp" + i + (side < 0 ? "L" : "R"), new Vector3(side * 12.2f, 11.8f, z), new Vector3(1.6f, 0.4f, 0.8f), lamp);
+                    Object.DestroyImmediate(head.GetComponent<Collider>());
+                    if (i < 2)
+                    {
+                        var spot = new GameObject("Spot" + i + (side < 0 ? "L" : "R"), typeof(Light));
+                        spot.transform.SetParent(lights.transform, false);
+                        spot.transform.position = new Vector3(side * 12f, 11.5f, z);
+                        spot.transform.rotation = Quaternion.Euler(70f, side < 0 ? 90f : -90f, 0f);
+                        var l = spot.GetComponent<Light>();
+                        l.type = LightType.Spot;
+                        l.spotAngle = 110f;
+                        l.range = 60f;
+                        l.intensity = 900f;
+                        l.color = new Color(1f, 0.95f, 0.85f);
+                        l.shadows = LightShadows.None;
+                    }
+                }
+            }
+            // Harbour dressing: stacked containers along the sides.
+            var rng = new System.Random(77);
+            for (int i = 0; i < 40; i++)
+            {
+                float z = -40f + (float)rng.NextDouble() * 1100f;
+                float side = rng.Next(2) == 0 ? -1f : 1f;
+                float x = side * (24f + (float)rng.NextDouble() * 30f);
+                var c = Wall(trackRoot.transform, "Container" + i, new Vector3(x, 1.3f, z), new Vector3(2.4f, 2.6f, 12f), crate);
+                c.transform.rotation = Quaternion.Euler(0f, (float)rng.NextDouble() * 20f - 10f, 0f);
+            }
+
+            // Layout: straight racing line, start at z=0, lanes 5 m apart.
+            var linePoints = new Vector3[samples.Count];
+            var lineWidths = new float[samples.Count];
+            for (int i = 0; i < samples.Count; i++) { linePoints[i] = samples[i].Position; lineWidths[i] = samples[i].HalfWidth; }
+            var racingLine = RacingLine.Build(linePoints, lineWidths, false, 0.8f, 110f);
+            var layoutGo = new GameObject("TrackLayout");
+            var layout = layoutGo.AddComponent<TrackLayout>();
+            var dragStart = new GameObject("DragStart");
+            dragStart.transform.SetParent(layoutGo.transform, false);
+            dragStart.transform.SetPositionAndRotation(new Vector3(0f, 0.1f, 0f), Quaternion.identity);
+            var startLine = Wall(trackRoot.transform, "StartLine", new Vector3(0f, 0.02f, 0f), new Vector3(16f, 0.02f, 0.4f), kerb);
+            Object.DestroyImmediate(startLine.GetComponent<Collider>());
+            var quarter = Wall(trackRoot.transform, "QuarterMile", new Vector3(0f, 0.02f, 402.336f), new Vector3(16f, 0.02f, 0.4f), kerb);
+            Object.DestroyImmediate(quarter.GetComponent<Collider>());
+            var half = Wall(trackRoot.transform, "HalfMile", new Vector3(0f, 0.02f, 804.672f), new Vector3(16f, 0.02f, 0.4f), kerb);
+            Object.DestroyImmediate(half.GetComponent<Collider>());
+            layout.EditorInitialize(ContentGenerator.DragTrackId, new Checkpoint[0], new Transform[0], racingLine, false, dragStart.transform, 5f);
+
+            var camera = SceneBuilder.CreateCamera("Camera", new Vector3(0f, 3f, -12f), new Vector3(0f, 0.5f, 10f), 58f, Color.black, true);
+            var rig = camera.gameObject.AddComponent<VehicleCameraRig>();
+
+            var sessionGo = new GameObject("DragSession");
+            var session = sessionGo.AddComponent<DragSession>();
+            session.EditorWire(layout, rig);
+
+            var ui = RaceUiBuilder.Build(session, rig);
+            var dragPanel = RaceUiBuilder.BuildDragPanel(ui.Canvas.transform);
+            var screen = ui.Canvas.gameObject.AddComponent<DragScreenController>();
+            screen.EditorWire(session, ui.Hud, dragPanel, ui.Countdown, ui.PausePanel, ui.ResumeButton, ui.RestartButton, ui.QuitButton,
+                ui.Results, ui.Controls.gameObject);
+
+            EditorSceneManager.SaveScene(scene, HarborStripPath);
         }
 
         /// <summary>

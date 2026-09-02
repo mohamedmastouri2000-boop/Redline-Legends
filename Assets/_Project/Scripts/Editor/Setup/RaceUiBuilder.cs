@@ -109,6 +109,53 @@ namespace RedlineLegends.Editor
             };
         }
 
+        /// <summary>Light tree, reaction time, shift feedback and the lane gap bar for drag scenes.</summary>
+        public static DragHudPanel BuildDragPanel(Transform root)
+        {
+            var panelRect = UiKit.CreateRect(root, "DragPanel");
+            UiKit.Stretch(panelRect);
+            var panel = panelRect.gameObject.AddComponent<DragHudPanel>();
+
+            // Light tree: vertical column on the right-centre.
+            var tree = UiKit.CreatePanel(panelRect, "LightTree", new Color(0f, 0f, 0f, 0.55f));
+            UiKit.Anchor((RectTransform)tree.transform, new Vector2(1f, 0.5f), new Vector2(-60f, 60f), new Vector2(90f, 420f));
+            var ambers = new Image[3];
+            for (int i = 0; i < 3; i++)
+            {
+                ambers[i] = UiKit.CreatePanel(tree.transform, "Amber" + i, new Color(0.2f, 0.2f, 0.22f, 0.8f));
+                ambers[i].raycastTarget = false;
+                UiKit.Anchor((RectTransform)ambers[i].transform, new Vector2(0.5f, 1f), new Vector2(0f, -20f - i * 80f), new Vector2(60f, 60f));
+            }
+            var green = UiKit.CreatePanel(tree.transform, "Green", new Color(0.2f, 0.2f, 0.22f, 0.8f));
+            green.raycastTarget = false;
+            UiKit.Anchor((RectTransform)green.transform, new Vector2(0.5f, 1f), new Vector2(0f, -260f), new Vector2(60f, 60f));
+            var red = UiKit.CreatePanel(tree.transform, "Red", new Color(0.2f, 0.2f, 0.22f, 0.8f));
+            red.raycastTarget = false;
+            UiKit.Anchor((RectTransform)red.transform, new Vector2(0.5f, 1f), new Vector2(0f, -340f), new Vector2(60f, 60f));
+
+            var reaction = UiKit.CreateText(panelRect, "Reaction", "", 34f, UiKit.TextMain, TextAlignmentOptions.Center, FontStyles.Bold);
+            UiKit.Anchor((RectTransform)reaction.transform, new Vector2(0.5f, 1f), new Vector2(0f, -150f), new Vector2(600f, 44f));
+            var shift = UiKit.CreateText(panelRect, "ShiftFeedback", "", 44f, UiKit.TextMain, TextAlignmentOptions.Center, FontStyles.Bold);
+            UiKit.Anchor((RectTransform)shift.transform, new Vector2(0.5f, 0.5f), new Vector2(0f, 220f), new Vector2(800f, 60f));
+
+            // Gap bar: strip with two markers.
+            var gapBg = UiKit.CreatePanel(panelRect, "GapTrack", new Color(0.1f, 0.1f, 0.12f, 0.7f));
+            gapBg.raycastTarget = false;
+            UiKit.Anchor((RectTransform)gapBg.transform, new Vector2(0.5f, 0f), new Vector2(0f, 250f), new Vector2(700f, 10f));
+            var gapRect = (RectTransform)gapBg.transform;
+            var playerMarker = UiKit.CreatePanel(gapBg.transform, "PlayerMarker", UiKit.Accent);
+            playerMarker.raycastTarget = false;
+            UiKit.Anchor((RectTransform)playerMarker.transform, new Vector2(0f, 0.5f), new Vector2(0f, 12f), new Vector2(14f, 22f));
+            var oppMarker = UiKit.CreatePanel(gapBg.transform, "OpponentMarker", new Color(0.4f, 0.75f, 1f, 1f));
+            oppMarker.raycastTarget = false;
+            UiKit.Anchor((RectTransform)oppMarker.transform, new Vector2(0f, 0.5f), new Vector2(0f, -12f), new Vector2(14f, 22f));
+            var opponent = UiKit.CreateText(panelRect, "OpponentGap", "", 26f, UiKit.TextDim, TextAlignmentOptions.Center);
+            UiKit.Anchor((RectTransform)opponent.transform, new Vector2(0.5f, 0f), new Vector2(0f, 275f), new Vector2(700f, 34f));
+
+            panel.EditorWire(ambers, green, red, reaction, shift, opponent, gapRect, (RectTransform)playerMarker.transform, (RectTransform)oppMarker.transform);
+            return panel;
+        }
+
         private static ResultsPanel BuildResultsPanel(Transform root)
         {
             var panel = UiKit.CreatePanel(root, "ResultsPanel", new Color(0.03f, 0.03f, 0.05f, 0.92f));

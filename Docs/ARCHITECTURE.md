@@ -126,11 +126,47 @@ tunable arcade-realistic handling at 50 Hz):
   `VehicleCameraRig` provides chase (speed/acceleration/drift/collision reactive), hood and cockpit views.
 - Verified by `VehicleDriveTests` (settle, accelerate, brake, corner, reset, manual shift) in the proving ground.
 
-## 10. Phase status
+## 10. Circuit racing (Phase 3)
+
+- **Track scene contract**: a `TrackLayout` with ordered `Checkpoint` triggers (index 0 = start/finish, also the
+  respawn pose), grid slot transforms just behind the line, and a `RacingLine` (dense polyline with per-node
+  target speeds derived from curvature × grip, back-propagated for braking zones). `TrackMeshBuilder` generates
+  chunked road/kerb meshes and solid extruded barriers from a control polygon; `Track_SunsetLoop` is the first.
+- **RaceSession** (one per track scene, `ILocalRacerSource`): consumes the `RaceLaunchRequest`, spawns every
+  participant through `VehicleFactory` (player → `MobileInputProvider`, AI → `AIInputProvider` + `AIDriver`),
+  runs countdown → racing → finishing → finished, validates checkpoint order (shortcuts cannot rank), tracks
+  laps/lap times/progress/positions at 10 Hz, wrong-way and upside-down detection, occupancy-aware respawns,
+  and the rules for Circuit, Sprint, Time Attack, Elimination and Checkpoint events. It emits a `RaceOutcome`,
+  hands it to `ProgressionService.RecordOutcome` (rewards, records, championship bonus, save) and to the UI.
+- **AIDriver**: pure-pursuit steering on the line with a speed-scaled look-ahead, braking horizon over the
+  line's target speeds (never faster than its own car can corner), throttle easing in corners and on slip,
+  spherecast car awareness with aggression-scaled gaps and side selection for overtakes, seeded mistakes
+  (late braking, wide line, lift) at the profile's frequency, reaction-time lag on all inputs, stuck recovery.
+- **Race UI**: `RaceScreenController` binds HUD info/countdown/messages, pause menu and `ResultsPanel`.
+- Verified by `CircuitRaceTests`: menu → launch → autopilot race → finish → reward → save reload → menu.
+
+## 11. Drag racing (Phase 4)
+
+- **DragSession** (`Track_HarborStrip`): staging on the brakes (rev freely, `HoldBrakes` launch hold), a
+  three-amber light tree at 0.5 s intervals, brakes released on the first amber so jumping the start is
+  possible; a car that moves before green red-lights and is classified last. Reaction time is green-to-launch
+  (car leaves the line). Elapsed time and trap speed at the ¼ or ½ mile; player shift quality is scored per
+  shift (Perfect/Good/Early/Late) from the vehicle's own `Shifted` event; results go through the same
+  `RaceOutcome` → `ProgressionService` path (best ET and best reaction are persisted).
+- **DragAIDriver**: seeded reaction time inside the profile's window, false-start chance, launch rpm target
+  with quality-dependent error (bang-bang throttle hold), manual shifts at an accuracy-dependent rpm, lane
+  keeping, nitrous strategy (launch / after 2nd shift / final stretch / random).
+- **UI**: `DragHudPanel` (light tree, RT, shift feedback, lane gap bar) on top of the shared `RaceHud`,
+  bound by `DragScreenController`.
+- Verified by `DragRaceTests` (expert autopilot with manual shifts: green, launch, ≥2 shifts, finish, reward,
+  reaction and ET persisted, save reload, back to menu).
+
+## 12. Phase status
 
 - Phase 1 Foundation — done.
 - Phase 2 Vehicle prototype — done (proving ground test drive from the garage).
-- Phase 3 Circuit slice — next: track layout (checkpoints, grid, racing line), race session rules, AI driver,
-  results and rewards.
-- Phase 4 Drag slice, Phase 5 Garage/progression polish, Phase 6 Content (50 events, 15 cars),
-  Phase 7 Mobile optimisation.
+- Phase 3 Circuit slice — done.
+- Phase 4 Drag slice — done.
+- Phase 5 Garage/progression polish — next: settings screen (controls, graphics, audio), tuning UI, paint,
+  achievements, tutorials, audio + VFX architecture.
+- Phase 6 Content (50 events, 15 cars), Phase 7 Mobile optimisation (profiling on device, LODs, baking).

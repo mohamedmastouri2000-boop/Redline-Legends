@@ -15,6 +15,9 @@ EditorBuildSettings:
     path: Assets/_Project/Scenes/Garage.unity
     guid: 9abe509601a4dda42b18f59fdd1493a2
   - enabled: 1
+    path: Assets/_Project/Scenes/Track_HarborStrip.unity
+    guid: d2fd10f80e13dd24b8604d67b2127a12
+  - enabled: 1
     path: Assets/_Project/Scenes/Track_ProvingGround.unity
     guid: acda427dc3bfd144586968c194b60706
   - enabled: 1
