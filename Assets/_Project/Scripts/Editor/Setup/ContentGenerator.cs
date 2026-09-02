@@ -234,6 +234,8 @@ namespace RedlineLegends.Editor
                 stats.Transmission.GearRatios = row.Gears;
                 stats.Transmission.FinalDrive = row.FinalDrive;
                 stats.Chassis.MassKg = row.Mass;
+                stats.Chassis.CenterOfMassOffset = new Vector3(0f,
+                    row.Class == VehicleClass.Street ? 0.5f : row.Class == VehicleClass.Sport ? 0.45f : 0.4f, 0.02f);
                 stats.Chassis.TopSpeedKmh = row.TopKmh;
                 stats.Chassis.DragCoefficient = row.Drag;
                 stats.Chassis.DownforceCoefficient = row.Class >= VehicleClass.Super ? 0.35f : 0f;
@@ -246,7 +248,7 @@ namespace RedlineLegends.Editor
                 stats.Suspension.SpringRate = row.Mass * 28f;
                 stats.Suspension.Damping = row.Mass * 3.1f;
                 stats.Suspension.AntiRoll = row.Mass * 6.5f;
-                stats.Suspension.RideHeightM = PlaceholderCarBuilder.ShapeFor(row.Class).RideHeight;
+                stats.Suspension.RideHeightM = 0f;
 
                 var slots = new List<UpgradeSlot>();
                 foreach (UpgradeCategory cat in System.Enum.GetValues(typeof(UpgradeCategory)))
@@ -286,12 +288,19 @@ namespace RedlineLegends.Editor
 
         public const string CircuitTrackId = "trk_sunset_loop";
         public const string DragTrackId = "trk_harbor_strip";
+        public const string ProvingGroundTrackId = "trk_proving_ground";
         public const string CircuitSceneName = "Track_SunsetLoop";
         public const string DragSceneName = "Track_HarborStrip";
+        public const string ProvingGroundSceneName = "Track_ProvingGround";
 
         private static Dictionary<string, TrackDefinition> GenerateTracks()
         {
             var result = new Dictionary<string, TrackDefinition>();
+            var proving = EditorPaths.GetOrCreateAsset<TrackDefinition>(EditorPaths.Content + "/Tracks/" + ProvingGroundTrackId + ".asset");
+            proving.EditorInitialize(ProvingGroundTrackId, "Proving Ground", ProvingGroundSceneName, TrackTheme.Industrial, 0f, false, false, 1);
+            EditorUtility.SetDirty(proving);
+            result[ProvingGroundTrackId] = proving;
+
             var circuit = EditorPaths.GetOrCreateAsset<TrackDefinition>(EditorPaths.Content + "/Tracks/" + CircuitTrackId + ".asset");
             circuit.EditorInitialize(CircuitTrackId, "Sunset Loop", CircuitSceneName, TrackTheme.Coast, 1650f, true, false, 8);
             EditorUtility.SetDirty(circuit);

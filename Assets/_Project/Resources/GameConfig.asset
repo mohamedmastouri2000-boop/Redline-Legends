@@ -32,4 +32,5 @@ MonoBehaviour:
     TutorialsEnabled: 1
     ShowRacingLine: 1
   saveFileName: profile.sav
+  testDriveTrackId: trk_proving_ground
   fixedTimestep: 0.02

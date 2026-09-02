@@ -24,6 +24,7 @@ namespace RedlineLegends.Editor
             ContentGenerator.Generate();
             AppRootPrefabBuilder.Build();
             SceneBuilder.BuildAll();
+            TrackSceneBuilder.BuildAll();
             ProjectSettingsSetup.SetBuildScenes(CollectScenePaths());
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -50,7 +51,7 @@ namespace RedlineLegends.Editor
         public static void ImportTmpEssentials()
         {
             if (AssetDatabase.LoadAssetAtPath<UnityEngine.Object>(TmpEssentialsMarker) != null) return;
-            AssetDatabase.ImportPackage(TmpEssentialsPackage, false);
+            UnityEditor.AssetPackage.Package.Import(TmpEssentialsPackage, false);
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
             Debug.Log("[Setup] TextMeshPro essential resources imported.");
         }
@@ -71,6 +72,13 @@ namespace RedlineLegends.Editor
         public static void MenuScenes()
         {
             SceneBuilder.BuildAll();
+            ProjectSettingsSetup.SetBuildScenes(CollectScenePaths());
+        }
+
+        [MenuItem("Redline Legends/Setup/7. Track Scenes", priority = 16)]
+        public static void MenuTrackScenes()
+        {
+            TrackSceneBuilder.BuildAll();
             ProjectSettingsSetup.SetBuildScenes(CollectScenePaths());
         }
 

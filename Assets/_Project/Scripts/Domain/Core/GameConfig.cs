@@ -20,6 +20,8 @@ namespace RedlineLegends.Core
         [SerializeField] private InputActionAsset inputActions;
         [SerializeField] private SettingsData defaultSettings = new SettingsData();
         [SerializeField] private string saveFileName = "profile.sav";
+        [Tooltip("Track used by the garage Test Drive button.")]
+        [SerializeField] private string testDriveTrackId = "trk_proving_ground";
         [Tooltip("Physics step. 50 Hz is a good mobile compromise; the vehicle sim is stable here.")]
         [SerializeField] private float fixedTimestep = 0.02f;
 
@@ -28,6 +30,7 @@ namespace RedlineLegends.Core
         public InputActionAsset InputActions => inputActions;
         public SettingsData DefaultSettings => defaultSettings;
         public string SaveFileName => saveFileName;
+        public string TestDriveTrackId => testDriveTrackId;
         public float FixedTimestep => fixedTimestep;
 
         public static GameConfig Load()

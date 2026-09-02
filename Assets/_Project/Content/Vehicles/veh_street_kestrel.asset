@@ -100,7 +100,7 @@ MonoBehaviour:
       AwdFrontTorqueSplit: 0.4
     Chassis:
       MassKg: 1180
-      CenterOfMassOffset: {x: 0, y: -0.35, z: 0.05}
+      CenterOfMassOffset: {x: 0, y: 0.5, z: 0.02}
       DragCoefficient: 0.31
       FrontalAreaM2: 2.2
       DownforceCoefficient: 0
@@ -126,7 +126,7 @@ MonoBehaviour:
       SpringRate: 33040
       Damping: 3658
       TravelM: 0.22
-      RideHeightM: 0.32
+      RideHeightM: 0
       AntiRoll: 7670
     Nitrous:
       CapacitySeconds: 0

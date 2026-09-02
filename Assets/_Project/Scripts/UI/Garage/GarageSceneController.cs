@@ -35,6 +35,7 @@ namespace RedlineLegends.UI
         [SerializeField] private Button actionButton;
         [SerializeField] private TMP_Text actionLabel;
         [SerializeField] private Button backButton;
+        [SerializeField] private Button testDriveButton;
         [SerializeField] private RectTransform upgradeList;
         [SerializeField] private UpgradeRow upgradeRowTemplate;
 
@@ -67,6 +68,7 @@ namespace RedlineLegends.UI
             nextButton.onClick.AddListener(() => Browse(1));
             actionButton.onClick.AddListener(OnAction);
             backButton.onClick.AddListener(() => _sceneFlow.LoadMainMenu());
+            if (testDriveButton != null) testDriveButton.onClick.AddListener(LaunchTestDrive);
             upgradeRowTemplate.gameObject.SetActive(false);
 
             _index = IndexOf(_garage.SelectedVehicleId);
@@ -214,14 +216,27 @@ namespace RedlineLegends.UI
             Refresh();
         }
 
+        private void LaunchTestDrive()
+        {
+            var config = Services.Get<GameConfig>();
+            if (!_catalog.TryGetTrack(config.TestDriveTrackId, out var track))
+            {
+                statusText.text = "Test drive track is not available.";
+                return;
+            }
+            var builder = new Race.RaceLaunchBuilder(_catalog, _garage, _profile);
+            var request = builder.BuildPractice(track);
+            if (request != null) _sceneFlow.LoadRace(request);
+        }
+
 #if UNITY_EDITOR
         public void EditorWire(Transform table, TMP_Text name, TMP_Text cls, TMP_Text rating, TMP_Text stats, TMP_Text credits,
-            TMP_Text status, Button prev, Button next, Button action, TMP_Text actionText, Button back,
+            TMP_Text status, Button prev, Button next, Button action, TMP_Text actionText, Button back, Button testDrive,
             RectTransform upgrades, UpgradeRow template)
         {
             turntable = table; carNameText = name; carClassText = cls; ratingText = rating; statsText = stats;
             creditsText = credits; statusText = status; prevButton = prev; nextButton = next; actionButton = action;
-            actionLabel = actionText; backButton = back; upgradeList = upgrades; upgradeRowTemplate = template;
+            actionLabel = actionText; backButton = back; testDriveButton = testDrive; upgradeList = upgrades; upgradeRowTemplate = template;
         }
 #endif
     }

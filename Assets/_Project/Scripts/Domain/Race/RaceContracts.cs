@@ -56,6 +56,8 @@ namespace RedlineLegends.Race
         public List<RaceParticipantSpec> Participants = new List<RaceParticipantSpec>();
         /// <summary>Deterministic seed for AI mistakes/grid shuffles; shared by all peers later.</summary>
         public int Seed;
+        /// <summary>Free drive: no rules, no rewards, no records.</summary>
+        public bool IsPractice;
 
         public RaceParticipantSpec FindLocalPlayer()
         {

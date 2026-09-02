@@ -34,6 +34,35 @@ namespace RedlineLegends.Race
             _profile = profile ?? throw new ArgumentNullException(nameof(profile));
         }
 
+        /// <summary>Free drive on a track with the selected car and no opponents.</summary>
+        public RaceLaunchRequest BuildPractice(Tracks.TrackDefinition track)
+        {
+            if (track == null) return null;
+            var vehicle = _garage.SelectedVehicle;
+            if (vehicle == null) return null;
+            var request = new RaceLaunchRequest
+            {
+                EventId = "",
+                EventDisplayName = "Test Drive",
+                Mode = RaceMode.Circuit,
+                TrackId = track.Id,
+                TrackSceneName = track.SceneName,
+                Seed = Environment.TickCount,
+                IsPractice = true
+            };
+            request.Participants.Add(new RaceParticipantSpec
+            {
+                Id = new RacerId(1),
+                DisplayName = _profile.DisplayName ?? LocalPlayerName,
+                VehicleId = vehicle.Id,
+                ControlSource = ControlSource.LocalPlayer,
+                GridSlot = 0,
+                VehicleSpec = _garage.BuildSpec(vehicle.Id),
+                PaintIndex = _garage.GetOwned(vehicle.Id)?.PaintIndex ?? 0
+            });
+            return request;
+        }
+
         /// <summary>Returns null (with a reason) when the selected car cannot enter.</summary>
         public RaceLaunchRequest Build(RaceEventDefinition evt, out string failReason)
         {

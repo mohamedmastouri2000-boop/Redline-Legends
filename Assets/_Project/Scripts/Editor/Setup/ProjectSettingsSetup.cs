@@ -33,7 +33,6 @@ namespace RedlineLegends.Editor
             PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
             PlayerSettings.Android.minSdkVersion = (AndroidSdkVersions)26;
             PlayerSettings.Android.optimizedFramePacing = true;
-            PlayerSettings.Android.startInFullscreen = true;
             PlayerSettings.SetUseDefaultGraphicsAPIs(BuildTarget.Android, false);
             PlayerSettings.SetGraphicsAPIs(BuildTarget.Android, new[] { GraphicsDeviceType.Vulkan, GraphicsDeviceType.OpenGLES3 });
             PlayerSettings.MTRendering = true;
@@ -41,8 +40,29 @@ namespace RedlineLegends.Editor
             PlayerSettings.SetMobileMTRendering(android, true);
 
             SetActiveInputHandler(1); // 1 = Input System package only
+            ApplyLayers();
 
             Debug.Log("[Setup] Project settings applied.");
+        }
+
+        /// <summary>Writes the gameplay layers GameLayers relies on into the TagManager.</summary>
+        private static void ApplyLayers()
+        {
+            var assets = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset");
+            if (assets == null || assets.Length == 0) return;
+            var so = new SerializedObject(assets[0]);
+            var layers = so.FindProperty("layers");
+            if (layers == null || !layers.isArray) return;
+            SetLayer(layers, RedlineLegends.Core.GameLayers.VehicleIndex, RedlineLegends.Core.GameLayers.VehicleName);
+            SetLayer(layers, RedlineLegends.Core.GameLayers.TrackIndex, RedlineLegends.Core.GameLayers.TrackName);
+            SetLayer(layers, RedlineLegends.Core.GameLayers.CheckpointIndex, RedlineLegends.Core.GameLayers.CheckpointName);
+            so.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static void SetLayer(SerializedProperty layers, int index, string name)
+        {
+            if (index >= layers.arraySize) return;
+            layers.GetArrayElementAtIndex(index).stringValue = name;
         }
 
         /// <summary>Not exposed by PlayerSettings; edit the serialized project settings directly.</summary>

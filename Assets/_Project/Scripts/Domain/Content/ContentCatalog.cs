@@ -96,6 +96,7 @@ namespace RedlineLegends.Content
         public AIProfile GetAIProfile(string id) => Get(_aiProfiles, id, "AIProfile");
 
         public bool TryGetVehicle(string id, out VehicleDefinition def) => _vehicles.TryGetValue(id ?? "", out def);
+        public bool TryGetTrack(string id, out TrackDefinition def) => _tracks.TryGetValue(id ?? "", out def);
         public bool TryGetEvent(string id, out RaceEventDefinition def) => _events.TryGetValue(id ?? "", out def);
         public bool TryGetChampionship(string id, out ChampionshipDefinition def) => _championships.TryGetValue(id ?? "", out def);
         public bool TryGetAIProfile(string id, out AIProfile def) => _aiProfiles.TryGetValue(id ?? "", out def);

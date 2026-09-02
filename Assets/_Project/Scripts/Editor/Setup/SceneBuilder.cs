@@ -333,6 +333,8 @@ namespace RedlineLegends.Editor
 
             var back = UiKit.CreateButton(canvas.transform, "BackButton", "BACK", UiKit.ButtonNormal, 28f, out _);
             UiKit.Anchor((RectTransform)back.transform, new Vector2(1f, 1f), new Vector2(-40f, -90f), new Vector2(200f, 64f));
+            var testDrive = UiKit.CreateButton(canvas.transform, "TestDriveButton", "TEST DRIVE", UiKit.ButtonNormal, 26f, out _);
+            UiKit.Anchor((RectTransform)testDrive.transform, new Vector2(1f, 1f), new Vector2(-40f, -164f), new Vector2(200f, 64f));
 
             var prev = UiKit.CreateButton(canvas.transform, "PrevButton", "<", UiKit.ButtonNormal, 40f, out _);
             UiKit.Anchor((RectTransform)prev.transform, new Vector2(0.5f, 0f), new Vector2(-330f, 60f), new Vector2(110f, 90f));
@@ -350,7 +352,7 @@ namespace RedlineLegends.Editor
             var upgradeTemplate = BuildUpgradeRow(upgradeContent);
 
             controller.EditorWire(turntable.transform, name, cls, rating, stats, credits, status, prev, next, action, actionLabel, back,
-                upgradeContent, upgradeTemplate);
+                testDrive, upgradeContent, upgradeTemplate);
 
             Save(scene, GaragePath);
         }

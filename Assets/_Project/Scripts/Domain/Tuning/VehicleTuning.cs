@@ -70,10 +70,10 @@ namespace RedlineLegends.Tuning
             stats.Suspension.SpringRate *= stiff;
             stats.Suspension.Damping *= Mathf.Sqrt(stiff);
             stats.Suspension.AntiRoll *= stiff;
-            stats.Suspension.RideHeightM = Mathf.Max(0.05f,
-                stats.Suspension.RideHeightM + Mathf.Clamp(tuning.RideHeight, -1f, 1f) * limits.RideHeightRangeM);
+            stats.Suspension.RideHeightM = Mathf.Clamp(
+                stats.Suspension.RideHeightM + Mathf.Clamp(tuning.RideHeight, -1f, 1f) * limits.RideHeightRangeM, -0.06f, 0.1f);
             // Lower car = lower centre of mass.
-            stats.Chassis.CenterOfMassOffset.y -= Mathf.Clamp(tuning.RideHeight, -1f, 1f) * limits.RideHeightRangeM * 0.5f;
+            stats.Chassis.CenterOfMassOffset.y += Mathf.Clamp(tuning.RideHeight, -1f, 1f) * limits.RideHeightRangeM;
 
             // Grip bias is consumed by the vehicle controller as a per-axle multiplier; we store it
             // on the stats by nudging stability assist (rear bias = looser car).

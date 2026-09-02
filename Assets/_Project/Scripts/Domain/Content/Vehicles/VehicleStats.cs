@@ -86,8 +86,8 @@ namespace RedlineLegends.Vehicles
     public sealed class ChassisStats
     {
         public float MassKg = 1300f;
-        [Tooltip("Offset from the body origin. Lower = more stable.")]
-        public Vector3 CenterOfMassOffset = new Vector3(0f, -0.35f, 0.05f);
+        [Tooltip("Centre of mass in vehicle space. The vehicle origin is at ground level under the model, so this is the COM height above the road. Lower = more stable.")]
+        public Vector3 CenterOfMassOffset = new Vector3(0f, 0.45f, 0.02f);
         public float DragCoefficient = 0.32f;
         public float FrontalAreaM2 = 2.2f;
         [Tooltip("Downforce in newtons per (m/s)^2. 0 for street cars.")]
@@ -151,8 +151,8 @@ namespace RedlineLegends.Vehicles
         [Tooltip("Damping per wheel (Ns/m).")]
         public float Damping = 4200f;
         public float TravelM = 0.22f;
-        [Tooltip("Rest length of the suspension ray (ride height).")]
-        public float RideHeightM = 0.16f;
+        [Tooltip("Body lift relative to the model's authored stance in metres (0 = as modelled; tuning lowers or raises it).")]
+        public float RideHeightM = 0f;
         [Tooltip("Anti-roll stiffness (N/m of travel difference).")]
         public float AntiRoll = 9000f;
 

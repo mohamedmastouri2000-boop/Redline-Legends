@@ -54,6 +54,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 44241d2a56df8b44eaec07dde88c027f, type: 2}
   - {fileID: 11400000, guid: f9314be914720c64d81f16e1652814b5, type: 2}
   tracks:
+  - {fileID: 11400000, guid: 9aa544df66b4628429354f12eda12c74, type: 2}
   - {fileID: 11400000, guid: 50d81d4b86a3eb34b98dd6896bf130ce, type: 2}
   - {fileID: 11400000, guid: 6c76d5871e5ac334c9eb8c404f05003e, type: 2}
   events:
