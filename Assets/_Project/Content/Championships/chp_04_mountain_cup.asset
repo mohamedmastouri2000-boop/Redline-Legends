@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 819a59a3c43650c49bcdf359bb358517, type: 3}
+  m_Name: chp_04_mountain_cup
+  m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Career.ChampionshipDefinition
+  id: chp_04_mountain_cup
+  displayName: Mountain Cup
+  description: Climb the pass. Every metre is uphill.
+  tier: 4
+  events:
+  - {fileID: 11400000, guid: 29fbbbea984052e489a6a6387617f6e1, type: 2}
+  - {fileID: 11400000, guid: 2f5080dd6bff8e640a3a45a858a1595c, type: 2}
+  - {fileID: 11400000, guid: 4d2c79c48d85816459e63705ba4d6abb, type: 2}
+  - {fileID: 11400000, guid: 1b71f9ee11fffdc42a9ce6d65bdc8d2d, type: 2}
+  - {fileID: 11400000, guid: f9699b4e102b478499863d58b3f459cf, type: 2}
+  unlockRequirement:
+    PlayerLevel: 0
+    TotalStars: 0
+    RequiredEventId: 
+    RequiredChampionshipId: chp_03_desert_series
+    RequiredChampionshipStars: 8
+  completionCredits: 12300
+  completionXp: 2197
+  banner: {fileID: 0}

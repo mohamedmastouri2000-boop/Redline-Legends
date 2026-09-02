@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9047b5b67104fb4fa67a8f308a6905d, type: 3}
+  m_Name: evt_drag_r04
+  m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Events.DragEventDefinition
+  id: evt_drag_r04
+  displayName: Round 4 - Boss
+  description: Beat the ladder boss.
+  track: {fileID: 11400000, guid: 6c76d5871e5ac334c9eb8c404f05003e, type: 2}
+  rewards:
+    ByPosition:
+    - Credits: 1750
+      Xp: 352
+      Stars: 3
+    - Credits: 1225
+      Xp: 246
+      Stars: 2
+    - Credits: 875
+      Xp: 176
+      Stars: 1
+    - Credits: 525
+      Xp: 123
+      Stars: 1
+    - Credits: 350
+      Xp: 88
+      Stars: 0
+    - Credits: 262
+      Xp: 70
+      Stars: 0
+    CompletionCredits: 350
+    CompletionXp: 88
+    TimeAttackStarThresholds: []
+  restriction:
+    AllowedClasses: 
+    MinPerformanceRating: 300
+    MaxPerformanceRating: 0
+    AllowedVehicleIds: []
+  recommendedPerformanceRating: 425
+  weather: 0
+  timeOfDay: 2
+  unlockRequirement:
+    PlayerLevel: 0
+    TotalStars: 0
+    RequiredEventId: evt_drag_r03
+    RequiredChampionshipId: 
+    RequiredChampionshipStars: 0
+  aiProfile: {fileID: 11400000, guid: a7a4dbb3d4afd1e4890acdfd3a7da75b, type: 2}
+  aiVehiclePool: []
+  isBossEvent: 1
+  thumbnail: {fileID: 0}
+  distance: 0
+  opponentVehicle: {fileID: 11400000, guid: b3765c82ceec49e438c36e0478db6fb3, type: 2}
+  opponentName: Vale
+  tournamentRound: 4

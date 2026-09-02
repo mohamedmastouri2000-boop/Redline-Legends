@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b893f69611f8d234796374a4a9e5a72c, type: 3}
+  m_Name: evt_c04_e03
+  m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Events.CircuitEventDefinition
+  id: evt_c04_e03
+  displayName: Dune Pass Time Attack
+  description: Alone against the clock.
+  track: {fileID: 11400000, guid: f62943707934bf144a5017e982ec5629, type: 2}
+  rewards:
+    ByPosition:
+    - Credits: 2200
+      Xp: 395
+      Stars: 3
+    - Credits: 1540
+      Xp: 276
+      Stars: 2
+    - Credits: 1100
+      Xp: 198
+      Stars: 1
+    - Credits: 660
+      Xp: 138
+      Stars: 1
+    - Credits: 440
+      Xp: 99
+      Stars: 0
+    - Credits: 330
+      Xp: 79
+      Stars: 0
+    CompletionCredits: 440
+    CompletionXp: 99
+    TimeAttackStarThresholds:
+    - 66.943886
+    - 72.2994
+    - 80.332664
+  restriction:
+    AllowedClasses: 01000000i
+    MinPerformanceRating: 0
+    MaxPerformanceRating: 0
+    AllowedVehicleIds: []
+  recommendedPerformanceRating: 672
+  weather: 0
+  timeOfDay: 1
+  unlockRequirement:
+    PlayerLevel: 0
+    TotalStars: 0
+    RequiredEventId: evt_c04_e02
+    RequiredChampionshipId: 
+    RequiredChampionshipStars: 0
+  aiProfile: {fileID: 0}
+  aiVehiclePool: []
+  isBossEvent: 0
+  thumbnail: {fileID: 0}
+  eventType: 2
+  laps: 1
+  aiCount: 0
+  eliminationIntervalSeconds: 20
+  checkpointStartSeconds: 30
+  checkpointBonusSeconds: 8

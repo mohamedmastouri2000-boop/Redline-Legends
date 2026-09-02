@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b893f69611f8d234796374a4a9e5a72c, type: 3}
+  m_Name: evt_c03_e04
+  m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Events.CircuitEventDefinition
+  id: evt_c03_e04
+  displayName: Ridge Highway Race
+  description: The second track of the series.
+  track: {fileID: 11400000, guid: bf3159e57a0fb6e4db46248511b5649b, type: 2}
+  rewards:
+    ByPosition:
+    - Credits: 2310
+      Xp: 426
+      Stars: 3
+    - Credits: 1617
+      Xp: 298
+      Stars: 2
+    - Credits: 1155
+      Xp: 213
+      Stars: 1
+    - Credits: 693
+      Xp: 149
+      Stars: 1
+    - Credits: 462
+      Xp: 106
+      Stars: 0
+    - Credits: 346
+      Xp: 85
+      Stars: 0
+    CompletionCredits: 462
+    CompletionXp: 106
+    TimeAttackStarThresholds: []
+  restriction:
+    AllowedClasses: 0000000001000000i
+    MinPerformanceRating: 0
+    MaxPerformanceRating: 0
+    AllowedVehicleIds: []
+  recommendedPerformanceRating: 598
+  weather: 0
+  timeOfDay: 0
+  unlockRequirement:
+    PlayerLevel: 0
+    TotalStars: 0
+    RequiredEventId: evt_c03_e03
+    RequiredChampionshipId: 
+    RequiredChampionshipStars: 0
+  aiProfile: {fileID: 11400000, guid: a7a4dbb3d4afd1e4890acdfd3a7da75b, type: 2}
+  aiVehiclePool: []
+  isBossEvent: 0
+  thumbnail: {fileID: 0}
+  eventType: 0
+  laps: 3
+  aiCount: 5
+  eliminationIntervalSeconds: 20
+  checkpointStartSeconds: 30
+  checkpointBonusSeconds: 8

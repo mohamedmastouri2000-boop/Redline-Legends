@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 819a59a3c43650c49bcdf359bb358517, type: 3}
+  m_Name: chp_08_neon_nights
+  m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Career.ChampionshipDefinition
+  id: chp_08_neon_nights
+  displayName: Neon Nights
+  description: Night circuit and the drag strip, no excuses.
+  tier: 8
+  events:
+  - {fileID: 11400000, guid: 03657355efaa3b74b9caf9474fb97ba9, type: 2}
+  - {fileID: 11400000, guid: 53fc6e79a24a4ef46bfb4bae161d809c, type: 2}
+  - {fileID: 11400000, guid: da973945fe5f63646be2f608f222c9af, type: 2}
+  - {fileID: 11400000, guid: 489f32883bf71ad49b33cbd59ad0ad5c, type: 2}
+  - {fileID: 11400000, guid: ffa6d0e563140c445b17ef9c7c51719e, type: 2}
+  unlockRequirement:
+    PlayerLevel: 0
+    TotalStars: 0
+    RequiredEventId: 
+    RequiredChampionshipId: chp_07_coastal_gp
+    RequiredChampionshipStars: 8
+  completionCredits: 40900
+  completionXp: 6275
+  banner: {fileID: 0}

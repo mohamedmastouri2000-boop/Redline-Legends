@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 819a59a3c43650c49bcdf359bb358517, type: 3}
+  m_Name: chp_07_coastal_gp
+  m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Career.ChampionshipDefinition
+  id: chp_07_coastal_gp
+  displayName: Coastal GP
+  description: The coast road at supercar pace.
+  tier: 7
+  events:
+  - {fileID: 11400000, guid: 93b1168680648394ca3d51e162840151, type: 2}
+  - {fileID: 11400000, guid: 133bc748b131a3d42af52c11c2f70a1d, type: 2}
+  - {fileID: 11400000, guid: 4ca06848d5876714e960d766777417f9, type: 2}
+  - {fileID: 11400000, guid: cde64f8450e8e5c4ca7e9902ae3bbdce, type: 2}
+  - {fileID: 11400000, guid: 94597c15fe552b24fb4f8b9bdaaa3f66, type: 2}
+  unlockRequirement:
+    PlayerLevel: 0
+    TotalStars: 0
+    RequiredEventId: 
+    RequiredChampionshipId: chp_06_industrial_open
+    RequiredChampionshipStars: 8
+  completionCredits: 30300
+  completionXp: 4827
+  banner: {fileID: 0}

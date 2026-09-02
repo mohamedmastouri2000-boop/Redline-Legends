@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80ec776b651d25b42ad0eb1490651772, type: 3}
+  m_Name: trk_night_run
+  m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Tracks.TrackDefinition
+  id: trk_night_run
+  displayName: Neon Loop
+  sceneName: Track_NeonLoop
+  theme: 1
+  lengthMeters: 1323.3196
+  isLoop: 1
+  supportsDrag: 0
+  maxParticipants: 8
+  thumbnail: {fileID: 0}
+  minimap: {fileID: 0}

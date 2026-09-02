@@ -179,14 +179,35 @@ tunable arcade-realistic handling at 50 Hz):
 - **Tutorials**: `TutorialService` + `TutorialOverlay`; first circuit and first drag hold the session in
   Preparing until dismissed, first upgrade shows on the first garage visit. Skippable, remembered in the save.
 
-## 13. Phase status
+## 13. Content (Phase 6)
+
+- **Tracks**: `TrackSpecs` holds one `CircuitSpec` per circuit (control polygon, width, loop flag, theme
+  colours, sky/sun/fog, dressing style). `CircuitBuilder` turns a spec into a full scene; `TrackDressing`
+  scatters themed placeholder props (buildings, dunes, rocks, trees, containers, grandstands, lamps) with a
+  clearance test against the whole road. Eight circuits: Sunset Loop (coast), Meridian Downtown (city), Neon
+  Loop (night city), Dune Pass (desert), Alpine Climb (mountain point-to-point with 186 m of elevation), Cargo
+  Yard (industrial), Ridge Highway, Grand Circuit; plus the Harbor Strip drag strip and the proving ground.
+  Road shoulders extend to the barrier line so elevated roads have no gap to fall through.
+- **Roster**: 15 fictional cars (4 Street, 4 Sport, 4 Super, 3 Hyper) with per-class derived physics; unlocks by
+  level or championship completion. Upgrade kits exist for every class × category.
+- **Career**: 10 championships × 5 events (sprint, race, a time attack / elimination / checkpoint special, a
+  drag or second-track race, a boss final). Each championship requires 8 stars from the previous one; each
+  event requires the previous event. Recommended PR per event is the median stock+stage rating of the eligible
+  classes, computed from the roster at generation time. Rewards scale ×1.35 per championship.
+- **Drag ladder**: a 12-round "Drag Tournament" championship with named rivals in specific cars, quarter mile
+  rounds 1–8 and half mile 9–12, bosses every fourth round, PR minimums derived from the rival's car.
+- **Validation**: `ContentValidationTests` (counts, references, scenes in build, unlock chains, class rating
+  order) and `TrackDrivabilityTests` (an autopilot must pass ≥4 gates in 60 s on every circuit without getting
+  stuck or spending time airborne).
+
+## 14. Phase status
 
 - Phase 1 Foundation — done.
 - Phase 2 Vehicle prototype — done (proving ground test drive from the garage).
 - Phase 3 Circuit slice — done.
 - Phase 4 Drag slice — done.
 - Phase 5 Garage/progression polish, audio, VFX, tutorials — done.
-- Phase 6 Content — next: 15 cars, 10 championships / 50 events, drag ladder, more tracks (see
-  `Docs/CONTENT_PLAN.md`); real car and environment models replacing the generated placeholders.
-- Phase 7 Mobile optimisation — device profiling, LOD groups, light baking, texture compression review,
+- Phase 6 Content — done as a first balance pass with generated placeholder art. Still open: real car and
+  environment models, recorded audio, hand balancing after playtesting.
+- Phase 7 Mobile optimisation — next: device profiling, LOD groups, light baking, texture compression review,
   thermal testing on low/mid/high presets.

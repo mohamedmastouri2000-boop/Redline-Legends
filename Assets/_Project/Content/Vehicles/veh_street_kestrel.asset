@@ -95,7 +95,7 @@ MonoBehaviour:
       - 0.86
       ReverseRatio: 3.2
       FinalDrive: 4.1
-      ShiftTimeSeconds: 0.22
+      ShiftTimeSeconds: 0.24
       DrivelineEfficiency: 0.88
       AwdFrontTorqueSplit: 0.4
     Chassis:
@@ -106,8 +106,8 @@ MonoBehaviour:
       DownforceCoefficient: 0
       TopSpeedKmh: 196
     Tires:
-      LateralGrip: 1
-      LongitudinalGrip: 1.05
+      LateralGrip: 1.02
+      LongitudinalGrip: 1.071
       PeakSlipAngleDeg: 9
       PeakSlipRatio: 0.14
       SlideGripFraction: 0.78
@@ -119,8 +119,8 @@ MonoBehaviour:
       HighSpeedSteerReduction: 0.62
       StabilityAssist: 0.35
     Brakes:
-      BrakeTorqueNm: 5200
-      HandbrakeTorqueNm: 3640
+      BrakeTorqueNm: 5192
+      HandbrakeTorqueNm: 3634.4
       BrakeBias: 0.62
     Suspension:
       SpringRate: 33040

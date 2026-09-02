@@ -66,9 +66,12 @@ namespace RedlineLegends.Editor
             return 0.5f * ((2f * p1) + (-p0 + p2) * t + (2f * p0 - 5f * p1 + 4f * p2 - p3) * t2 + (-p0 + 3f * p1 - 3f * p2 + p3) * t3);
         }
 
-        /// <summary>Road surface strips in chunks of chunkSamples samples, with a MeshCollider each.</summary>
+        /// <summary>
+        /// Road surface strips in chunks of chunkSamples samples, with a MeshCollider each. The
+        /// shoulder strip reaches the barrier line so an elevated road has no gap to fall through.
+        /// </summary>
         public static List<GameObject> BuildRoad(Transform parent, List<Sample> samples, bool loop, int chunkSamples,
-            Material roadMaterial, Material kerbMaterial, string meshFolder, string meshPrefix, int layer)
+            Material roadMaterial, Material kerbMaterial, string meshFolder, string meshPrefix, int layer, float shoulderWidth = 3.6f)
         {
             var chunks = new List<GameObject>();
             int total = samples.Count;
@@ -95,12 +98,12 @@ namespace RedlineLegends.Editor
                         if (prevIdx >= total) prevIdx = 0;
                         u += Vector3.Distance(samples[prevIdx].Position, s.Position) / 8f;
                     }
-                    float kerb = 0.9f;
-                    // 6 verts per ring: outer kerb L, road L, road R, outer kerb R (+2 for kerb top offsets)
-                    Vector3 lKerb = s.Position - s.Right * (s.HalfWidth + kerb) + Vector3.up * 0.06f;
+                    float kerb = shoulderWidth;
+                    // 4 verts per ring: shoulder L, road L, road R, shoulder R
+                    Vector3 lKerb = s.Position - s.Right * (s.HalfWidth + kerb) + Vector3.up * 0.04f;
                     Vector3 l = s.Position - s.Right * s.HalfWidth;
                     Vector3 r = s.Position + s.Right * s.HalfWidth;
-                    Vector3 rKerb = s.Position + s.Right * (s.HalfWidth + kerb) + Vector3.up * 0.06f;
+                    Vector3 rKerb = s.Position + s.Right * (s.HalfWidth + kerb) + Vector3.up * 0.04f;
                     verts.Add(lKerb); verts.Add(l); verts.Add(r); verts.Add(rKerb);
                     uvs.Add(new Vector2(0f, u)); uvs.Add(new Vector2(0f, u)); uvs.Add(new Vector2(1f, u)); uvs.Add(new Vector2(1f, u));
                     for (int v = 0; v < 4; v++) normals.Add(Vector3.up);

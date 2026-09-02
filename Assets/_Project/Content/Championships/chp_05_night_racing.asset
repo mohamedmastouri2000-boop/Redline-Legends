@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 819a59a3c43650c49bcdf359bb358517, type: 3}
+  m_Name: chp_05_night_racing
+  m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Career.ChampionshipDefinition
+  id: chp_05_night_racing
+  displayName: Night Racing
+  description: Neon, fog and a half-mile strip under floodlights.
+  tier: 5
+  events:
+  - {fileID: 11400000, guid: 53b10411e58afb5499e72da4a053497d, type: 2}
+  - {fileID: 11400000, guid: aa41d869c0d4b4645bd86d3c4642719c, type: 2}
+  - {fileID: 11400000, guid: d2935a92ce9b8aa46ab01d1869e15310, type: 2}
+  - {fileID: 11400000, guid: 3478166ebc338f34490cf1d3e4fe6f95, type: 2}
+  - {fileID: 11400000, guid: 1eefa1ee357edaa4ab256bd23b1dd9c0, type: 2}
+  unlockRequirement:
+    PlayerLevel: 0
+    TotalStars: 0
+    RequiredEventId: 
+    RequiredChampionshipId: chp_04_mountain_cup
+    RequiredChampionshipStars: 8
+  completionCredits: 16600
+  completionXp: 2856
+  banner: {fileID: 0}

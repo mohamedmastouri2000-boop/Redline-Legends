@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 819a59a3c43650c49bcdf359bb358517, type: 3}
+  m_Name: chp_02_city_challenge
+  m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Career.ChampionshipDefinition
+  id: chp_02_city_challenge
+  displayName: City Challenge
+  description: Ninety-degree corners and no room for error.
+  tier: 2
+  events:
+  - {fileID: 11400000, guid: 97492b6180f1725488a9ce53b73913fd, type: 2}
+  - {fileID: 11400000, guid: bf780896ef755c748b15bfd38329cc79, type: 2}
+  - {fileID: 11400000, guid: 7e9d6e49423bcbe4e9fccbf1a13c972b, type: 2}
+  - {fileID: 11400000, guid: ceece2f842e08274790c6a66d80edc17, type: 2}
+  - {fileID: 11400000, guid: ec55a0bcd138c11428014fc7f9b5180c, type: 2}
+  unlockRequirement:
+    PlayerLevel: 0
+    TotalStars: 0
+    RequiredEventId: 
+    RequiredChampionshipId: chp_01_beginner_streets
+    RequiredChampionshipStars: 8
+  completionCredits: 6800
+  completionXp: 1300
+  banner: {fileID: 0}

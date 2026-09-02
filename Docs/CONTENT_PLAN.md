@@ -1,5 +1,9 @@
 # Content Plan (Phase 6)
 
+Status: implemented as generator tables (`ContentGenerator`, `TrackSpecs`) on 2026-09-03 — 15 cars, 8 circuits +
+drag strip + proving ground, 10 championships / 50 events, 12-round drag ladder, 17 achievements. Numbers below
+are the design intent; the generator derives physics per class and computes recommended PR from the roster.
+
 Targets for the initial release: 15 fictional cars across four tiers, 10 championships of five events (50
 circuit-mode events including specials), plus a drag ladder. All ids are stable snake_case and never reused.
 Everything here becomes rows in `ContentGenerator` (or hand-authored assets in `Assets/_Project/Content`).

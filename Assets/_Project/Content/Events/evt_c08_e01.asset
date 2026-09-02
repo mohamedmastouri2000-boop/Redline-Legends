@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b893f69611f8d234796374a4a9e5a72c, type: 3}
+  m_Name: evt_c08_e01
+  m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Events.CircuitEventDefinition
+  id: evt_c08_e01
+  displayName: Neon Loop Sprint
+  description: One flying lap to open the Neon Nights.
+  track: {fileID: 11400000, guid: 26e52aa0a3169814fb3e1919986249a3, type: 2}
+  rewards:
+    ByPosition:
+    - Credits: 7350
+      Xp: 1129
+      Stars: 3
+    - Credits: 5145
+      Xp: 790
+      Stars: 2
+    - Credits: 3675
+      Xp: 564
+      Stars: 1
+    - Credits: 2205
+      Xp: 395
+      Stars: 1
+    - Credits: 1470
+      Xp: 282
+      Stars: 0
+    - Credits: 1102
+      Xp: 226
+      Stars: 0
+    CompletionCredits: 1470
+    CompletionXp: 282
+    TimeAttackStarThresholds: []
+  restriction:
+    AllowedClasses: 02000000i
+    MinPerformanceRating: 0
+    MaxPerformanceRating: 0
+    AllowedVehicleIds: []
+  recommendedPerformanceRating: 848
+  weather: 0
+  timeOfDay: 2
+  unlockRequirement:
+    PlayerLevel: 0
+    TotalStars: 0
+    RequiredEventId: 
+    RequiredChampionshipId: chp_07_coastal_gp
+    RequiredChampionshipStars: 8
+  aiProfile: {fileID: 11400000, guid: abf6e3ee85b61024cb5e3a375c05563a, type: 2}
+  aiVehiclePool: []
+  isBossEvent: 0
+  thumbnail: {fileID: 0}
+  eventType: 1
+  laps: 1
+  aiCount: 3
+  eliminationIntervalSeconds: 20
+  checkpointStartSeconds: 30
+  checkpointBonusSeconds: 8

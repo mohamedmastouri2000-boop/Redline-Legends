@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9047b5b67104fb4fa67a8f308a6905d, type: 3}
+  m_Name: evt_drag_r06
+  m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Events.DragEventDefinition
+  id: evt_drag_r06
+  displayName: Round 6
+  description: Ladder round 6.
+  track: {fileID: 11400000, guid: 6c76d5871e5ac334c9eb8c404f05003e, type: 2}
+  rewards:
+    ByPosition:
+    - Credits: 2950
+      Xp: 594
+      Stars: 3
+    - Credits: 2065
+      Xp: 416
+      Stars: 2
+    - Credits: 1475
+      Xp: 297
+      Stars: 1
+    - Credits: 885
+      Xp: 208
+      Stars: 1
+    - Credits: 590
+      Xp: 148
+      Stars: 0
+    - Credits: 443
+      Xp: 119
+      Stars: 0
+    CompletionCredits: 590
+    CompletionXp: 148
+    TimeAttackStarThresholds: []
+  restriction:
+    AllowedClasses: 
+    MinPerformanceRating: 470
+    MaxPerformanceRating: 0
+    AllowedVehicleIds: []
+  recommendedPerformanceRating: 672
+  weather: 0
+  timeOfDay: 2
+  unlockRequirement:
+    PlayerLevel: 0
+    TotalStars: 0
+    RequiredEventId: evt_drag_r05
+    RequiredChampionshipId: 
+    RequiredChampionshipStars: 0
+  aiProfile: {fileID: 11400000, guid: b8f5e74c8144054448bce68f681981ee, type: 2}
+  aiVehiclePool: []
+  isBossEvent: 0
+  thumbnail: {fileID: 0}
+  distance: 0
+  opponentVehicle: {fileID: 11400000, guid: 6998ff083e6a7624e879ae4896339f67, type: 2}
+  opponentName: Marta
+  tournamentRound: 6

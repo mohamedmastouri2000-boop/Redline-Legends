@@ -14,39 +14,39 @@ MonoBehaviour:
   m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Events.CircuitEventDefinition
   id: evt_c01_e02
   displayName: Sunset Loop Race
-  description: Two laps against a full rookie grid.
+  description: Full grid, 2 laps.
   track: {fileID: 11400000, guid: 50d81d4b86a3eb34b98dd6896bf130ce, type: 2}
   rewards:
     ByPosition:
-    - Credits: 1400
-      Xp: 260
+    - Credits: 1170
+      Xp: 234
       Stars: 3
-    - Credits: 980
-      Xp: 182
+    - Credits: 819
+      Xp: 164
       Stars: 2
-    - Credits: 700
-      Xp: 130
+    - Credits: 585
+      Xp: 117
       Stars: 1
-    - Credits: 420
-      Xp: 91
+    - Credits: 351
+      Xp: 82
       Stars: 1
-    - Credits: 280
-      Xp: 65
+    - Credits: 234
+      Xp: 58
       Stars: 0
-    - Credits: 210
-      Xp: 52
+    - Credits: 176
+      Xp: 47
       Stars: 0
-    CompletionCredits: 280
-    CompletionXp: 65
+    CompletionCredits: 234
+    CompletionXp: 58
     TimeAttackStarThresholds: []
   restriction:
     AllowedClasses: 00000000i
     MinPerformanceRating: 0
     MaxPerformanceRating: 0
     AllowedVehicleIds: []
-  recommendedPerformanceRating: 180
+  recommendedPerformanceRating: 418
   weather: 0
-  timeOfDay: 1
+  timeOfDay: 0
   unlockRequirement:
     PlayerLevel: 0
     TotalStars: 0

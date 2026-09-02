@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 819a59a3c43650c49bcdf359bb358517, type: 3}
+  m_Name: chp_06_industrial_open
+  m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Career.ChampionshipDefinition
+  id: chp_06_industrial_open
+  displayName: Industrial Open
+  description: Containers, concrete and a technical yard.
+  tier: 6
+  events:
+  - {fileID: 11400000, guid: ce71743c4e2da5540901a05e89a4165c, type: 2}
+  - {fileID: 11400000, guid: 178924c066a40b1439d519be526fe2ed, type: 2}
+  - {fileID: 11400000, guid: 4edd8d42d1e812649a01cbc7dfb8953b, type: 2}
+  - {fileID: 11400000, guid: 71e2c4106afc9544f9707785ac9705af, type: 2}
+  - {fileID: 11400000, guid: ce73f9e13358faa478896504c7dc26f8, type: 2}
+  unlockRequirement:
+    PlayerLevel: 0
+    TotalStars: 0
+    RequiredEventId: 
+    RequiredChampionshipId: chp_05_night_racing
+    RequiredChampionshipStars: 8
+  completionCredits: 22400
+  completionXp: 3713
+  banner: {fileID: 0}

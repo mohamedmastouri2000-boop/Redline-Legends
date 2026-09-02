@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b893f69611f8d234796374a4a9e5a72c, type: 3}
+  m_Name: evt_c10_e02
+  m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Events.CircuitEventDefinition
+  id: evt_c10_e02
+  displayName: Grand Circuit Race
+  description: Full grid, 3 laps.
+  track: {fileID: 11400000, guid: e0067a85c68add84a86f805ef7dc52eb, type: 2}
+  rewards:
+    ByPosition:
+    - Credits: 17420
+      Xp: 2482
+      Stars: 3
+    - Credits: 12194
+      Xp: 1737
+      Stars: 2
+    - Credits: 8710
+      Xp: 1241
+      Stars: 1
+    - Credits: 5226
+      Xp: 869
+      Stars: 1
+    - Credits: 3484
+      Xp: 620
+      Stars: 0
+    - Credits: 2613
+      Xp: 496
+      Stars: 0
+    CompletionCredits: 3484
+    CompletionXp: 620
+    TimeAttackStarThresholds: []
+  restriction:
+    AllowedClasses: 03000000i
+    MinPerformanceRating: 0
+    MaxPerformanceRating: 0
+    AllowedVehicleIds: []
+  recommendedPerformanceRating: 917
+  weather: 0
+  timeOfDay: 2
+  unlockRequirement:
+    PlayerLevel: 0
+    TotalStars: 0
+    RequiredEventId: evt_c10_e01
+    RequiredChampionshipId: 
+    RequiredChampionshipStars: 0
+  aiProfile: {fileID: 11400000, guid: 717bd0d942b601241bb8ca8cfc63a3b3, type: 2}
+  aiVehiclePool: []
+  isBossEvent: 0
+  thumbnail: {fileID: 0}
+  eventType: 0
+  laps: 3
+  aiCount: 5
+  eliminationIntervalSeconds: 20
+  checkpointStartSeconds: 30
+  checkpointBonusSeconds: 8

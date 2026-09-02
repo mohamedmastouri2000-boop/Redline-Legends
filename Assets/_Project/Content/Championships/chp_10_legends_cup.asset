@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 819a59a3c43650c49bcdf359bb358517, type: 3}
+  m_Name: chp_10_legends_cup
+  m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Career.ChampionshipDefinition
+  id: chp_10_legends_cup
+  displayName: Legends Cup
+  description: The best cars, the best drivers, the last word.
+  tier: 10
+  events:
+  - {fileID: 11400000, guid: d327b8f04c58fe64cb567dca58df4421, type: 2}
+  - {fileID: 11400000, guid: 85ab1de6b4bf938499cbb248967a0c1d, type: 2}
+  - {fileID: 11400000, guid: 040ef560cbc9ca54baee3124e4d56bbd, type: 2}
+  - {fileID: 11400000, guid: 0d875bb870bc6064e863db3755a2bfd2, type: 2}
+  - {fileID: 11400000, guid: 4f60fedfd739c064aaa362afba1c56b4, type: 2}
+  unlockRequirement:
+    PlayerLevel: 0
+    TotalStars: 0
+    RequiredEventId: 
+    RequiredChampionshipId: chp_09_summit_series
+    RequiredChampionshipStars: 8
+  completionCredits: 74500
+  completionXp: 10604
+  banner: {fileID: 0}

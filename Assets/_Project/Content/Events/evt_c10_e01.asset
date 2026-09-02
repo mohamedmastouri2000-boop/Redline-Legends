@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b893f69611f8d234796374a4a9e5a72c, type: 3}
+  m_Name: evt_c10_e01
+  m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Events.CircuitEventDefinition
+  id: evt_c10_e01
+  displayName: Grand Circuit Sprint
+  description: One flying lap to open the Legends Cup.
+  track: {fileID: 11400000, guid: e0067a85c68add84a86f805ef7dc52eb, type: 2}
+  rewards:
+    ByPosition:
+    - Credits: 13400
+      Xp: 1909
+      Stars: 3
+    - Credits: 9380
+      Xp: 1336
+      Stars: 2
+    - Credits: 6700
+      Xp: 954
+      Stars: 1
+    - Credits: 4020
+      Xp: 668
+      Stars: 1
+    - Credits: 2680
+      Xp: 477
+      Stars: 0
+    - Credits: 2010
+      Xp: 382
+      Stars: 0
+    CompletionCredits: 2680
+    CompletionXp: 477
+    TimeAttackStarThresholds: []
+  restriction:
+    AllowedClasses: 03000000i
+    MinPerformanceRating: 0
+    MaxPerformanceRating: 0
+    AllowedVehicleIds: []
+  recommendedPerformanceRating: 917
+  weather: 0
+  timeOfDay: 2
+  unlockRequirement:
+    PlayerLevel: 0
+    TotalStars: 0
+    RequiredEventId: 
+    RequiredChampionshipId: chp_09_summit_series
+    RequiredChampionshipStars: 8
+  aiProfile: {fileID: 11400000, guid: 717bd0d942b601241bb8ca8cfc63a3b3, type: 2}
+  aiVehiclePool: []
+  isBossEvent: 0
+  thumbnail: {fileID: 0}
+  eventType: 1
+  laps: 1
+  aiCount: 3
+  eliminationIntervalSeconds: 20
+  checkpointStartSeconds: 30
+  checkpointBonusSeconds: 8

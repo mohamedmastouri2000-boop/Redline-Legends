@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b893f69611f8d234796374a4a9e5a72c, type: 3}
+  m_Name: evt_c09_e01
+  m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Events.CircuitEventDefinition
+  id: evt_c09_e01
+  displayName: Alpine Climb Sprint
+  description: One flying lap to open the Summit Series.
+  track: {fileID: 11400000, guid: bf42c01250158414da38c25c3a772191, type: 2}
+  rewards:
+    ByPosition:
+    - Credits: 9950
+      Xp: 1468
+      Stars: 3
+    - Credits: 6965
+      Xp: 1028
+      Stars: 2
+    - Credits: 4975
+      Xp: 734
+      Stars: 1
+    - Credits: 2985
+      Xp: 514
+      Stars: 1
+    - Credits: 1990
+      Xp: 367
+      Stars: 0
+    - Credits: 1492
+      Xp: 294
+      Stars: 0
+    CompletionCredits: 1990
+    CompletionXp: 367
+    TimeAttackStarThresholds: []
+  restriction:
+    AllowedClasses: 0200000003000000i
+    MinPerformanceRating: 0
+    MaxPerformanceRating: 0
+    AllowedVehicleIds: []
+  recommendedPerformanceRating: 868
+  weather: 1
+  timeOfDay: 2
+  unlockRequirement:
+    PlayerLevel: 0
+    TotalStars: 0
+    RequiredEventId: 
+    RequiredChampionshipId: chp_08_neon_nights
+    RequiredChampionshipStars: 8
+  aiProfile: {fileID: 11400000, guid: abf6e3ee85b61024cb5e3a375c05563a, type: 2}
+  aiVehiclePool: []
+  isBossEvent: 0
+  thumbnail: {fileID: 0}
+  eventType: 1
+  laps: 1
+  aiCount: 3
+  eliminationIntervalSeconds: 20
+  checkpointStartSeconds: 30
+  checkpointBonusSeconds: 8

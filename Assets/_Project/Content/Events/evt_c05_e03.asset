@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b893f69611f8d234796374a4a9e5a72c, type: 3}
+  m_Name: evt_c05_e03
+  m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Events.CircuitEventDefinition
+  id: evt_c05_e03
+  displayName: Neon Loop Elimination
+  description: Last place is out every 20 seconds.
+  track: {fileID: 11400000, guid: 26e52aa0a3169814fb3e1919986249a3, type: 2}
+  rewards:
+    ByPosition:
+    - Credits: 3600
+      Xp: 617
+      Stars: 3
+    - Credits: 2520
+      Xp: 432
+      Stars: 2
+    - Credits: 1800
+      Xp: 308
+      Stars: 1
+    - Credits: 1080
+      Xp: 216
+      Stars: 1
+    - Credits: 720
+      Xp: 154
+      Stars: 0
+    - Credits: 540
+      Xp: 123
+      Stars: 0
+    CompletionCredits: 720
+    CompletionXp: 154
+    TimeAttackStarThresholds: []
+  restriction:
+    AllowedClasses: 01000000i
+    MinPerformanceRating: 0
+    MaxPerformanceRating: 0
+    AllowedVehicleIds: []
+  recommendedPerformanceRating: 672
+  weather: 0
+  timeOfDay: 2
+  unlockRequirement:
+    PlayerLevel: 0
+    TotalStars: 0
+    RequiredEventId: evt_c05_e02
+    RequiredChampionshipId: 
+    RequiredChampionshipStars: 0
+  aiProfile: {fileID: 11400000, guid: b8f5e74c8144054448bce68f681981ee, type: 2}
+  aiVehiclePool: []
+  isBossEvent: 0
+  thumbnail: {fileID: 0}
+  eventType: 3
+  laps: 3
+  aiCount: 5
+  eliminationIntervalSeconds: 20
+  checkpointStartSeconds: 30
+  checkpointBonusSeconds: 8

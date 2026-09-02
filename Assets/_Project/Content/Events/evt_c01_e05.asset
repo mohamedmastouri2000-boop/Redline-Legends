@@ -13,38 +13,38 @@ MonoBehaviour:
   m_Name: evt_c01_e05
   m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Events.CircuitEventDefinition
   id: evt_c01_e05
-  displayName: Coast Road Showdown
-  description: Three laps, amateur field. Win to clear the championship.
+  displayName: Beginner Streets Final
+  description: Beat the champion to clear the series.
   track: {fileID: 11400000, guid: 50d81d4b86a3eb34b98dd6896bf130ce, type: 2}
   rewards:
     ByPosition:
-    - Credits: 2200
-      Xp: 400
+    - Credits: 1980
+      Xp: 360
       Stars: 3
-    - Credits: 1540
-      Xp: 280
+    - Credits: 1386
+      Xp: 252
       Stars: 2
-    - Credits: 1100
-      Xp: 200
+    - Credits: 990
+      Xp: 180
       Stars: 1
-    - Credits: 660
-      Xp: 140
+    - Credits: 594
+      Xp: 126
       Stars: 1
-    - Credits: 440
-      Xp: 100
+    - Credits: 396
+      Xp: 90
       Stars: 0
-    - Credits: 330
-      Xp: 80
+    - Credits: 297
+      Xp: 72
       Stars: 0
-    CompletionCredits: 440
-    CompletionXp: 100
+    CompletionCredits: 396
+    CompletionXp: 90
     TimeAttackStarThresholds: []
   restriction:
     AllowedClasses: 00000000i
     MinPerformanceRating: 0
     MaxPerformanceRating: 0
     AllowedVehicleIds: []
-  recommendedPerformanceRating: 210
+  recommendedPerformanceRating: 476
   weather: 0
   timeOfDay: 0
   unlockRequirement:

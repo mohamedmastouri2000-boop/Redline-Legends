@@ -28,8 +28,8 @@ MonoBehaviour:
       PeakPowerHp: 240
       PeakTorqueNm: 320
       IdleRpm: 900
-      RedlineRpm: 7000
-      LimiterRpm: 7250
+      RedlineRpm: 6800
+      LimiterRpm: 7050
       TorqueCurve:
         serializedVersion: 2
         m_Curve:
@@ -88,27 +88,26 @@ MonoBehaviour:
     Transmission:
       Drivetrain: 1
       GearRatios:
-      - 3.4
-      - 2.05
+      - 3.6
+      - 2.1
       - 1.45
-      - 1.1
-      - 0.87
-      - 0.72
+      - 1.08
+      - 0.86
       ReverseRatio: 3.2
-      FinalDrive: 3.9
-      ShiftTimeSeconds: 0.22
+      FinalDrive: 4.1
+      ShiftTimeSeconds: 0.24
       DrivelineEfficiency: 0.88
       AwdFrontTorqueSplit: 0.4
     Chassis:
       MassKg: 1350
       CenterOfMassOffset: {x: 0, y: 0.5, z: 0.02}
-      DragCoefficient: 0.32
+      DragCoefficient: 0.31
       FrontalAreaM2: 2.2
       DownforceCoefficient: 0
       TopSpeedKmh: 236
     Tires:
-      LateralGrip: 1.04
-      LongitudinalGrip: 1.0919999
+      LateralGrip: 1.02
+      LongitudinalGrip: 1.071
       PeakSlipAngleDeg: 9
       PeakSlipRatio: 0.14
       SlideGripFraction: 0.78
@@ -116,12 +115,12 @@ MonoBehaviour:
       RollingResistance: 0.014
     Handling:
       MaxSteerAngleDeg: 32
-      SteerResponse: 6.8
+      SteerResponse: 6.5
       HighSpeedSteerReduction: 0.62
       StabilityAssist: 0.35
     Brakes:
-      BrakeTorqueNm: 6000
-      HandbrakeTorqueNm: 4200
+      BrakeTorqueNm: 5940
+      HandbrakeTorqueNm: 4158
       BrakeBias: 0.62
     Suspension:
       SpringRate: 37800

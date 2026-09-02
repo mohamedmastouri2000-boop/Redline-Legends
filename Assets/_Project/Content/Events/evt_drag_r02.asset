@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9047b5b67104fb4fa67a8f308a6905d, type: 3}
+  m_Name: evt_drag_r02
+  m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Events.DragEventDefinition
+  id: evt_drag_r02
+  displayName: Round 2
+  description: Ladder round 2.
+  track: {fileID: 11400000, guid: 6c76d5871e5ac334c9eb8c404f05003e, type: 2}
+  rewards:
+    ByPosition:
+    - Credits: 1050
+      Xp: 208
+      Stars: 3
+    - Credits: 735
+      Xp: 146
+      Stars: 2
+    - Credits: 525
+      Xp: 104
+      Stars: 1
+    - Credits: 315
+      Xp: 73
+      Stars: 1
+    - Credits: 210
+      Xp: 52
+      Stars: 0
+    - Credits: 158
+      Xp: 42
+      Stars: 0
+    CompletionCredits: 210
+    CompletionXp: 52
+    TimeAttackStarThresholds: []
+  restriction:
+    AllowedClasses: 
+    MinPerformanceRating: 290
+    MaxPerformanceRating: 0
+    AllowedVehicleIds: []
+  recommendedPerformanceRating: 418
+  weather: 0
+  timeOfDay: 2
+  unlockRequirement:
+    PlayerLevel: 0
+    TotalStars: 0
+    RequiredEventId: evt_drag_r01
+    RequiredChampionshipId: 
+    RequiredChampionshipStars: 0
+  aiProfile: {fileID: 11400000, guid: 39d7f35fe4bbb5f429a6626001021f54, type: 2}
+  aiVehiclePool: []
+  isBossEvent: 0
+  thumbnail: {fileID: 0}
+  distance: 0
+  opponentVehicle: {fileID: 11400000, guid: f175a86b9caa385498e03bea759fd7f7, type: 2}
+  opponentName: Lena
+  tournamentRound: 2

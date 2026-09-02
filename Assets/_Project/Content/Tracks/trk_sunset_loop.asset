@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Sunset Loop
   sceneName: Track_SunsetLoop
   theme: 4
-  lengthMeters: 1650
+  lengthMeters: 1344.6595
   isLoop: 1
   supportsDrag: 0
   maxParticipants: 8

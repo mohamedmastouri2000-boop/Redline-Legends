@@ -15,7 +15,7 @@ MonoBehaviour:
   id: trk_harbor_strip
   displayName: Harbor Strip
   sceneName: Track_HarborStrip
-  theme: 5
+  theme: 8
   lengthMeters: 1000
   isLoop: 0
   supportsDrag: 1

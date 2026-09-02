@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 819a59a3c43650c49bcdf359bb358517, type: 3}
+  m_Name: chp_09_summit_series
+  m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Career.ChampionshipDefinition
+  id: chp_09_summit_series
+  displayName: Summit Series
+  description: From the climb to the grand circuit.
+  tier: 9
+  events:
+  - {fileID: 11400000, guid: c57824b73bdc77745babe40ab9953da0, type: 2}
+  - {fileID: 11400000, guid: 66c7f34175df752438b959aec0664c84, type: 2}
+  - {fileID: 11400000, guid: 1b731e4b53d2b3c478ccfd5f90816dd8, type: 2}
+  - {fileID: 11400000, guid: 63fba4d4e7f6e9749bbfefba74f678d5, type: 2}
+  - {fileID: 11400000, guid: db9efeacad8234d4a8a00e2fed3b1bdd, type: 2}
+  unlockRequirement:
+    PlayerLevel: 0
+    TotalStars: 0
+    RequiredEventId: 
+    RequiredChampionshipId: chp_08_neon_nights
+    RequiredChampionshipStars: 8
+  completionCredits: 55200
+  completionXp: 8157
+  banner: {fileID: 0}

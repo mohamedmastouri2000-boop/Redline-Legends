@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9047b5b67104fb4fa67a8f308a6905d, type: 3}
+  m_Name: evt_drag_r05
+  m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Events.DragEventDefinition
+  id: evt_drag_r05
+  displayName: Round 5
+  description: Ladder round 5.
+  track: {fileID: 11400000, guid: 6c76d5871e5ac334c9eb8c404f05003e, type: 2}
+  rewards:
+    ByPosition:
+    - Credits: 2300
+      Xp: 457
+      Stars: 3
+    - Credits: 1610
+      Xp: 320
+      Stars: 2
+    - Credits: 1150
+      Xp: 228
+      Stars: 1
+    - Credits: 690
+      Xp: 160
+      Stars: 1
+    - Credits: 460
+      Xp: 114
+      Stars: 0
+    - Credits: 345
+      Xp: 91
+      Stars: 0
+    CompletionCredits: 460
+    CompletionXp: 114
+    TimeAttackStarThresholds: []
+  restriction:
+    AllowedClasses: 
+    MinPerformanceRating: 480
+    MaxPerformanceRating: 0
+    AllowedVehicleIds: []
+  recommendedPerformanceRating: 681
+  weather: 0
+  timeOfDay: 2
+  unlockRequirement:
+    PlayerLevel: 0
+    TotalStars: 0
+    RequiredEventId: evt_drag_r04
+    RequiredChampionshipId: 
+    RequiredChampionshipStars: 0
+  aiProfile: {fileID: 11400000, guid: b8f5e74c8144054448bce68f681981ee, type: 2}
+  aiVehiclePool: []
+  isBossEvent: 0
+  thumbnail: {fileID: 0}
+  distance: 0
+  opponentVehicle: {fileID: 11400000, guid: 6d7c60e32b7456f41820dfbcc9977f0f, type: 2}
+  opponentName: Kenji
+  tournamentRound: 5

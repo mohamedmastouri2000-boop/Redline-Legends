@@ -13,41 +13,41 @@ MonoBehaviour:
   m_Name: evt_c01_e03
   m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Events.CircuitEventDefinition
   id: evt_c01_e03
-  displayName: Sunset Time Attack
-  description: Beat the clock. Three stars under 1:25.
+  displayName: Sunset Loop Time Attack
+  description: Alone against the clock.
   track: {fileID: 11400000, guid: 50d81d4b86a3eb34b98dd6896bf130ce, type: 2}
   rewards:
     ByPosition:
-    - Credits: 1100
-      Xp: 200
+    - Credits: 900
+      Xp: 180
       Stars: 3
-    - Credits: 770
-      Xp: 140
+    - Credits: 630
+      Xp: 126
       Stars: 2
-    - Credits: 550
-      Xp: 100
+    - Credits: 450
+      Xp: 90
       Stars: 1
-    - Credits: 330
-      Xp: 70
+    - Credits: 270
+      Xp: 63
       Stars: 1
-    - Credits: 220
-      Xp: 50
+    - Credits: 180
+      Xp: 45
       Stars: 0
-    - Credits: 165
-      Xp: 40
+    - Credits: 135
+      Xp: 36
       Stars: 0
-    CompletionCredits: 220
-    CompletionXp: 50
+    CompletionCredits: 180
+    CompletionXp: 45
     TimeAttackStarThresholds:
-    - 85
-    - 92
-    - 105
+    - 64.03141
+    - 69.15392
+    - 76.83769
   restriction:
     AllowedClasses: 00000000i
     MinPerformanceRating: 0
     MaxPerformanceRating: 0
     AllowedVehicleIds: []
-  recommendedPerformanceRating: 190
+  recommendedPerformanceRating: 418
   weather: 0
   timeOfDay: 0
   unlockRequirement:

@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b893f69611f8d234796374a4a9e5a72c, type: 3}
+  m_Name: evt_c10_e05
+  m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Events.CircuitEventDefinition
+  id: evt_c10_e05
+  displayName: Legends Cup Final
+  description: Beat the champion to clear the series.
+  track: {fileID: 11400000, guid: 26e52aa0a3169814fb3e1919986249a3, type: 2}
+  rewards:
+    ByPosition:
+    - Credits: 29480
+      Xp: 3818
+      Stars: 3
+    - Credits: 20636
+      Xp: 2673
+      Stars: 2
+    - Credits: 14740
+      Xp: 1909
+      Stars: 1
+    - Credits: 8844
+      Xp: 1336
+      Stars: 1
+    - Credits: 5896
+      Xp: 954
+      Stars: 0
+    - Credits: 4422
+      Xp: 764
+      Stars: 0
+    CompletionCredits: 5896
+    CompletionXp: 954
+    TimeAttackStarThresholds: []
+  restriction:
+    AllowedClasses: 03000000i
+    MinPerformanceRating: 0
+    MaxPerformanceRating: 0
+    AllowedVehicleIds: []
+  recommendedPerformanceRating: 917
+  weather: 0
+  timeOfDay: 2
+  unlockRequirement:
+    PlayerLevel: 0
+    TotalStars: 0
+    RequiredEventId: evt_c10_e04
+    RequiredChampionshipId: 
+    RequiredChampionshipStars: 0
+  aiProfile: {fileID: 11400000, guid: 717bd0d942b601241bb8ca8cfc63a3b3, type: 2}
+  aiVehiclePool: []
+  isBossEvent: 1
+  thumbnail: {fileID: 0}
+  eventType: 0
+  laps: 4
+  aiCount: 5
+  eliminationIntervalSeconds: 20
+  checkpointStartSeconds: 30
+  checkpointBonusSeconds: 8

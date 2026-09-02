@@ -14,43 +14,43 @@ MonoBehaviour:
   m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Events.DragEventDefinition
   id: evt_c01_e04
   displayName: Harbor Strip Quarter
-  description: Your first quarter mile. Watch the lights.
+  description: Reaction, shifts, nerve.
   track: {fileID: 11400000, guid: 6c76d5871e5ac334c9eb8c404f05003e, type: 2}
   rewards:
     ByPosition:
-    - Credits: 1200
-      Xp: 220
+    - Credits: 1080
+      Xp: 216
       Stars: 3
-    - Credits: 840
-      Xp: 154
+    - Credits: 756
+      Xp: 151
       Stars: 2
-    - Credits: 600
-      Xp: 110
+    - Credits: 540
+      Xp: 108
       Stars: 1
-    - Credits: 360
-      Xp: 77
+    - Credits: 324
+      Xp: 76
       Stars: 1
-    - Credits: 240
-      Xp: 55
+    - Credits: 216
+      Xp: 54
       Stars: 0
-    - Credits: 180
-      Xp: 44
+    - Credits: 162
+      Xp: 43
       Stars: 0
-    CompletionCredits: 240
-    CompletionXp: 55
+    CompletionCredits: 216
+    CompletionXp: 54
     TimeAttackStarThresholds: []
   restriction:
     AllowedClasses: 00000000i
     MinPerformanceRating: 0
     MaxPerformanceRating: 0
     AllowedVehicleIds: []
-  recommendedPerformanceRating: 180
+  recommendedPerformanceRating: 418
   weather: 0
   timeOfDay: 2
   unlockRequirement:
     PlayerLevel: 0
     TotalStars: 0
-    RequiredEventId: evt_c01_e02
+    RequiredEventId: evt_c01_e03
     RequiredChampionshipId: 
     RequiredChampionshipStars: 0
   aiProfile: {fileID: 11400000, guid: 39d7f35fe4bbb5f429a6626001021f54, type: 2}
@@ -58,6 +58,6 @@ MonoBehaviour:
   isBossEvent: 0
   thumbnail: {fileID: 0}
   distance: 0
-  opponentVehicle: {fileID: 0}
+  opponentVehicle: {fileID: 11400000, guid: b3765c82ceec49e438c36e0478db6fb3, type: 2}
   opponentName: Tomas
   tournamentRound: 0

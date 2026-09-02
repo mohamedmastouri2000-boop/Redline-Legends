@@ -1,0 +1,187 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 821f4da06ca00c041bcb47a85879b959, type: 3}
+  m_Name: veh_super_ardent
+  m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Vehicles.VehicleDefinition
+  id: veh_super_ardent
+  displayName: Ardent GT3
+  brandName: Toran
+  vehicleClass: 2
+  price: 150000
+  unlockRequirement:
+    PlayerLevel: 0
+    TotalStars: 0
+    RequiredEventId: 
+    RequiredChampionshipId: chp_06_industrial_open
+    RequiredChampionshipStars: 0
+  baseStats:
+    Engine:
+      PeakPowerHp: 560
+      PeakTorqueNm: 640
+      IdleRpm: 900
+      RedlineRpm: 8200
+      LimiterRpm: 8450
+      TorqueCurve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 0.55
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 0.35
+          value: 0.9
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 0.6
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 0.85
+          value: 0.92
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 1
+          value: 0.75
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      EngineInertia: 0.15
+      EngineBrakingNm: 45
+      TurboBoostMultiplier: 1.1
+      TurboSpoolSeconds: 0.6
+    Transmission:
+      Drivetrain: 1
+      GearRatios:
+      - 3.2
+      - 2.15
+      - 1.6
+      - 1.28
+      - 1.05
+      - 0.88
+      - 0.74
+      ReverseRatio: 3.2
+      FinalDrive: 3.4
+      ShiftTimeSeconds: 0.12
+      DrivelineEfficiency: 0.88
+      AwdFrontTorqueSplit: 0.4
+    Chassis:
+      MassKg: 1350
+      CenterOfMassOffset: {x: 0, y: 0.4, z: 0.02}
+      DragCoefficient: 0.32
+      FrontalAreaM2: 2
+      DownforceCoefficient: 0.45
+      TopSpeedKmh: 312
+    Tires:
+      LateralGrip: 1.35
+      LongitudinalGrip: 1.4175
+      PeakSlipAngleDeg: 9
+      PeakSlipRatio: 0.14
+      SlideGripFraction: 0.78
+      WheelRadiusM: 0.35
+      RollingResistance: 0.014
+    Handling:
+      MaxSteerAngleDeg: 28
+      SteerResponse: 8.5
+      HighSpeedSteerReduction: 0.62
+      StabilityAssist: 0.25
+    Brakes:
+      BrakeTorqueNm: 8370
+      HandbrakeTorqueNm: 5859
+      BrakeBias: 0.62
+    Suspension:
+      SpringRate: 56700
+      Damping: 5669.9995
+      TravelM: 0.22
+      RideHeightM: 0
+      AntiRoll: 13500
+    Nitrous:
+      CapacitySeconds: 0
+      PowerMultiplier: 1.3
+      RefillPerSecond: 0
+  upgradeSlots:
+  - Category: 0
+    Definition: {fileID: 11400000, guid: 88568c4207336b54dacb844f6495c64d, type: 2}
+  - Category: 1
+    Definition: {fileID: 11400000, guid: ca8997d0a526cdc47a183ddd43985dc9, type: 2}
+  - Category: 2
+    Definition: {fileID: 11400000, guid: c7773727483fd0948af1dfcfcc8e5727, type: 2}
+  - Category: 3
+    Definition: {fileID: 11400000, guid: 744dab9b03aa2ac408e2c8d1894eeaf4, type: 2}
+  - Category: 4
+    Definition: {fileID: 11400000, guid: 5a3e478d3b18e9a4fb5317d5503c8c13, type: 2}
+  - Category: 5
+    Definition: {fileID: 11400000, guid: b0ae358b18689e940a966343390dabbf, type: 2}
+  - Category: 6
+    Definition: {fileID: 11400000, guid: c6b64837b102ecb4e9ea4950e3c2e59c, type: 2}
+  - Category: 7
+    Definition: {fileID: 11400000, guid: b63c97f0643bf0843ad98785cc0f168c, type: 2}
+  - Category: 8
+    Definition: {fileID: 11400000, guid: 6a74b771765a8884cb2ea458243ae5c0, type: 2}
+  tuningLimits:
+    FinalDriveRange: 0.12
+    GearRatioRange: 0.1
+    SuspensionStiffnessRange: 0.35
+    RideHeightRangeM: 0.05
+    GripBiasRange: 0.08
+    NitrousBalanceRange: 0.25
+  paintOptions:
+  - Name: Paint 1
+    Color: {r: 1, g: 1, b: 1, a: 1}
+    Metallic: 0.65
+    Smoothness: 0.85
+    Price: 0
+  - Name: Paint 2
+    Color: {r: 0.8352941, g: 0, b: 0, a: 1}
+    Metallic: 0.65
+    Smoothness: 0.85
+    Price: 1200
+  - Name: Paint 3
+    Color: {r: 0, g: 0.5686275, b: 0.91764706, a: 1}
+    Metallic: 0.65
+    Smoothness: 0.85
+    Price: 1200
+  - Name: Paint 4
+    Color: {r: 0.12941177, g: 0.12941177, b: 0.12941177, a: 1}
+    Metallic: 0.65
+    Smoothness: 0.85
+    Price: 1200
+  visualPrefab: {fileID: 4908612485366646732, guid: 2b01b3539b845ba46b1ac4f14672d96a, type: 3}
+  audio: {fileID: 11400000, guid: c033ab20c4631a44fb210330e2f93086, type: 2}
+  thumbnail: {fileID: 0}
+  supportsCockpitCamera: 0

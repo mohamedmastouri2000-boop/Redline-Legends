@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Events.CircuitEventDefinition
   id: evt_c01_e01
   displayName: Sunset Loop Sprint
-  description: One lap to learn the coast road.
+  description: One flying lap to open the Beginner Streets.
   track: {fileID: 11400000, guid: 50d81d4b86a3eb34b98dd6896bf130ce, type: 2}
   rewards:
     ByPosition:
@@ -44,9 +44,9 @@ MonoBehaviour:
     MinPerformanceRating: 0
     MaxPerformanceRating: 0
     AllowedVehicleIds: []
-  recommendedPerformanceRating: 170
+  recommendedPerformanceRating: 418
   weather: 0
-  timeOfDay: 1
+  timeOfDay: 0
   unlockRequirement:
     PlayerLevel: 0
     TotalStars: 0

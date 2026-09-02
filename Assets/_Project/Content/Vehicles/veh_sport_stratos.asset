@@ -81,9 +81,9 @@ MonoBehaviour:
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
-      EngineInertia: 0.22
+      EngineInertia: 0.18
       EngineBrakingNm: 45
-      TurboBoostMultiplier: 1.12
+      TurboBoostMultiplier: 1
       TurboSpoolSeconds: 0.6
     Transmission:
       Drivetrain: 2
@@ -96,39 +96,39 @@ MonoBehaviour:
       - 0.82
       ReverseRatio: 3.2
       FinalDrive: 3.7
-      ShiftTimeSeconds: 0.22
+      ShiftTimeSeconds: 0.18
       DrivelineEfficiency: 0.88
       AwdFrontTorqueSplit: 0.4
     Chassis:
       MassKg: 1480
       CenterOfMassOffset: {x: 0, y: 0.45, z: 0.02}
       DragCoefficient: 0.3
-      FrontalAreaM2: 2.2
-      DownforceCoefficient: 0
+      FrontalAreaM2: 2.1
+      DownforceCoefficient: 0.1
       TopSpeedKmh: 276
     Tires:
-      LateralGrip: 1.14
-      LongitudinalGrip: 1.1969999
+      LateralGrip: 1.17
+      LongitudinalGrip: 1.2284999
       PeakSlipAngleDeg: 9
       PeakSlipRatio: 0.14
       SlideGripFraction: 0.78
       WheelRadiusM: 0.34
       RollingResistance: 0.014
     Handling:
-      MaxSteerAngleDeg: 32
-      SteerResponse: 7.6
+      MaxSteerAngleDeg: 30
+      SteerResponse: 7.5
       HighSpeedSteerReduction: 0.62
-      StabilityAssist: 0.35
+      StabilityAssist: 0.3
     Brakes:
-      BrakeTorqueNm: 7800
-      HandbrakeTorqueNm: 5460
+      BrakeTorqueNm: 7695.9995
+      HandbrakeTorqueNm: 5387.1997
       BrakeBias: 0.62
     Suspension:
-      SpringRate: 41440
-      Damping: 4588
+      SpringRate: 50320
+      Damping: 5328
       TravelM: 0.22
       RideHeightM: 0
-      AntiRoll: 9620
+      AntiRoll: 11840
     Nitrous:
       CapacitySeconds: 0
       PowerMultiplier: 1.3
@@ -169,17 +169,17 @@ MonoBehaviour:
     Color: {r: 0.7176471, g: 0.10980392, b: 0.10980392, a: 1}
     Metallic: 0.65
     Smoothness: 0.85
-    Price: 400
+    Price: 800
   - Name: Paint 3
     Color: {r: 0.98039216, g: 0.98039216, b: 0.98039216, a: 1}
     Metallic: 0.65
     Smoothness: 0.85
-    Price: 400
+    Price: 800
   - Name: Paint 4
     Color: {r: 0.12941177, g: 0.12941177, b: 0.12941177, a: 1}
     Metallic: 0.65
     Smoothness: 0.85
-    Price: 400
+    Price: 800
   visualPrefab: {fileID: 6905886883477524148, guid: 36270d2b556bb7c488e7eb64709cb0d0, type: 3}
   audio: {fileID: 11400000, guid: c033ab20c4631a44fb210330e2f93086, type: 2}
   thumbnail: {fileID: 0}
