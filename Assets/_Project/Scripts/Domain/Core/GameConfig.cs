@@ -18,6 +18,7 @@ namespace RedlineLegends.Core
         [SerializeField] private ContentDatabase contentDatabase;
         [SerializeField] private ProgressionConfig progressionConfig;
         [SerializeField] private InputActionAsset inputActions;
+        [SerializeField] private VfxLibrary vfx;
         [SerializeField] private SettingsData defaultSettings = new SettingsData();
         [SerializeField] private string saveFileName = "profile.sav";
         [Tooltip("Track used by the garage Test Drive button.")]
@@ -28,6 +29,7 @@ namespace RedlineLegends.Core
         public ContentDatabase ContentDatabase => contentDatabase;
         public ProgressionConfig ProgressionConfig => progressionConfig;
         public InputActionAsset InputActions => inputActions;
+        public VfxLibrary Vfx => vfx;
         public SettingsData DefaultSettings => defaultSettings;
         public string SaveFileName => saveFileName;
         public string TestDriveTrackId => testDriveTrackId;
@@ -42,11 +44,12 @@ namespace RedlineLegends.Core
         }
 
 #if UNITY_EDITOR
-        public void EditorInitialize(ContentDatabase db, ProgressionConfig progression, InputActionAsset actions)
+        public void EditorInitialize(ContentDatabase db, ProgressionConfig progression, InputActionAsset actions, VfxLibrary vfxLibrary)
         {
             contentDatabase = db;
             progressionConfig = progression;
             inputActions = actions;
+            vfx = vfxLibrary;
         }
 #endif
     }

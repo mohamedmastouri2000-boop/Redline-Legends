@@ -21,6 +21,7 @@ namespace RedlineLegends.Editor
             public Button RestartButton;
             public Button QuitButton;
             public ResultsPanel Results;
+            public TutorialOverlay Tutorial;
         }
 
         public static Result Build(MonoBehaviour localRacerSource, VehicleCameraRig cameraRig)
@@ -99,13 +100,16 @@ namespace RedlineLegends.Editor
             UiKit.Anchor((RectTransform)quit.transform, new Vector2(0.5f, 0.5f), new Vector2(0f, -160f), new Vector2(460f, 90f));
             pausePanel.gameObject.SetActive(false);
 
-            // ---- results panel
+            // ---- results panel, tutorial, click sounds
             var results = BuildResultsPanel(root);
+            var tutorial = UiKit.CreateTutorialOverlay(root);
+            canvas.gameObject.AddComponent<UiClickSound>();
 
             return new Result
             {
                 Canvas = canvas, Hud = hud, Controls = controls, PauseButton = pause, Countdown = countdown,
-                PausePanel = pausePanel.gameObject, ResumeButton = resume, RestartButton = restart, QuitButton = quit, Results = results
+                PausePanel = pausePanel.gameObject, ResumeButton = resume, RestartButton = restart, QuitButton = quit, Results = results,
+                Tutorial = tutorial
             };
         }
 

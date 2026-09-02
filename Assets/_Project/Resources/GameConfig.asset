@@ -15,6 +15,7 @@ MonoBehaviour:
   contentDatabase: {fileID: 11400000, guid: 6f77a09325d1ead44856b0b9ed8b893b, type: 2}
   progressionConfig: {fileID: 11400000, guid: be1bffb81c2b5624bad2ec477a25a270, type: 2}
   inputActions: {fileID: -944628639613478452, guid: 86b27f34a7fa24440af70404d059dff6, type: 3}
+  vfx: {fileID: 11400000, guid: ee16b3711b176d14abe334586fc68cfb, type: 2}
   defaultSettings:
     Graphics: 1
     TargetFrameRate: 60

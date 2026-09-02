@@ -62,6 +62,10 @@ namespace RedlineLegends.Tests
             var session = Object.FindAnyObjectByType<DragSession>();
             Assert.IsNotNull(session, "Strip scene has no DragSession.");
             yield return null;
+            yield return null;
+            var overlay = Object.FindAnyObjectByType<UI.TutorialOverlay>(FindObjectsInactive.Include);
+            if (overlay != null && overlay.IsShowing) overlay.Finish();
+            else if (session.WaitingForTutorial) session.BeginRace();
             Assert.IsNotNull(session.Player);
             Assert.AreEqual(2, session.Racers.Count);
 

@@ -79,6 +79,7 @@ namespace RedlineLegends.Core
             var settings = new SettingsService(_save);
             settings.ApplyEngineSettings(_save.Data.Settings);
             container.Register(settings);
+            container.Register(new AudioService(settings));
 
             _profile = new PlayerProfileService(_save, Config.ProgressionConfig);
             container.Register(_profile);
@@ -90,6 +91,7 @@ namespace RedlineLegends.Core
             progression.OutcomeRecorded += achievements.RecordRaceResult;
             container.Register(achievements);
             container.Register(new HapticsService(settings));
+            container.Register(new TutorialService(progression, settings));
 
             var localInput = new MobileInputProvider(Config.InputActions, _save.Data.Settings);
             settings.Changed += localInput.ApplySettings;

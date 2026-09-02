@@ -22,6 +22,7 @@ namespace RedlineLegends.UI
         [SerializeField] private Button quitButton;
         [SerializeField] private ResultsPanel resultsPanel;
         [SerializeField] private GameObject touchControls;
+        [SerializeField] private TutorialOverlay tutorial;
 
         private float _messageTimer;
         private string _message = "";
@@ -47,6 +48,25 @@ namespace RedlineLegends.UI
             }
             if (pausePanel != null) pausePanel.SetActive(false);
             if (countdownText != null) countdownText.text = "";
+
+        }
+
+        private bool _tutorialHandled;
+
+        /// <summary>Start order between session and UI is not guaranteed, so the hand-off is polled.</summary>
+        private void HandleTutorial()
+        {
+            if (_tutorialHandled || session == null || !session.WaitingForTutorial) return;
+            _tutorialHandled = true;
+            if (tutorial != null && Core.Services.TryGet<Progression.TutorialService>(out var tutorials))
+            {
+                tutorial.Show(Progression.TutorialService.PagesFor(Progression.TutorialIds.FirstCircuit), () =>
+                {
+                    tutorials.Complete(Progression.TutorialIds.FirstCircuit);
+                    session.BeginRace();
+                });
+            }
+            else session.BeginRace();
         }
 
         private void OnDestroy()
@@ -62,6 +82,7 @@ namespace RedlineLegends.UI
         private void Update()
         {
             if (session == null || hud == null) return;
+            HandleTutorial();
             var player = session.Player;
             if (player == null) return;
 
@@ -138,10 +159,10 @@ namespace RedlineLegends.UI
 
 #if UNITY_EDITOR
         public void EditorWire(RaceSession s, RaceHud h, TMP_Text countdown, GameObject pause, Button resume, Button restart, Button quit,
-            ResultsPanel results, GameObject controls)
+            ResultsPanel results, GameObject controls, TutorialOverlay tut)
         {
             session = s; hud = h; countdownText = countdown; pausePanel = pause; resumeButton = resume; restartButton = restart;
-            quitButton = quit; resultsPanel = results; touchControls = controls;
+            quitButton = quit; resultsPanel = results; touchControls = controls; tutorial = tut;
         }
 #endif
     }

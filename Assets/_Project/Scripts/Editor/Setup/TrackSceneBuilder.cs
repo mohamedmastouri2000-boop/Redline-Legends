@@ -151,7 +151,8 @@ namespace RedlineLegends.Editor
             var dragPanel = RaceUiBuilder.BuildDragPanel(ui.Canvas.transform);
             var screen = ui.Canvas.gameObject.AddComponent<DragScreenController>();
             screen.EditorWire(session, ui.Hud, dragPanel, ui.Countdown, ui.PausePanel, ui.ResumeButton, ui.RestartButton, ui.QuitButton,
-                ui.Results, ui.Controls.gameObject);
+                ui.Results, ui.Controls.gameObject, ui.Tutorial);
+            CreateSkidMarks();
 
             EditorSceneManager.SaveScene(scene, HarborStripPath);
         }
@@ -330,7 +331,8 @@ namespace RedlineLegends.Editor
             var ui = RaceUiBuilder.Build(session, rig);
             var screen = ui.Canvas.gameObject.AddComponent<RaceScreenController>();
             screen.EditorWire(session, ui.Hud, ui.Countdown, ui.PausePanel, ui.ResumeButton, ui.RestartButton, ui.QuitButton,
-                ui.Results, ui.Controls.gameObject);
+                ui.Results, ui.Controls.gameObject, ui.Tutorial);
+            CreateSkidMarks();
 
             EditorSceneManager.SaveScene(scene, SunsetLoopPath);
         }
@@ -389,8 +391,20 @@ namespace RedlineLegends.Editor
             var ui = RaceUiBuilder.Build(session, rig);
             var hudController = ui.Canvas.gameObject.AddComponent<TestDriveHudController>();
             hudController.EditorWire(session, ui.Hud, ui.PauseButton);
+            CreateSkidMarks();
 
             EditorSceneManager.SaveScene(scene, ProvingGroundPath);
+        }
+
+        /// <summary>Scene-wide skid mark mesh; VehicleEffects finds it once at spawn.</summary>
+        private static void CreateSkidMarks()
+        {
+            var vfx = AssetDatabase.LoadAssetAtPath<VfxLibrary>(ContentGenerator.VfxLibraryPath);
+            if (vfx == null) return;
+            var go = new GameObject("SkidMarks", typeof(MeshFilter), typeof(MeshRenderer), typeof(RedlineLegends.VFX.SkidMarkRenderer));
+            var skids = go.GetComponent<RedlineLegends.VFX.SkidMarkRenderer>();
+            var initializer = go.AddComponent<RedlineLegends.VFX.SkidMarkBootstrap>();
+            initializer.EditorWire(skids, vfx);
         }
 
         public static GameObject Wall(Transform parent, string name, Vector3 center, Vector3 size, Material material)

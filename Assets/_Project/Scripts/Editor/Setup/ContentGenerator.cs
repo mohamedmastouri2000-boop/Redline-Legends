@@ -24,6 +24,7 @@ namespace RedlineLegends.Editor
     public static class ContentGenerator
     {
         public const string ConfigPath = EditorPaths.Resources + "/" + GameConfig.ResourcePath + ".asset";
+        public const string VfxLibraryPath = EditorPaths.Settings + "/VfxLibrary.asset";
         public const string DatabasePath = EditorPaths.Content + "/ContentDatabase.asset";
         public const string ProgressionPath = EditorPaths.Content + "/ProgressionConfig.asset";
         public const string StarterVehicleId = "veh_street_kestrel";
@@ -128,8 +129,9 @@ namespace RedlineLegends.Editor
             var actions = AssetDatabase.LoadAssetAtPath<InputActionAsset>(EditorPaths.InputActions);
             if (actions == null) Debug.LogError("[Setup] Input actions asset missing at " + EditorPaths.InputActions);
 
+            var vfx = GenerateVfxLibrary();
             var config = EditorPaths.GetOrCreateAsset<GameConfig>(ConfigPath);
-            config.EditorInitialize(database, progression, actions);
+            config.EditorInitialize(database, progression, actions, vfx);
             EditorUtility.SetDirty(config);
 
             AssetDatabase.SaveAssets();
@@ -348,6 +350,20 @@ namespace RedlineLegends.Editor
             EditorUtility.SetDirty(c1);
             list.Add(c1);
             return list;
+        }
+
+        private static VfxLibrary GenerateVfxLibrary()
+        {
+            var soft = VfxTextures.GetOrCreateSoftCircle();
+            var streak = VfxTextures.GetOrCreateStreak();
+            var smoke = MaterialFactory.Particle("Vfx_Smoke", soft, new Color(1f, 1f, 1f, 0.5f), additive: false);
+            var sparks = MaterialFactory.Particle("Vfx_Sparks", soft, new Color(1f, 0.8f, 0.4f, 1f), additive: true);
+            var nitrous = MaterialFactory.Particle("Vfx_Nitrous", soft, new Color(0.5f, 0.7f, 1f, 1f), additive: true);
+            var skid = MaterialFactory.Particle("Vfx_Skid", streak, new Color(0.05f, 0.05f, 0.05f, 1f), additive: false, vertexColor: true);
+            var library = EditorPaths.GetOrCreateAsset<VfxLibrary>(VfxLibraryPath);
+            library.EditorInitialize(smoke, sparks, nitrous, skid);
+            EditorUtility.SetDirty(library);
+            return library;
         }
 
         private static List<AchievementDefinition> GenerateAchievements()

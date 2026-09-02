@@ -64,6 +64,11 @@ namespace RedlineLegends.Tests
             var session = Object.FindAnyObjectByType<RaceSession>();
             Assert.IsNotNull(session, "Track scene has no RaceSession.");
             yield return null;
+            yield return null;
+            // A fresh profile shows the first-race tutorial; dismiss it the way a player would.
+            var overlay = Object.FindAnyObjectByType<UI.TutorialOverlay>(FindObjectsInactive.Include);
+            if (overlay != null && overlay.IsShowing) overlay.Finish();
+            else if (session.WaitingForTutorial) session.BeginRace();
             Assert.IsNotNull(session.Player, "Session did not spawn the player.");
             Assert.AreEqual(request.Participants.Count, session.Racers.Count, "Not every participant was spawned.");
             Assert.Greater(session.Layout.CheckpointCount, 4, "Track needs checkpoints.");

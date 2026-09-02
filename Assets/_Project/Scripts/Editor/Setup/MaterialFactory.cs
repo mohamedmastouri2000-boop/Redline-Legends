@@ -64,6 +64,27 @@ namespace RedlineLegends.Editor
             return mat;
         }
 
+        /// <summary>URP particle material: alpha-blended or additive, optional vertex colour (skid marks fade by alpha).</summary>
+        public static Material Particle(string fileName, Texture2D texture, Color tint, bool additive, bool vertexColor = false)
+        {
+            var shader = Shader.Find("Universal Render Pipeline/Particles/Unlit");
+            var mat = EditorPaths.GetOrCreateMaterial(EditorPaths.Materials + "/" + fileName + ".mat", shader);
+            mat.SetTexture("_BaseMap", texture);
+            mat.SetColor(BaseColor, tint);
+            mat.SetFloat(Surface, 1f);
+            mat.SetFloat(Blend, additive ? 2f : 0f);
+            mat.SetFloat(SrcBlend, (float)UnityEngine.Rendering.BlendMode.SrcAlpha);
+            mat.SetFloat(DstBlend, additive ? (float)UnityEngine.Rendering.BlendMode.One : (float)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+            mat.SetFloat(ZWrite, 0f);
+            mat.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Off);
+            mat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+            if (additive) mat.EnableKeyword("_ALPHAPREMULTIPLY_ON");
+            mat.SetOverrideTag("RenderType", "Transparent");
+            mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent + (vertexColor ? -10 : 0);
+            EditorUtility.SetDirty(mat);
+            return mat;
+        }
+
         public static Material Emissive(string fileName, Color color, Color emission)
         {
             var mat = Opaque(fileName, color, 0.2f, 0.6f);

@@ -134,8 +134,20 @@ namespace RedlineLegends.Race
                 layout.Checkpoints[i].Passed += OnCheckpointPassed;
 
             _settings.Changed += OnSettingsChanged;
-            SetState(IsPractice ? RaceState.Racing : RaceState.Countdown);
             _countdown = CountdownSeconds;
+            // First circuit race: hold in Preparing until the tutorial overlay releases us.
+            WaitingForTutorial = !IsPractice && Services.TryGet<TutorialService>(out var tutorials) && tutorials.ShouldShow(TutorialIds.FirstCircuit);
+            if (!WaitingForTutorial) BeginRace();
+        }
+
+        /// <summary>True while the race waits for the first-time tutorial to be dismissed.</summary>
+        public bool WaitingForTutorial { get; private set; }
+
+        public void BeginRace()
+        {
+            if (State != RaceState.Preparing) return;
+            WaitingForTutorial = false;
+            SetState(IsPractice ? RaceState.Racing : RaceState.Countdown);
             if (IsPractice) ReleaseRacers();
         }
 

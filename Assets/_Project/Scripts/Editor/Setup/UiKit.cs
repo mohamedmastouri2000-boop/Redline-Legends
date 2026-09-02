@@ -154,6 +154,28 @@ namespace RedlineLegends.Editor
             return scroll;
         }
 
+        /// <summary>Paged tutorial overlay: dim curtain, card with title/body/page, NEXT and SKIP.</summary>
+        public static RedlineLegends.UI.TutorialOverlay CreateTutorialOverlay(Transform parent)
+        {
+            var curtain = CreatePanel(parent, "TutorialOverlay", new Color(0f, 0f, 0f, 0.7f));
+            Stretch((RectTransform)curtain.transform);
+            var overlay = curtain.gameObject.AddComponent<RedlineLegends.UI.TutorialOverlay>();
+            var card = CreatePanel(curtain.transform, "Card", PanelDark);
+            Anchor((RectTransform)card.transform, new Vector2(0.5f, 0.5f), Vector2.zero, new Vector2(1000f, 420f));
+            var title = CreateText(card.transform, "Title", "TUTORIAL", 42f, Accent, TextAlignmentOptions.Left, FontStyles.Bold);
+            Anchor((RectTransform)title.transform, new Vector2(0f, 1f), new Vector2(40f, -30f), new Vector2(800f, 56f));
+            var page = CreateText(card.transform, "Page", "1 / 3", 24f, TextDim, TextAlignmentOptions.Right);
+            Anchor((RectTransform)page.transform, new Vector2(1f, 1f), new Vector2(-40f, -36f), new Vector2(200f, 40f));
+            var body = CreateText(card.transform, "Body", "", 30f, TextMain, TextAlignmentOptions.TopLeft);
+            AnchorRange((RectTransform)body.transform, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(40f, 120f), new Vector2(-40f, -100f));
+            var next = CreateButton(card.transform, "Next", "NEXT", Accent, 30f, out _);
+            Anchor((RectTransform)next.transform, new Vector2(1f, 0f), new Vector2(-40f, 30f), new Vector2(260f, 72f));
+            var skip = CreateButton(card.transform, "Skip", "SKIP", ButtonNormal, 26f, out _);
+            Anchor((RectTransform)skip.transform, new Vector2(0f, 0f), new Vector2(40f, 30f), new Vector2(220f, 72f));
+            overlay.EditorWire(title, body, page, next, skip);
+            return overlay;
+        }
+
         /// <summary>Horizontal uGUI slider with a fill and a wide handle for thumbs.</summary>
         public static Slider CreateSlider(Transform parent, string name, out Image fillImage)
         {

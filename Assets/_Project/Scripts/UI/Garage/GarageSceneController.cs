@@ -43,6 +43,7 @@ namespace RedlineLegends.UI
         [SerializeField] private TMP_Text paintText;
         [SerializeField] private RectTransform upgradeList;
         [SerializeField] private UpgradeRow upgradeRowTemplate;
+        [SerializeField] private TutorialOverlay tutorial;
 
         private ContentCatalog _catalog;
         private GarageService _garage;
@@ -89,6 +90,9 @@ namespace RedlineLegends.UI
             _profile.Changed += Refresh;
             _garage.Changed += Refresh;
             ShowCurrent();
+
+            if (tutorial != null && Services.TryGet<TutorialService>(out var tutorials) && tutorials.ShouldShow(TutorialIds.FirstUpgrade))
+                tutorial.Show(TutorialService.PagesFor(TutorialIds.FirstUpgrade), () => tutorials.Complete(TutorialIds.FirstUpgrade));
         }
 
         private void OnDestroy()
@@ -271,12 +275,13 @@ namespace RedlineLegends.UI
 #if UNITY_EDITOR
         public void EditorWire(Transform table, TMP_Text name, TMP_Text cls, TMP_Text rating, TMP_Text stats, TMP_Text credits,
             TMP_Text status, Button prev, Button next, Button action, TMP_Text actionText, Button back, Button testDrive,
-            RectTransform upgrades, UpgradeRow template, Button tune, TuningPanel tuning, Button paintPrev, Button paintNext, TMP_Text paint)
+            RectTransform upgrades, UpgradeRow template, Button tune, TuningPanel tuning, Button paintPrev, Button paintNext, TMP_Text paint,
+            TutorialOverlay tut)
         {
             turntable = table; carNameText = name; carClassText = cls; ratingText = rating; statsText = stats;
             creditsText = credits; statusText = status; prevButton = prev; nextButton = next; actionButton = action;
             actionLabel = actionText; backButton = back; testDriveButton = testDrive; upgradeList = upgrades; upgradeRowTemplate = template;
-            tuneButton = tune; tuningPanel = tuning; paintPrevButton = paintPrev; paintNextButton = paintNext; paintText = paint;
+            tuneButton = tune; tuningPanel = tuning; paintPrevButton = paintPrev; paintNextButton = paintNext; paintText = paint; tutorial = tut;
         }
 #endif
     }

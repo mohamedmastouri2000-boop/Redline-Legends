@@ -121,6 +121,16 @@ namespace RedlineLegends.DragRace
 
             SpawnRacers();
             _settings.Changed += OnSettingsChanged;
+            WaitingForTutorial = Services.TryGet<TutorialService>(out var tutorials) && tutorials.ShouldShow(TutorialIds.FirstDrag);
+            if (!WaitingForTutorial) BeginRace();
+        }
+
+        public bool WaitingForTutorial { get; private set; }
+
+        public void BeginRace()
+        {
+            if (State != DragState.Preparing) return;
+            WaitingForTutorial = false;
             SetState(DragState.Staging);
             Message?.Invoke("Rev it up");
         }

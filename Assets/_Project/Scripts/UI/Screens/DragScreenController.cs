@@ -20,6 +20,7 @@ namespace RedlineLegends.UI
         [SerializeField] private Button quitButton;
         [SerializeField] private ResultsPanel resultsPanel;
         [SerializeField] private GameObject touchControls;
+        [SerializeField] private TutorialOverlay tutorial;
 
         private string _message = "";
         private float _messageTimer;
@@ -46,6 +47,24 @@ namespace RedlineLegends.UI
             }
             if (pausePanel != null) pausePanel.SetActive(false);
             if (countdownText != null) countdownText.text = "";
+
+        }
+
+        private bool _tutorialHandled;
+
+        private void HandleTutorial()
+        {
+            if (_tutorialHandled || session == null || !session.WaitingForTutorial) return;
+            _tutorialHandled = true;
+            if (tutorial != null && Core.Services.TryGet<Progression.TutorialService>(out var tutorials))
+            {
+                tutorial.Show(Progression.TutorialService.PagesFor(Progression.TutorialIds.FirstDrag), () =>
+                {
+                    tutorials.Complete(Progression.TutorialIds.FirstDrag);
+                    session.BeginRace();
+                });
+            }
+            else session.BeginRace();
         }
 
         private void OnDestroy()
@@ -61,7 +80,9 @@ namespace RedlineLegends.UI
 
         private void Update()
         {
-            if (session == null || hud == null || session.Player == null) return;
+            if (session == null || hud == null) return;
+            HandleTutorial();
+            if (session.Player == null) return;
             var player = session.Player;
             var opponent = session.Opponent;
 
@@ -132,10 +153,10 @@ namespace RedlineLegends.UI
 
 #if UNITY_EDITOR
         public void EditorWire(DragSession s, RaceHud h, DragHudPanel panel, TMP_Text countdown, GameObject pause, Button resume,
-            Button restart, Button quit, ResultsPanel results, GameObject controls)
+            Button restart, Button quit, ResultsPanel results, GameObject controls, TutorialOverlay tut)
         {
             session = s; hud = h; dragPanel = panel; countdownText = countdown; pausePanel = pause; resumeButton = resume;
-            restartButton = restart; quitButton = quit; resultsPanel = results; touchControls = controls;
+            restartButton = restart; quitButton = quit; resultsPanel = results; touchControls = controls; tutorial = tut;
         }
 #endif
     }

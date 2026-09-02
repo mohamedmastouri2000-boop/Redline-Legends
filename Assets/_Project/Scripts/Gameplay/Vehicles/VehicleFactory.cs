@@ -47,6 +47,14 @@ namespace RedlineLegends.Vehicles
             controller.Initialize(stats, input, wheels);
             root.AddComponent<VehicleVisuals>().Initialize(controller);
 
+            bool isPlayer = spec.ControlSource == ControlSource.LocalPlayer;
+            root.AddComponent<Audio.VehicleAudio>().Initialize(controller, definition.Audio, isPlayer);
+            if (Services.TryGet<GameConfig>(out var config) && config.Vfx != null)
+            {
+                var skids = Object.FindAnyObjectByType<VFX.SkidMarkRenderer>();
+                root.AddComponent<VFX.VehicleEffects>().Initialize(controller, config.Vfx, skids, isPlayer);
+            }
+
             GameLayers.SetLayerRecursive(root, GameLayers.Vehicle);
             GameLog.Info("Spawned " + root.name + " collider center=" + collider.center.ToString("0.00") + " size=" + collider.size.ToString("0.00")
                          + " wheelFL=" + wheels[0].LocalHubAtRest.ToString("0.00") + " wheelRR=" + wheels[3].LocalHubAtRest.ToString("0.00")

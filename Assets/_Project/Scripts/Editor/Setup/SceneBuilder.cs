@@ -156,6 +156,7 @@ namespace RedlineLegends.Editor
 
             var canvas = UiKit.CreateCanvas("MenuCanvas", 0);
             var controller = canvas.gameObject.AddComponent<MainMenuController>();
+            canvas.gameObject.AddComponent<UiClickSound>();
 
             var bg = UiKit.CreatePanel(canvas.transform, "Background", new Color(0.06f, 0.06f, 0.08f, 1f));
             UiKit.Stretch((RectTransform)bg.transform);
@@ -476,8 +477,10 @@ namespace RedlineLegends.Editor
             UiKit.AnchorRange((RectTransform)upgradeContent.parent, Vector2.zero, Vector2.one, new Vector2(12f, 12f), new Vector2(-12f, -56f));
             var upgradeTemplate = BuildUpgradeRow(upgradeContent);
 
+            var garageTutorial = UiKit.CreateTutorialOverlay(canvas.transform);
+            canvas.gameObject.AddComponent<UiClickSound>();
             controller.EditorWire(turntable.transform, name, cls, rating, stats, credits, status, prev, next, action, actionLabel, back,
-                testDrive, upgradeContent, upgradeTemplate, tune, tuningPanel, paintPrev, paintNext, paintLabel);
+                testDrive, upgradeContent, upgradeTemplate, tune, tuningPanel, paintPrev, paintNext, paintLabel, garageTutorial);
             tuningPanel.gameObject.SetActive(false);
 
             Save(scene, GaragePath);
