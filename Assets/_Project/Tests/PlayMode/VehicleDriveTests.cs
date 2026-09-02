@@ -24,7 +24,7 @@ namespace RedlineLegends.Tests
             yield return null;
             var machine = Services.Get<GameStateMachine>();
             float end = Time.realtimeSinceStartup + 10f;
-            while (machine.Current != GameStateId.MainMenu && Time.realtimeSinceStartup < end) yield return null;
+            while (machine.Current != GameStateId.MainMenu && machine.Current != GameStateId.Boot && Time.realtimeSinceStartup < end) yield return null;
         }
 
         private static IEnumerator LoadProvingGround()

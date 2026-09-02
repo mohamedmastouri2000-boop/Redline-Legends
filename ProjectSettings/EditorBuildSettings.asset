@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Project/Scenes/Track_ProvingGround.unity
     guid: acda427dc3bfd144586968c194b60706
+  - enabled: 1
+    path: Assets/_Project/Scenes/Track_SunsetLoop.unity
+    guid: 9f579c22ddaffbf48ab26f7134635dd5
   m_configObjects: {}

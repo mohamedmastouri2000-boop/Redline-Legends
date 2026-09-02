@@ -429,16 +429,18 @@ namespace RedlineLegends.Vehicles
             float freeThrottle = (_shiftTimer > 0f || _limiterCut) ? 0f : (HoldBrakes ? throttle : effThrottle);
             float freeTorque = _stats.EvaluateTorque(_freeRpm) * freeThrottle - e.EngineBrakingNm * (_freeRpm / e.RedlineRpm) * (1f - freeThrottle) - 8f;
             float freeAccel = freeTorque / Mathf.Max(0.05f, e.EngineInertia); // rad/s^2
+            float prevFreeRpm = _freeRpm;
             _freeRpm += freeAccel * MathUtil.RadPerSecToRpm * dt;
             _freeRpm = Mathf.Clamp(_freeRpm, e.IdleRpm, e.LimiterRpm + 150f);
 
             // A slipping clutch under load behaves like a torque converter: unless the driver held
-            // the revs before launch, the engine settles at a throttle-dependent stall speed instead
-            // of running away to the limiter.
+            // the revs before launch, the engine cannot rise above a throttle-dependent stall speed,
+            // and revs held above it bleed off as the clutch bites.
             if (inGear && clutch < 0.999f)
             {
                 float stallCap = Mathf.Lerp(e.IdleRpm, e.RedlineRpm * 0.6f, effThrottle);
-                if (_freeRpm > stallCap) _freeRpm = Mathf.MoveTowards(_freeRpm, stallCap, 2500f * dt);
+                float ceiling = Mathf.Max(stallCap, prevFreeRpm - 2500f * dt);
+                if (_freeRpm > ceiling) _freeRpm = ceiling;
             }
 
             float targetRpm = inGear ? Mathf.Lerp(_freeRpm, Mathf.Max(e.IdleRpm, engagedRpm), clutch) : _freeRpm;

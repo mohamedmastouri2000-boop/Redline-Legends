@@ -16,7 +16,7 @@ namespace RedlineLegends.UI
         public void Set(string upgradeName, int stage, int maxStage, int nextPrice, bool canBuy, string lockText, Action onBuy)
         {
             nameText.text = upgradeName;
-            stageText.text = new string('●', stage) + new string('○', Mathf.Max(0, maxStage - stage));
+            stageText.text = UiText.Pips(stage, maxStage);
             bool maxed = stage >= maxStage || nextPrice < 0;
             buyButton.gameObject.SetActive(!maxed);
             buyButton.interactable = canBuy;

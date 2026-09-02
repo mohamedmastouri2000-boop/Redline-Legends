@@ -15,6 +15,12 @@ namespace RedlineLegends.Editor
             public RaceHud Hud;
             public TouchControls Controls;
             public Button PauseButton;
+            public TMP_Text Countdown;
+            public GameObject PausePanel;
+            public Button ResumeButton;
+            public Button RestartButton;
+            public Button QuitButton;
+            public ResultsPanel Results;
         }
 
         public static Result Build(MonoBehaviour localRacerSource, VehicleCameraRig cameraRig)
@@ -76,7 +82,68 @@ namespace RedlineLegends.Editor
             // ---- touch controls
             var controls = BuildTouchControls(root);
 
-            return new Result { Canvas = canvas, Hud = hud, Controls = controls, PauseButton = pause };
+            // ---- countdown
+            var countdown = UiKit.CreateText(root, "Countdown", "", 160f, UiKit.TextMain, TextAlignmentOptions.Center, FontStyles.Bold);
+            UiKit.Anchor((RectTransform)countdown.transform, new Vector2(0.5f, 0.5f), new Vector2(0f, 120f), new Vector2(800f, 200f));
+
+            // ---- pause panel
+            var pausePanel = UiKit.CreatePanel(root, "PausePanel", new Color(0f, 0f, 0f, 0.75f));
+            UiKit.Stretch((RectTransform)pausePanel.transform);
+            var pauseTitle = UiKit.CreateText(pausePanel.transform, "Title", "PAUSED", 64f, UiKit.TextMain, TextAlignmentOptions.Center, FontStyles.Bold);
+            UiKit.Anchor((RectTransform)pauseTitle.transform, new Vector2(0.5f, 0.5f), new Vector2(0f, 200f), new Vector2(800f, 90f));
+            var resume = UiKit.CreateButton(pausePanel.transform, "Resume", "RESUME", UiKit.Accent, 32f, out _);
+            UiKit.Anchor((RectTransform)resume.transform, new Vector2(0.5f, 0.5f), new Vector2(0f, 60f), new Vector2(460f, 90f));
+            var restart = UiKit.CreateButton(pausePanel.transform, "Restart", "RESTART", UiKit.ButtonNormal, 32f, out _);
+            UiKit.Anchor((RectTransform)restart.transform, new Vector2(0.5f, 0.5f), new Vector2(0f, -50f), new Vector2(460f, 90f));
+            var quit = UiKit.CreateButton(pausePanel.transform, "Quit", "QUIT TO MENU", UiKit.ButtonNormal, 32f, out _);
+            UiKit.Anchor((RectTransform)quit.transform, new Vector2(0.5f, 0.5f), new Vector2(0f, -160f), new Vector2(460f, 90f));
+            pausePanel.gameObject.SetActive(false);
+
+            // ---- results panel
+            var results = BuildResultsPanel(root);
+
+            return new Result
+            {
+                Canvas = canvas, Hud = hud, Controls = controls, PauseButton = pause, Countdown = countdown,
+                PausePanel = pausePanel.gameObject, ResumeButton = resume, RestartButton = restart, QuitButton = quit, Results = results
+            };
+        }
+
+        private static ResultsPanel BuildResultsPanel(Transform root)
+        {
+            var panel = UiKit.CreatePanel(root, "ResultsPanel", new Color(0.03f, 0.03f, 0.05f, 0.92f));
+            UiKit.Stretch((RectTransform)panel.transform);
+            var results = panel.gameObject.AddComponent<ResultsPanel>();
+
+            var title = UiKit.CreateText(panel.transform, "Title", "FINISHED", 72f, UiKit.TextMain, TextAlignmentOptions.Center, FontStyles.Bold);
+            UiKit.Anchor((RectTransform)title.transform, new Vector2(0.5f, 1f), new Vector2(0f, -40f), new Vector2(1200f, 90f));
+            var reward = UiKit.CreateText(panel.transform, "Reward", "", 36f, new Color(1f, 0.85f, 0.3f), TextAlignmentOptions.Center, FontStyles.Bold);
+            UiKit.Anchor((RectTransform)reward.transform, new Vector2(0.5f, 1f), new Vector2(0f, -130f), new Vector2(1200f, 50f));
+
+            UiKit.CreateScrollList(panel.transform, "List", out var content);
+            UiKit.AnchorRange((RectTransform)content.parent, new Vector2(0.5f, 0f), new Vector2(0.5f, 1f), new Vector2(-500f, 140f), new Vector2(500f, -200f));
+
+            var rowBg = UiKit.CreatePanel(content, "RowTemplate", UiKit.PanelMid);
+            UiKit.SetPreferredHeight(rowBg, 64f);
+            var row = rowBg.gameObject.AddComponent<ResultRow>();
+            var pos = UiKit.CreateText(rowBg.transform, "Pos", "1", 32f, UiKit.Accent, TextAlignmentOptions.Center, FontStyles.Bold);
+            UiKit.AnchorRange((RectTransform)pos.transform, new Vector2(0f, 0f), new Vector2(0.08f, 1f), Vector2.zero, Vector2.zero);
+            var name = UiKit.CreateText(rowBg.transform, "Name", "Racer", 30f, UiKit.TextMain, TextAlignmentOptions.Left, FontStyles.Bold);
+            UiKit.AnchorRange((RectTransform)name.transform, new Vector2(0.08f, 0f), new Vector2(0.5f, 1f), new Vector2(12f, 0f), Vector2.zero);
+            var time = UiKit.CreateText(rowBg.transform, "Time", "", 28f, UiKit.TextMain, TextAlignmentOptions.Right);
+            UiKit.AnchorRange((RectTransform)time.transform, new Vector2(0.5f, 0f), new Vector2(0.76f, 1f), Vector2.zero, Vector2.zero);
+            var lap = UiKit.CreateText(rowBg.transform, "BestLap", "", 24f, UiKit.TextDim, TextAlignmentOptions.Right);
+            UiKit.AnchorRange((RectTransform)lap.transform, new Vector2(0.76f, 0f), new Vector2(1f, 1f), Vector2.zero, new Vector2(-16f, 0f));
+            row.EditorWire(pos, name, time, lap, rowBg);
+
+            var cont = UiKit.CreateButton(panel.transform, "Continue", "CONTINUE", UiKit.Accent, 32f, out _);
+            UiKit.Anchor((RectTransform)cont.transform, new Vector2(0.5f, 0f), new Vector2(200f, 40f), new Vector2(360f, 84f));
+            var restart = UiKit.CreateButton(panel.transform, "Restart", "RESTART", UiKit.ButtonNormal, 32f, out _);
+            UiKit.Anchor((RectTransform)restart.transform, new Vector2(0.5f, 0f), new Vector2(-200f, 40f), new Vector2(360f, 84f));
+
+            results.EditorWire(title, reward, content, row, cont, restart);
+            panel.gameObject.SetActive(false);
+            return results;
         }
 
         private static TouchControls BuildTouchControls(Transform root)

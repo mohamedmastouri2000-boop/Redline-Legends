@@ -244,7 +244,7 @@ namespace RedlineLegends.Editor
             UiKit.AnchorRange((RectTransform)title.transform, new Vector2(0f, 0.5f), new Vector2(0.7f, 1f), new Vector2(24f, -4f), new Vector2(0f, -10f));
             var detail = UiKit.CreateText(bg.transform, "Detail", "Details", 22f, UiKit.TextDim, TextAlignmentOptions.Left);
             UiKit.AnchorRange((RectTransform)detail.transform, new Vector2(0f, 0f), new Vector2(0.7f, 0.5f), new Vector2(24f, 10f), new Vector2(0f, 4f));
-            var stars = UiKit.CreateText(bg.transform, "Stars", "☆☆☆", 30f, new Color(1f, 0.8f, 0.2f), TextAlignmentOptions.Center);
+            var stars = UiKit.CreateText(bg.transform, "Stars", "---", 30f, new Color(1f, 0.8f, 0.2f), TextAlignmentOptions.Center);
             UiKit.AnchorRange((RectTransform)stars.transform, new Vector2(0.7f, 0f), new Vector2(0.82f, 1f), Vector2.zero, Vector2.zero);
             var launch = UiKit.CreateButton(bg.transform, "Launch", "RACE", UiKit.Accent, 28f, out _);
             UiKit.AnchorRange((RectTransform)launch.transform, new Vector2(0.84f, 0.15f), new Vector2(0.985f, 0.85f), Vector2.zero, Vector2.zero);
@@ -364,7 +364,7 @@ namespace RedlineLegends.Editor
             var row = bg.gameObject.AddComponent<UpgradeRow>();
             var name = UiKit.CreateText(bg.transform, "Name", "Engine", 22f, UiKit.TextMain, TextAlignmentOptions.Left, FontStyles.Bold);
             UiKit.AnchorRange((RectTransform)name.transform, new Vector2(0f, 0f), new Vector2(0.45f, 1f), new Vector2(12f, 0f), Vector2.zero);
-            var stage = UiKit.CreateText(bg.transform, "Stage", "○○○", 24f, UiKit.Accent, TextAlignmentOptions.Center);
+            var stage = UiKit.CreateText(bg.transform, "Stage", "...", 24f, UiKit.Accent, TextAlignmentOptions.Center);
             UiKit.AnchorRange((RectTransform)stage.transform, new Vector2(0.45f, 0f), new Vector2(0.65f, 1f), Vector2.zero, Vector2.zero);
             var buy = UiKit.CreateButton(bg.transform, "Buy", "0 CR", UiKit.AccentDim, 20f, out var buyLabel);
             UiKit.AnchorRange((RectTransform)buy.transform, new Vector2(0.66f, 0.12f), new Vector2(0.98f, 0.88f), Vector2.zero, Vector2.zero);

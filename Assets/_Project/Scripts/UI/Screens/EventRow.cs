@@ -41,7 +41,7 @@ namespace RedlineLegends.UI
                 ? evt.ModeLabel + " · " + track + laps + " · PR " + evt.RecommendedPerformanceRating + best
                 : "Locked · " + evt.UnlockRequirement.Describe();
             int stars = progress != null ? progress.Stars : 0;
-            starsText.text = new string('★', stars) + new string('☆', 3 - stars);
+            starsText.text = UiText.Stars(stars);
             launchButton.gameObject.SetActive(true);
             launchButton.interactable = unlocked;
             launchButton.onClick.RemoveAllListeners();
