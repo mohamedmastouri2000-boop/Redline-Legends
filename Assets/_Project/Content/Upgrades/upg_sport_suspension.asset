@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c97e6b5c910f84a43926a5462727b530, type: 3}
+  m_Name: upg_sport_suspension
+  m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Upgrades.VehicleUpgradeDefinition
+  id: upg_sport_suspension
+  displayName: Sport Suspension
+  category: 5
+  stages:
+  - DisplayName: Stage 1
+    Price: 4800
+    RequiredPlayerLevel: 1
+    Modifiers:
+    - Stat: 16
+      Op: 1
+      Value: 1.1
+    - Stat: 17
+      Op: 1
+      Value: 1.08
+    - Stat: 18
+      Op: 1
+      Value: 1.12
+    - Stat: 14
+      Op: 1
+      Value: 1.05
+  - DisplayName: Stage 2
+    Price: 10600
+    RequiredPlayerLevel: 3
+    Modifiers:
+    - Stat: 16
+      Op: 1
+      Value: 1.1
+    - Stat: 17
+      Op: 1
+      Value: 1.08
+    - Stat: 18
+      Op: 1
+      Value: 1.12
+    - Stat: 14
+      Op: 1
+      Value: 1.05
+  - DisplayName: Stage 3
+    Price: 20900
+    RequiredPlayerLevel: 6
+    Modifiers:
+    - Stat: 16
+      Op: 1
+      Value: 1.1
+    - Stat: 17
+      Op: 1
+      Value: 1.08
+    - Stat: 18
+      Op: 1
+      Value: 1.12
+    - Stat: 14
+      Op: 1
+      Value: 1.05

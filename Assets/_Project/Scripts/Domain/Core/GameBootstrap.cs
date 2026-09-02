@@ -99,20 +99,39 @@ namespace RedlineLegends.Core
             _sessionStart = Time.realtimeSinceStartup;
             GameLog.Info("Redline Legends booted. Profile " + _profile.ProfileId + ", level " + _profile.Level + ".");
 
-            // Booting from the Bootstrap scene means a real launch: go to the menu. Booting from any
-            // other scene means a developer pressed Play there; leave them in it.
-            var active = SceneManager.GetActiveScene();
-            if (active.name == SceneNames.Bootstrap || string.IsNullOrEmpty(active.name))
-                StartCoroutine(GoToMenuNextFrame(sceneFlow));
-            else
-                stateMachine.TransitionTo(GuessStateForScene(active.name));
+            // Booting from the Bootstrap scene means a real launch: go to the menu. Booting from a
+            // menu/garage/track scene means a developer pressed Play there; leave them in it.
+            // Any other scene (e.g. the test runner's) just waits for a scene we know.
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            HandleSceneEntered(SceneManager.GetActiveScene().name, sceneFlow, stateMachine);
         }
 
-        private static GameStateId GuessStateForScene(string sceneName)
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            if (mode != LoadSceneMode.Single || !Services.IsReady) return;
+            var sceneFlow = Services.Get<SceneFlowService>();
+            if (sceneFlow.IsTransitioning) return; // SceneFlow announces its own transitions.
+            HandleSceneEntered(scene.name, sceneFlow, Services.Get<GameStateMachine>());
+        }
+
+        private void HandleSceneEntered(string sceneName, SceneFlowService sceneFlow, GameStateMachine stateMachine)
+        {
+            if (sceneName == SceneNames.Bootstrap)
+            {
+                stateMachine.TransitionTo(GameStateId.Boot);
+                StartCoroutine(GoToMenuNextFrame(sceneFlow));
+                return;
+            }
+            var state = GuessStateForScene(sceneName);
+            if (state.HasValue) stateMachine.TransitionTo(state.Value);
+        }
+
+        private static GameStateId? GuessStateForScene(string sceneName)
         {
             if (sceneName == SceneNames.MainMenu) return GameStateId.MainMenu;
             if (sceneName == SceneNames.Garage) return GameStateId.Garage;
-            return GameStateId.Race;
+            if (sceneName.StartsWith("Track_")) return GameStateId.Race;
+            return null;
         }
 
         private IEnumerator GoToMenuNextFrame(SceneFlowService sceneFlow)
@@ -144,6 +163,7 @@ namespace RedlineLegends.Core
         private void OnDestroy()
         {
             if (_instance != this) return;
+            SceneManager.sceneLoaded -= OnSceneLoaded;
             var input = Services.IsReady && Services.TryGet<MobileInputProvider>(out var provider) ? provider : null;
             input?.Dispose();
             Services.Uninstall();

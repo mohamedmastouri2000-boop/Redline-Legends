@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b893f69611f8d234796374a4a9e5a72c, type: 3}
+  m_Name: evt_c01_e01
+  m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Events.CircuitEventDefinition
+  id: evt_c01_e01
+  displayName: Sunset Loop Sprint
+  description: One lap to learn the coast road.
+  track: {fileID: 11400000, guid: 50d81d4b86a3eb34b98dd6896bf130ce, type: 2}
+  rewards:
+    ByPosition:
+    - Credits: 900
+      Xp: 180
+      Stars: 3
+    - Credits: 630
+      Xp: 126
+      Stars: 2
+    - Credits: 450
+      Xp: 90
+      Stars: 1
+    - Credits: 270
+      Xp: 63
+      Stars: 1
+    - Credits: 180
+      Xp: 45
+      Stars: 0
+    - Credits: 135
+      Xp: 36
+      Stars: 0
+    CompletionCredits: 180
+    CompletionXp: 45
+    TimeAttackStarThresholds: []
+  restriction:
+    AllowedClasses: 00000000i
+    MinPerformanceRating: 0
+    MaxPerformanceRating: 0
+    AllowedVehicleIds: []
+  recommendedPerformanceRating: 170
+  weather: 0
+  timeOfDay: 1
+  unlockRequirement:
+    PlayerLevel: 0
+    TotalStars: 0
+    RequiredEventId: 
+    RequiredChampionshipId: 
+    RequiredChampionshipStars: 0
+  aiProfile: {fileID: 11400000, guid: 39d7f35fe4bbb5f429a6626001021f54, type: 2}
+  aiVehiclePool: []
+  isBossEvent: 0
+  thumbnail: {fileID: 0}
+  eventType: 1
+  laps: 1
+  aiCount: 3
+  eliminationIntervalSeconds: 20
+  checkpointStartSeconds: 30
+  checkpointBonusSeconds: 8

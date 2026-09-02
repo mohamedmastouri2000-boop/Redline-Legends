@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b893f69611f8d234796374a4a9e5a72c, type: 3}
+  m_Name: evt_c01_e03
+  m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Events.CircuitEventDefinition
+  id: evt_c01_e03
+  displayName: Sunset Time Attack
+  description: Beat the clock. Three stars under 1:25.
+  track: {fileID: 11400000, guid: 50d81d4b86a3eb34b98dd6896bf130ce, type: 2}
+  rewards:
+    ByPosition:
+    - Credits: 1100
+      Xp: 200
+      Stars: 3
+    - Credits: 770
+      Xp: 140
+      Stars: 2
+    - Credits: 550
+      Xp: 100
+      Stars: 1
+    - Credits: 330
+      Xp: 70
+      Stars: 1
+    - Credits: 220
+      Xp: 50
+      Stars: 0
+    - Credits: 165
+      Xp: 40
+      Stars: 0
+    CompletionCredits: 220
+    CompletionXp: 50
+    TimeAttackStarThresholds:
+    - 85
+    - 92
+    - 105
+  restriction:
+    AllowedClasses: 00000000i
+    MinPerformanceRating: 0
+    MaxPerformanceRating: 0
+    AllowedVehicleIds: []
+  recommendedPerformanceRating: 190
+  weather: 0
+  timeOfDay: 0
+  unlockRequirement:
+    PlayerLevel: 0
+    TotalStars: 0
+    RequiredEventId: evt_c01_e02
+    RequiredChampionshipId: 
+    RequiredChampionshipStars: 0
+  aiProfile: {fileID: 0}
+  aiVehiclePool: []
+  isBossEvent: 0
+  thumbnail: {fileID: 0}
+  eventType: 2
+  laps: 1
+  aiCount: 0
+  eliminationIntervalSeconds: 20
+  checkpointStartSeconds: 30
+  checkpointBonusSeconds: 8

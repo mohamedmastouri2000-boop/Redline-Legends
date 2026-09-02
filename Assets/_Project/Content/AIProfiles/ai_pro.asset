@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 632eeb954cd3c7f4dbc1ccd0dfc37aa7, type: 3}
+  m_Name: ai_pro
+  m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.AI.AIProfile
+  id: ai_pro
+  displayName: Pro
+  tier: 2
+  rewardMultiplier: 1.35
+  reactionTime: 0.26
+  aggression: 0.5
+  corneringAccuracy: 0.8
+  brakingQuality: 0.78
+  throttleQuality: 0.84
+  mistakeFrequency: 1
+  speedScale: 0.91
+  vehicleUpgradeStage: 2
+  dragReactionTimeMin: 0.22
+  dragReactionTimeMax: 0.45
+  launchQuality: 0.75
+  shiftAccuracy: 0.75
+  nitrousStrategy: 2
+  falseStartChance: 0.02

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 819a59a3c43650c49bcdf359bb358517, type: 3}
+  m_Name: chp_01_beginner_streets
+  m_EditorClassIdentifier: RedlineLegends.Domain::RedlineLegends.Career.ChampionshipDefinition
+  id: chp_01_beginner_streets
+  displayName: Beginner Streets
+  description: Where every legend starts.
+  tier: 1
+  events:
+  - {fileID: 11400000, guid: 71f2be6e1995f8b429045fc3d558ec75, type: 2}
+  - {fileID: 11400000, guid: 893bf83c36c505c4e8532f00ba923afa, type: 2}
+  - {fileID: 11400000, guid: 31a14d742a4fd5043b7bed3386cc4d50, type: 2}
+  - {fileID: 11400000, guid: 03fd65d1de1de9d4294db9eb5cff25b1, type: 2}
+  - {fileID: 11400000, guid: 5fd9eb7250cbe134fb0cdf9b04be89b4, type: 2}
+  unlockRequirement:
+    PlayerLevel: 0
+    TotalStars: 0
+    RequiredEventId: 
+    RequiredChampionshipId: 
+    RequiredChampionshipStars: 0
+  completionCredits: 5000
+  completionXp: 1000
+  banner: {fileID: 0}
