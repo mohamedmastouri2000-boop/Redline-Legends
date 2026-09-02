@@ -161,12 +161,32 @@ tunable arcade-realistic handling at 50 Hz):
 - Verified by `DragRaceTests` (expert autopilot with manual shifts: green, launch, ≥2 shifts, finish, reward,
   reaction and ET persisted, save reload, back to menu).
 
-## 12. Phase status
+## 12. Garage, progression polish, audio, VFX (Phase 5)
+
+- **Settings** (`SettingsPanel`): control style, gearbox, camera, graphics tier, 30/60 fps, units, vibration,
+  tutorials, steering/tilt sensitivity, camera shake, master/music/effects volume. Applied immediately through
+  `SettingsService`; consumers (input, cameras, audio, quality) subscribe to its change event.
+- **Garage**: browse/buy/select, upgrade rows per category, paint selector (paid options), `TuningPanel` with a
+  live PR and 0–100/top-speed readout, gear ratios gated by `ProgressionConfig.AdvancedTuningLevel`, Test Drive.
+- **Achievements**: `AchievementDefinition` assets watch lifetime counters in `PlayerStatsData`; the
+  `AchievementService` listens to progression/garage/profile events, pays rewards, and the menu lists them.
+- **Haptics**: `HapticsService` pulses on perfect shifts and collisions when vibration is enabled.
+- **Audio**: `AudioService` (master → AudioListener; music/effects multipliers). `VehicleAudio` per car: engine
+  layer crossfade (or a synthesised placeholder when the `VehicleAudioDefinition` slot is empty), tyre squeal,
+  wind, nitrous, shift/limiter/impact one-shots; UI clicks per canvas. All sources created once.
+- **VFX**: `VfxLibrary` materials (generated textures); `VehicleEffects` per car with pre-created particle
+  systems for tyre smoke, sparks, backfire and nitrous; `SkidMarkRenderer` ring-buffer mesh per scene.
+- **Tutorials**: `TutorialService` + `TutorialOverlay`; first circuit and first drag hold the session in
+  Preparing until dismissed, first upgrade shows on the first garage visit. Skippable, remembered in the save.
+
+## 13. Phase status
 
 - Phase 1 Foundation — done.
 - Phase 2 Vehicle prototype — done (proving ground test drive from the garage).
 - Phase 3 Circuit slice — done.
 - Phase 4 Drag slice — done.
-- Phase 5 Garage/progression polish — next: settings screen (controls, graphics, audio), tuning UI, paint,
-  achievements, tutorials, audio + VFX architecture.
-- Phase 6 Content (50 events, 15 cars), Phase 7 Mobile optimisation (profiling on device, LODs, baking).
+- Phase 5 Garage/progression polish, audio, VFX, tutorials — done.
+- Phase 6 Content — next: 15 cars, 10 championships / 50 events, drag ladder, more tracks (see
+  `Docs/CONTENT_PLAN.md`); real car and environment models replacing the generated placeholders.
+- Phase 7 Mobile optimisation — device profiling, LOD groups, light baking, texture compression review,
+  thermal testing on low/mid/high presets.
