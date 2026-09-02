@@ -114,9 +114,11 @@ namespace RedlineLegends.Editor
             var events = GenerateEvents(tracks, profiles, vehicles);
             var championships = GenerateChampionships(events);
 
+            var achievements = GenerateAchievements();
+
             var database = EditorPaths.GetOrCreateAsset<ContentDatabase>(DatabasePath);
             database.EditorSetContent(vehicles.ToArray(), Ordered(upgrades), Ordered(tracks),
-                Ordered(events), championships.ToArray(), Ordered(profiles));
+                Ordered(events), championships.ToArray(), Ordered(profiles), achievements.ToArray());
             EditorUtility.SetDirty(database);
 
             var progression = EditorPaths.GetOrCreateAsset<ProgressionConfig>(ProgressionPath);
@@ -345,6 +347,34 @@ namespace RedlineLegends.Editor
                 UnlockRequirement.None, 5000, 1000);
             EditorUtility.SetDirty(c1);
             list.Add(c1);
+            return list;
+        }
+
+        private static List<AchievementDefinition> GenerateAchievements()
+        {
+            EditorPaths.EnsureFolder(EditorPaths.Content + "/Achievements");
+            var rows = new (string id, string name, string desc, AchievementStat stat, int target, int credits, int xp)[]
+            {
+                ("ach_first_race", "Green Flag", "Finish your first race.", AchievementStat.RacesEntered, 1, 500, 100),
+                ("ach_first_win", "Top Step", "Win a race.", AchievementStat.RacesWon, 1, 1000, 200),
+                ("ach_ten_wins", "Serial Winner", "Win 10 races.", AchievementStat.RacesWon, 10, 4000, 600),
+                ("ach_drag_win", "Green Light Go", "Win a drag race.", AchievementStat.DragWins, 1, 800, 150),
+                ("ach_perfect_shifts", "Redline Reflexes", "Land 25 perfect shifts.", AchievementStat.PerfectShifts, 25, 2000, 300),
+                ("ach_top_speed_250", "Two-Fifty", "Reach 250 km/h.", AchievementStat.TopSpeedKmh, 250, 1500, 250),
+                ("ach_collector_3", "Collector", "Own 3 cars.", AchievementStat.CarsOwned, 3, 3000, 400),
+                ("ach_stars_15", "Rising Star", "Earn 15 stars.", AchievementStat.TotalStars, 15, 2500, 400),
+                ("ach_championship", "Champion", "Complete a championship.", AchievementStat.ChampionshipsCompleted, 1, 5000, 800),
+                ("ach_tuner", "Tuner", "Install 10 upgrades.", AchievementStat.UpgradesInstalled, 10, 2000, 300),
+                ("ach_credits_100k", "Money Maker", "Earn 100,000 credits.", AchievementStat.CreditsEarned, 100000, 5000, 500),
+            };
+            var list = new List<AchievementDefinition>();
+            foreach (var row in rows)
+            {
+                var asset = EditorPaths.GetOrCreateAsset<AchievementDefinition>(EditorPaths.Content + "/Achievements/" + row.id + ".asset");
+                asset.EditorInitialize(row.id, row.name, row.desc, row.stat, row.target, row.credits, row.xp);
+                EditorUtility.SetDirty(asset);
+                list.Add(asset);
+            }
             return list;
         }
 

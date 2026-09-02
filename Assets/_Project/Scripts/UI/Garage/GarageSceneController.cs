@@ -36,6 +36,11 @@ namespace RedlineLegends.UI
         [SerializeField] private TMP_Text actionLabel;
         [SerializeField] private Button backButton;
         [SerializeField] private Button testDriveButton;
+        [SerializeField] private Button tuneButton;
+        [SerializeField] private TuningPanel tuningPanel;
+        [SerializeField] private Button paintPrevButton;
+        [SerializeField] private Button paintNextButton;
+        [SerializeField] private TMP_Text paintText;
         [SerializeField] private RectTransform upgradeList;
         [SerializeField] private UpgradeRow upgradeRowTemplate;
 
@@ -69,6 +74,15 @@ namespace RedlineLegends.UI
             actionButton.onClick.AddListener(OnAction);
             backButton.onClick.AddListener(() => _sceneFlow.LoadMainMenu());
             if (testDriveButton != null) testDriveButton.onClick.AddListener(LaunchTestDrive);
+            if (tuneButton != null && tuningPanel != null)
+            {
+                tuneButton.onClick.AddListener(() => { if (_garage.IsOwned(Current.Id)) tuningPanel.Open(Current); });
+                tuningPanel.CloseButton.onClick.AddListener(() => tuningPanel.gameObject.SetActive(false));
+                tuningPanel.Applied += Refresh;
+                tuningPanel.gameObject.SetActive(false);
+            }
+            if (paintPrevButton != null) paintPrevButton.onClick.AddListener(() => CyclePaint(-1));
+            if (paintNextButton != null) paintNextButton.onClick.AddListener(() => CyclePaint(1));
             upgradeRowTemplate.gameObject.SetActive(false);
 
             _index = IndexOf(_garage.SelectedVehicleId);
@@ -172,6 +186,31 @@ namespace RedlineLegends.UI
             }
 
             RefreshUpgrades(def, owned);
+
+            if (tuneButton != null) tuneButton.interactable = owned;
+            int paintIndex = owned ? _garage.GetOwned(def.Id).PaintIndex : 0;
+            if (paintText != null && def.PaintOptions.Length > 0)
+            {
+                var paint = def.PaintOptions[Mathf.Clamp(paintIndex, 0, def.PaintOptions.Length - 1)];
+                paintText.text = paint.Name + (paint.Price > 0 && owned ? "  " + paint.Price.ToString("N0") + " CR" : "");
+            }
+            if (paintPrevButton != null) paintPrevButton.interactable = owned && def.PaintOptions.Length > 1;
+            if (paintNextButton != null) paintNextButton.interactable = owned && def.PaintOptions.Length > 1;
+        }
+
+        private void CyclePaint(int delta)
+        {
+            var def = Current;
+            if (def == null || !_garage.IsOwned(def.Id) || def.PaintOptions.Length < 2) return;
+            int count = def.PaintOptions.Length;
+            int index = (_garage.GetOwned(def.Id).PaintIndex + delta + count) % count;
+            if (!_garage.TrySetPaint(def.Id, index))
+            {
+                statusText.text = "Not enough credits for that paint.";
+                return;
+            }
+            if (_displayed != null) VehicleVisualUtility.ApplyPaint(_displayed, def, index);
+            Refresh();
         }
 
         private void RefreshUpgrades(VehicleDefinition def, bool owned)
@@ -232,11 +271,12 @@ namespace RedlineLegends.UI
 #if UNITY_EDITOR
         public void EditorWire(Transform table, TMP_Text name, TMP_Text cls, TMP_Text rating, TMP_Text stats, TMP_Text credits,
             TMP_Text status, Button prev, Button next, Button action, TMP_Text actionText, Button back, Button testDrive,
-            RectTransform upgrades, UpgradeRow template)
+            RectTransform upgrades, UpgradeRow template, Button tune, TuningPanel tuning, Button paintPrev, Button paintNext, TMP_Text paint)
         {
             turntable = table; carNameText = name; carClassText = cls; ratingText = rating; statsText = stats;
             creditsText = credits; statusText = status; prevButton = prev; nextButton = next; actionButton = action;
             actionLabel = actionText; backButton = back; testDriveButton = testDrive; upgradeList = upgrades; upgradeRowTemplate = template;
+            tuneButton = tune; tuningPanel = tuning; paintPrevButton = paintPrev; paintNextButton = paintNext; paintText = paint;
         }
 #endif
     }

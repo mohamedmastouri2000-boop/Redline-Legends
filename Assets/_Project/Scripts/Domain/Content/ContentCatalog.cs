@@ -4,6 +4,7 @@ using RedlineLegends.AI;
 using RedlineLegends.Career;
 using RedlineLegends.Core;
 using RedlineLegends.Events;
+using RedlineLegends.Progression;
 using RedlineLegends.Tracks;
 using RedlineLegends.Upgrades;
 using RedlineLegends.Utilities;
@@ -24,6 +25,7 @@ namespace RedlineLegends.Content
         private readonly Dictionary<string, RaceEventDefinition> _events = new Dictionary<string, RaceEventDefinition>();
         private readonly Dictionary<string, ChampionshipDefinition> _championships = new Dictionary<string, ChampionshipDefinition>();
         private readonly Dictionary<string, AIProfile> _aiProfiles = new Dictionary<string, AIProfile>();
+        private readonly Dictionary<string, AchievementDefinition> _achievements = new Dictionary<string, AchievementDefinition>();
         private readonly Dictionary<string, ChampionshipDefinition> _eventToChampionship = new Dictionary<string, ChampionshipDefinition>();
 
         public ContentDatabase Source { get; }
@@ -32,6 +34,7 @@ namespace RedlineLegends.Content
         public IReadOnlyList<RaceEventDefinition> Events { get; }
         public IReadOnlyList<ChampionshipDefinition> Championships { get; }
         public IReadOnlyList<AIProfile> AIProfiles { get; }
+        public IReadOnlyList<AchievementDefinition> Achievements { get; }
 
         public ContentCatalog(ContentDatabase database)
         {
@@ -42,6 +45,7 @@ namespace RedlineLegends.Content
             Events = Index(database.Events, _events, e => e.Id, "Event");
             Championships = Index(database.Championships, _championships, c => c.Id, "Championship");
             AIProfiles = Index(database.AIProfiles, _aiProfiles, a => a.Id, "AIProfile");
+            Achievements = Index(database.Achievements, _achievements, a => a.Id, "Achievement");
 
             foreach (var championship in Championships)
             {

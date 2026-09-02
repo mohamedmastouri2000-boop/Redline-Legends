@@ -154,6 +154,34 @@ namespace RedlineLegends.Editor
             return scroll;
         }
 
+        /// <summary>Horizontal uGUI slider with a fill and a wide handle for thumbs.</summary>
+        public static Slider CreateSlider(Transform parent, string name, out Image fillImage)
+        {
+            var bg = CreatePanel(parent, name, new Color(0.1f, 0.1f, 0.12f, 1f));
+            var slider = bg.gameObject.AddComponent<Slider>();
+            var fillArea = CreateRect(bg.transform, "FillArea");
+            Stretch(fillArea, 6f, 4f, 6f, 4f);
+            fillImage = CreatePanel(fillArea, "Fill", Accent);
+            fillImage.raycastTarget = false;
+            var fillRect = (RectTransform)fillImage.transform;
+            fillRect.anchorMin = Vector2.zero;
+            fillRect.anchorMax = new Vector2(0f, 1f);
+            fillRect.offsetMin = Vector2.zero;
+            fillRect.offsetMax = Vector2.zero;
+            var handleArea = CreateRect(bg.transform, "HandleArea");
+            Stretch(handleArea, 14f, 0f, 14f, 0f);
+            var handle = CreatePanel(handleArea, "Handle", TextMain);
+            var handleRect = (RectTransform)handle.transform;
+            handleRect.anchorMin = new Vector2(0f, 0f);
+            handleRect.anchorMax = new Vector2(0f, 1f);
+            handleRect.sizeDelta = new Vector2(28f, 10f);
+            slider.fillRect = fillRect;
+            slider.handleRect = handleRect;
+            slider.targetGraphic = handle;
+            slider.direction = Slider.Direction.LeftToRight;
+            return slider;
+        }
+
         public static LayoutElement SetPreferredHeight(Component target, float height)
         {
             var element = target.gameObject.GetComponent<LayoutElement>();

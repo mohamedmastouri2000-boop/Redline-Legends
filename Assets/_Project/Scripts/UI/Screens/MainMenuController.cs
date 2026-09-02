@@ -17,11 +17,15 @@ namespace RedlineLegends.UI
         [SerializeField] private GameObject homePanel;
         [SerializeField] private EventListPanel circuitPanel;
         [SerializeField] private EventListPanel dragPanel;
+        [SerializeField] private SettingsPanel settingsPanel;
+        [SerializeField] private AchievementsPanel achievementsPanel;
 
         [Header("Home")]
         [SerializeField] private Button circuitButton;
         [SerializeField] private Button dragButton;
         [SerializeField] private Button garageButton;
+        [SerializeField] private Button settingsButton;
+        [SerializeField] private Button achievementsButton;
         [SerializeField] private TMP_Text profileNameText;
         [SerializeField] private TMP_Text creditsText;
         [SerializeField] private TMP_Text levelText;
@@ -46,9 +50,19 @@ namespace RedlineLegends.UI
             _sceneFlow = Services.Get<SceneFlowService>();
             _launchBuilder = new RaceLaunchBuilder(Services.Get<Content.ContentCatalog>(), _garage, _profile);
 
-            circuitButton.onClick.AddListener(() => ShowPanel(circuitPanel));
-            dragButton.onClick.AddListener(() => ShowPanel(dragPanel));
+            circuitButton.onClick.AddListener(() => ShowPanel(circuitPanel.gameObject));
+            dragButton.onClick.AddListener(() => ShowPanel(dragPanel.gameObject));
             garageButton.onClick.AddListener(() => _sceneFlow.LoadGarage());
+            if (settingsButton != null && settingsPanel != null)
+            {
+                settingsButton.onClick.AddListener(() => ShowPanel(settingsPanel.gameObject));
+                settingsPanel.BackButton.onClick.AddListener(ShowHome);
+            }
+            if (achievementsButton != null && achievementsPanel != null)
+            {
+                achievementsButton.onClick.AddListener(() => { ShowPanel(achievementsPanel.gameObject); achievementsPanel.Refresh(); });
+                achievementsPanel.BackButton.onClick.AddListener(ShowHome);
+            }
 
             circuitPanel.Initialize(RaceMode.Circuit, LaunchEvent, ShowHome);
             dragPanel.Initialize(RaceMode.Drag, LaunchEvent, ShowHome);
@@ -64,19 +78,17 @@ namespace RedlineLegends.UI
             if (_profile != null) _profile.Changed -= RefreshProfile;
         }
 
-        private void ShowHome()
-        {
-            homePanel.SetActive(true);
-            circuitPanel.gameObject.SetActive(false);
-            dragPanel.gameObject.SetActive(false);
-        }
+        private void ShowHome() => ShowPanel(homePanel);
 
-        private void ShowPanel(EventListPanel panel)
+        private void ShowPanel(GameObject panel)
         {
-            homePanel.SetActive(false);
-            circuitPanel.gameObject.SetActive(panel == circuitPanel);
-            dragPanel.gameObject.SetActive(panel == dragPanel);
-            panel.Refresh();
+            homePanel.SetActive(panel == homePanel);
+            circuitPanel.gameObject.SetActive(panel == circuitPanel.gameObject);
+            dragPanel.gameObject.SetActive(panel == dragPanel.gameObject);
+            if (settingsPanel != null) settingsPanel.gameObject.SetActive(panel == settingsPanel.gameObject);
+            if (achievementsPanel != null) achievementsPanel.gameObject.SetActive(panel == achievementsPanel.gameObject);
+            if (panel == circuitPanel.gameObject) circuitPanel.Refresh();
+            else if (panel == dragPanel.gameObject) dragPanel.Refresh();
         }
 
         private void LaunchEvent(Events.RaceEventDefinition evt)
@@ -119,11 +131,13 @@ namespace RedlineLegends.UI
 
 #if UNITY_EDITOR
         public void EditorWire(GameObject home, EventListPanel circuit, EventListPanel drag, Button circuitBtn, Button dragBtn,
-            Button garageBtn, TMP_Text name, TMP_Text credits, TMP_Text level, Image xp, TMP_Text car, TMP_Text banner)
+            Button garageBtn, TMP_Text name, TMP_Text credits, TMP_Text level, Image xp, TMP_Text car, TMP_Text banner,
+            SettingsPanel settings, Button settingsBtn, AchievementsPanel achievements, Button achievementsBtn)
         {
             homePanel = home; circuitPanel = circuit; dragPanel = drag; circuitButton = circuitBtn; dragButton = dragBtn;
             garageButton = garageBtn; profileNameText = name; creditsText = credits; levelText = level; xpFill = xp;
-            selectedCarText = car; resultsBanner = banner;
+            selectedCarText = car; resultsBanner = banner; settingsPanel = settings; settingsButton = settingsBtn;
+            achievementsPanel = achievements; achievementsButton = achievementsBtn;
         }
 #endif
     }

@@ -2,6 +2,7 @@ using System;
 using RedlineLegends.AI;
 using RedlineLegends.Career;
 using RedlineLegends.Events;
+using RedlineLegends.Progression;
 using RedlineLegends.Tracks;
 using RedlineLegends.Upgrades;
 using RedlineLegends.Vehicles;
@@ -23,8 +24,10 @@ namespace RedlineLegends.Content
         [SerializeField] private RaceEventDefinition[] events = Array.Empty<RaceEventDefinition>();
         [SerializeField] private ChampionshipDefinition[] championships = Array.Empty<ChampionshipDefinition>();
         [SerializeField] private AIProfile[] aiProfiles = Array.Empty<AIProfile>();
+        [SerializeField] private AchievementDefinition[] achievements = Array.Empty<AchievementDefinition>();
 
         public VehicleDefinition[] Vehicles => vehicles;
+        public AchievementDefinition[] Achievements => achievements;
         public VehicleUpgradeDefinition[] Upgrades => upgrades;
         public TrackDefinition[] Tracks => tracks;
         public RaceEventDefinition[] Events => events;
@@ -33,9 +36,9 @@ namespace RedlineLegends.Content
 
 #if UNITY_EDITOR
         public void EditorSetContent(VehicleDefinition[] v, VehicleUpgradeDefinition[] u, TrackDefinition[] t,
-            RaceEventDefinition[] e, ChampionshipDefinition[] c, AIProfile[] a)
+            RaceEventDefinition[] e, ChampionshipDefinition[] c, AIProfile[] a, AchievementDefinition[] ach)
         {
-            vehicles = v; upgrades = u; tracks = t; events = e; championships = c; aiProfiles = a;
+            vehicles = v; upgrades = u; tracks = t; events = e; championships = c; aiProfiles = a; achievements = ach;
         }
 #endif
     }

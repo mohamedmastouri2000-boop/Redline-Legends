@@ -1,0 +1,12 @@
+# ninja log v5
+59	263	8100864324276194	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	f5ee9f9166e86f32
+265	411	8100864325639505	D:/Redline Legends/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/28j31s5w/obj/arm64-v8a/libswappywrapper.so	17edb63f00ff95f4
+22	757	8100864329159333	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	346e9e1f3e6ebdbc
+28	762	8100864329237163	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	5e224f90314dc225
+0	775	8100864329373664	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	f23aac396aae322c
+51	793	8100864329532188	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	9adc0681a83de220
+15	815	8100864329748892	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	2396862b19824622
+42	923	8100864330841775	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	d2382ea8daf0f500
+35	942	8100864331003674	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	2df6f1a2267abac1
+7	1029	8100864331877084	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	7ec6be46c1c2aef7
+1030	1124	8100864332823366	D:/Redline Legends/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/28j31s5w/obj/arm64-v8a/libgame.so	fbad9c5789f5f615

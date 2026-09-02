@@ -86,6 +86,10 @@ namespace RedlineLegends.Core
             container.Register(progression);
             var garage = new GarageService(_save, catalog, _profile, Config.ProgressionConfig);
             container.Register(garage);
+            var achievements = new AchievementService(_save, catalog, _profile, progression, garage);
+            progression.OutcomeRecorded += achievements.RecordRaceResult;
+            container.Register(achievements);
+            container.Register(new HapticsService(settings));
 
             var localInput = new MobileInputProvider(Config.InputActions, _save.Data.Settings);
             settings.Changed += localInput.ApplySettings;

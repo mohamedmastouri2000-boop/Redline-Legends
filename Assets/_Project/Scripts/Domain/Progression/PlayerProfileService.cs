@@ -15,6 +15,8 @@ namespace RedlineLegends.Progression
 
         public event Action Changed;
         public event Action<int> LeveledUp;
+        /// <summary>Raised for every credit gain (rewards, level-ups, achievements).</summary>
+        public event Action<int> CreditsEarned;
 
         public PlayerProfileService(SaveService save, ProgressionConfig config)
         {
@@ -45,6 +47,7 @@ namespace RedlineLegends.Progression
         {
             if (amount <= 0) return;
             Profile.Credits = checked(Profile.Credits + amount);
+            CreditsEarned?.Invoke(amount);
             Changed?.Invoke();
         }
 
@@ -69,6 +72,7 @@ namespace RedlineLegends.Progression
                 Profile.Xp -= _config.XpForLevel(Profile.Level);
                 Profile.Level++;
                 Profile.Credits += _config.LevelUpCredits;
+                CreditsEarned?.Invoke(_config.LevelUpCredits);
                 gained++;
                 GameLog.Info("Level up: " + Profile.Level);
                 LeveledUp?.Invoke(Profile.Level);

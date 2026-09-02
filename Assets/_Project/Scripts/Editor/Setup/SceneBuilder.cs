@@ -180,10 +180,12 @@ namespace RedlineLegends.Editor
             var xpBar = UiKit.CreateFillBar(profilePanel.transform, "XpBar", new Color(0.1f, 0.1f, 0.12f, 1f), UiKit.Accent, out var xpFill);
             UiKit.AnchorRange((RectTransform)xpBar.transform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(16f, 10f), new Vector2(-16f, 18f));
 
-            float y = -260f;
+            float y = -220f;
             var circuitBtn = BigButton(home, "CircuitButton", "CIRCUIT RACING", ref y);
             var dragBtn = BigButton(home, "DragButton", "DRAG RACING", ref y);
             var garageBtn = BigButton(home, "GarageButton", "GARAGE", ref y);
+            var achievementsBtn = BigButton(home, "AchievementsButton", "ACHIEVEMENTS", ref y);
+            var settingsBtn = BigButton(home, "SettingsButton", "SETTINGS", ref y);
 
             var carText = UiKit.CreateText(home, "SelectedCar", "Selected car", 28f, UiKit.TextDim, TextAlignmentOptions.Left);
             UiKit.Anchor((RectTransform)carText.transform, new Vector2(0f, 0f), new Vector2(80f, 40f), new Vector2(900f, 40f));
@@ -194,24 +196,135 @@ namespace RedlineLegends.Editor
             // ---- Event panels
             var circuitPanel = BuildEventPanel(canvas.transform, "CircuitPanel");
             var dragPanel = BuildEventPanel(canvas.transform, "DragPanel");
+            var settingsPanel = BuildSettingsPanel(canvas.transform);
+            var achievementsPanel = BuildAchievementsPanel(canvas.transform);
 
             controller.EditorWire(home.gameObject, circuitPanel, dragPanel, circuitBtn, dragBtn, garageBtn,
-                nameText, creditsText, levelText, xpFill, carText, banner);
+                nameText, creditsText, levelText, xpFill, carText, banner, settingsPanel, settingsBtn, achievementsPanel, achievementsBtn);
 
             circuitPanel.gameObject.SetActive(false);
             dragPanel.gameObject.SetActive(false);
+            settingsPanel.gameObject.SetActive(false);
+            achievementsPanel.gameObject.SetActive(false);
             Save(scene, MainMenuPath);
         }
 
         private static Button BigButton(Transform parent, string name, string label, ref float y)
         {
-            var button = UiKit.CreateButton(parent, name, label, UiKit.ButtonNormal, 36f, out _);
-            UiKit.Anchor((RectTransform)button.transform, new Vector2(0f, 1f), new Vector2(80f, y), new Vector2(560f, 110f));
+            var button = UiKit.CreateButton(parent, name, label, UiKit.ButtonNormal, 32f, out _);
+            UiKit.Anchor((RectTransform)button.transform, new Vector2(0f, 1f), new Vector2(80f, y), new Vector2(560f, 92f));
             var edge = UiKit.CreatePanel(button.transform, "Edge", UiKit.Accent);
             edge.raycastTarget = false;
             UiKit.AnchorRange((RectTransform)edge.transform, Vector2.zero, new Vector2(0f, 1f), Vector2.zero, new Vector2(8f, 0f));
-            y -= 130f;
+            y -= 108f;
             return button;
+        }
+
+        // ------------------------------------------------------------------ shared widgets
+        public static CycleRow BuildCycleRow(Transform parent, string name, float y, float width = 760f)
+        {
+            var bg = UiKit.CreatePanel(parent, name, UiKit.PanelMid);
+            UiKit.Anchor((RectTransform)bg.transform, new Vector2(0f, 1f), new Vector2(0f, y), new Vector2(width, 64f));
+            var row = bg.gameObject.AddComponent<CycleRow>();
+            var label = UiKit.CreateText(bg.transform, "Label", name, 26f, UiKit.TextMain, TextAlignmentOptions.Left, FontStyles.Bold);
+            UiKit.AnchorRange((RectTransform)label.transform, new Vector2(0f, 0f), new Vector2(0.5f, 1f), new Vector2(16f, 0f), Vector2.zero);
+            var prev = UiKit.CreateButton(bg.transform, "Prev", "<", UiKit.ButtonNormal, 28f, out _);
+            UiKit.AnchorRange((RectTransform)prev.transform, new Vector2(0.52f, 0.1f), new Vector2(0.62f, 0.9f), Vector2.zero, Vector2.zero);
+            var value = UiKit.CreateText(bg.transform, "Value", "", 26f, UiKit.Accent, TextAlignmentOptions.Center, FontStyles.Bold);
+            UiKit.AnchorRange((RectTransform)value.transform, new Vector2(0.62f, 0f), new Vector2(0.88f, 1f), Vector2.zero, Vector2.zero);
+            var next = UiKit.CreateButton(bg.transform, "Next", ">", UiKit.ButtonNormal, 28f, out _);
+            UiKit.AnchorRange((RectTransform)next.transform, new Vector2(0.88f, 0.1f), new Vector2(0.98f, 0.9f), Vector2.zero, Vector2.zero);
+            row.EditorWire(label, value, prev, next);
+            return row;
+        }
+
+        public static SliderRow BuildSliderRow(Transform parent, string name, float y, float width = 760f)
+        {
+            var bg = UiKit.CreatePanel(parent, name, UiKit.PanelMid);
+            UiKit.Anchor((RectTransform)bg.transform, new Vector2(0f, 1f), new Vector2(0f, y), new Vector2(width, 64f));
+            var row = bg.gameObject.AddComponent<SliderRow>();
+            var label = UiKit.CreateText(bg.transform, "Label", name, 24f, UiKit.TextMain, TextAlignmentOptions.Left, FontStyles.Bold);
+            UiKit.AnchorRange((RectTransform)label.transform, new Vector2(0f, 0f), new Vector2(0.42f, 1f), new Vector2(16f, 0f), Vector2.zero);
+            var slider = UiKit.CreateSlider(bg.transform, "Slider", out _);
+            UiKit.AnchorRange((RectTransform)slider.transform, new Vector2(0.44f, 0.3f), new Vector2(0.86f, 0.7f), Vector2.zero, Vector2.zero);
+            var value = UiKit.CreateText(bg.transform, "Value", "", 22f, UiKit.Accent, TextAlignmentOptions.Right);
+            UiKit.AnchorRange((RectTransform)value.transform, new Vector2(0.87f, 0f), new Vector2(1f, 1f), Vector2.zero, new Vector2(-12f, 0f));
+            row.EditorWire(label, value, slider);
+            return row;
+        }
+
+        private static SettingsPanel BuildSettingsPanel(Transform parent)
+        {
+            var root = UiKit.CreatePanel(parent, "SettingsPanel", new Color(0.06f, 0.06f, 0.08f, 1f));
+            UiKit.Stretch((RectTransform)root.transform);
+            var panel = root.gameObject.AddComponent<SettingsPanel>();
+            var title = UiKit.CreateText(root.transform, "Title", "SETTINGS", 52f, UiKit.TextMain, TextAlignmentOptions.Left, FontStyles.Bold);
+            UiKit.Anchor((RectTransform)title.transform, new Vector2(0f, 1f), new Vector2(80f, -40f), new Vector2(800f, 70f));
+            var back = UiKit.CreateButton(root.transform, "BackButton", "BACK", UiKit.ButtonNormal, 30f, out _);
+            UiKit.Anchor((RectTransform)back.transform, new Vector2(1f, 1f), new Vector2(-60f, -40f), new Vector2(220f, 70f));
+
+            UiKit.CreateScrollList(root.transform, "List", out var content);
+            UiKit.AnchorRange((RectTransform)content.parent, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(80f, 40f), new Vector2(-60f, -130f));
+            // Two columns inside the scroll list: left = controls/camera, right = graphics/audio.
+            var left = UiKit.CreateRect(content, "Left");
+            var right = UiKit.CreateRect(content, "Right");
+            var grid = content.gameObject.GetComponent<VerticalLayoutGroup>();
+            Object.DestroyImmediate(grid);
+            var fitter = content.gameObject.GetComponent<ContentSizeFitter>();
+            fitter.verticalFit = ContentSizeFitter.FitMode.Unconstrained;
+            content.sizeDelta = new Vector2(0f, 760f);
+            UiKit.AnchorRange(left, new Vector2(0f, 0f), new Vector2(0.5f, 1f), new Vector2(0f, 0f), new Vector2(-10f, 0f));
+            UiKit.AnchorRange(right, new Vector2(0.5f, 0f), new Vector2(1f, 1f), new Vector2(10f, 0f), new Vector2(0f, 0f));
+
+            float y = -8f;
+            var style = BuildCycleRow(left, "Control style", y, 860f); y -= 72f;
+            var steer = BuildSliderRow(left, "Steering sensitivity", y, 860f); y -= 72f;
+            var tilt = BuildSliderRow(left, "Tilt sensitivity", y, 860f); y -= 72f;
+            var gearbox = BuildCycleRow(left, "Gearbox", y, 860f); y -= 72f;
+            var cam = BuildCycleRow(left, "Camera", y, 860f); y -= 72f;
+            var shake = BuildSliderRow(left, "Camera shake", y, 860f); y -= 72f;
+            var vib = BuildCycleRow(left, "Vibration", y, 860f); y -= 72f;
+            var tut = BuildCycleRow(left, "Tutorials", y, 860f);
+            foreach (RectTransform child in left) { var a = child.anchorMin; child.anchorMin = new Vector2(0f, 1f); child.anchorMax = new Vector2(0f, 1f); child.pivot = new Vector2(0f, 1f); }
+
+            y = -8f;
+            var gfx = BuildCycleRow(right, "Graphics", y, 860f); y -= 72f;
+            var fps = BuildCycleRow(right, "Frame rate", y, 860f); y -= 72f;
+            var unit = BuildCycleRow(right, "Units", y, 860f); y -= 72f;
+            var master = BuildSliderRow(right, "Master volume", y, 860f); y -= 72f;
+            var music = BuildSliderRow(right, "Music volume", y, 860f); y -= 72f;
+            var sfx = BuildSliderRow(right, "Effects volume", y, 860f);
+            foreach (RectTransform child in right) { child.anchorMin = new Vector2(0f, 1f); child.anchorMax = new Vector2(0f, 1f); child.pivot = new Vector2(0f, 1f); }
+
+            panel.EditorWire(style, gearbox, cam, gfx, fps, unit, vib, tut, steer, tilt, shake, master, music, sfx, back);
+            return panel;
+        }
+
+        private static AchievementsPanel BuildAchievementsPanel(Transform parent)
+        {
+            var root = UiKit.CreatePanel(parent, "AchievementsPanel", new Color(0.06f, 0.06f, 0.08f, 1f));
+            UiKit.Stretch((RectTransform)root.transform);
+            var panel = root.gameObject.AddComponent<AchievementsPanel>();
+            var title = UiKit.CreateText(root.transform, "Title", "ACHIEVEMENTS", 52f, UiKit.TextMain, TextAlignmentOptions.Left, FontStyles.Bold);
+            UiKit.Anchor((RectTransform)title.transform, new Vector2(0f, 1f), new Vector2(80f, -40f), new Vector2(1000f, 70f));
+            var back = UiKit.CreateButton(root.transform, "BackButton", "BACK", UiKit.ButtonNormal, 30f, out _);
+            UiKit.Anchor((RectTransform)back.transform, new Vector2(1f, 1f), new Vector2(-60f, -40f), new Vector2(220f, 70f));
+            UiKit.CreateScrollList(root.transform, "List", out var content);
+            UiKit.AnchorRange((RectTransform)content.parent, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(80f, 50f), new Vector2(-60f, -140f));
+
+            var bg = UiKit.CreatePanel(content, "RowTemplate", UiKit.PanelMid);
+            UiKit.SetPreferredHeight(bg, 84f);
+            var row = bg.gameObject.AddComponent<AchievementRow>();
+            var name = UiKit.CreateText(bg.transform, "Name", "Name", 30f, UiKit.TextMain, TextAlignmentOptions.Left, FontStyles.Bold);
+            UiKit.AnchorRange((RectTransform)name.transform, new Vector2(0f, 0.5f), new Vector2(0.75f, 1f), new Vector2(24f, -4f), new Vector2(0f, -8f));
+            var desc = UiKit.CreateText(bg.transform, "Description", "", 22f, UiKit.TextDim, TextAlignmentOptions.Left);
+            UiKit.AnchorRange((RectTransform)desc.transform, new Vector2(0f, 0f), new Vector2(0.75f, 0.5f), new Vector2(24f, 8f), new Vector2(0f, 2f));
+            var progress = UiKit.CreateText(bg.transform, "Progress", "0/1", 30f, UiKit.Accent, TextAlignmentOptions.Right, FontStyles.Bold);
+            UiKit.AnchorRange((RectTransform)progress.transform, new Vector2(0.75f, 0f), new Vector2(1f, 1f), Vector2.zero, new Vector2(-24f, 0f));
+            row.EditorWire(name, desc, progress, bg);
+
+            panel.EditorWire(title, back, content, row);
+            return panel;
         }
 
         private static EventListPanel BuildEventPanel(Transform parent, string name)
@@ -335,6 +448,18 @@ namespace RedlineLegends.Editor
             UiKit.Anchor((RectTransform)back.transform, new Vector2(1f, 1f), new Vector2(-40f, -90f), new Vector2(200f, 64f));
             var testDrive = UiKit.CreateButton(canvas.transform, "TestDriveButton", "TEST DRIVE", UiKit.ButtonNormal, 26f, out _);
             UiKit.Anchor((RectTransform)testDrive.transform, new Vector2(1f, 1f), new Vector2(-40f, -164f), new Vector2(200f, 64f));
+            var tune = UiKit.CreateButton(canvas.transform, "TuneButton", "TUNE", UiKit.ButtonNormal, 26f, out _);
+            UiKit.Anchor((RectTransform)tune.transform, new Vector2(1f, 1f), new Vector2(-40f, -238f), new Vector2(200f, 64f));
+
+            // Paint selector under the info panel.
+            var paintPrev = UiKit.CreateButton(canvas.transform, "PaintPrev", "<", UiKit.ButtonNormal, 26f, out _);
+            UiKit.Anchor((RectTransform)paintPrev.transform, new Vector2(0f, 0f), new Vector2(40f, 200f), new Vector2(64f, 56f));
+            var paintLabel = UiKit.CreateText(canvas.transform, "PaintName", "Paint", 24f, UiKit.TextMain, TextAlignmentOptions.Center, FontStyles.Bold);
+            UiKit.Anchor((RectTransform)paintLabel.transform, new Vector2(0f, 0f), new Vector2(110f, 200f), new Vector2(340f, 56f));
+            var paintNext = UiKit.CreateButton(canvas.transform, "PaintNext", ">", UiKit.ButtonNormal, 26f, out _);
+            UiKit.Anchor((RectTransform)paintNext.transform, new Vector2(0f, 0f), new Vector2(456f, 200f), new Vector2(64f, 56f));
+
+            var tuningPanel = BuildTuningPanel(canvas.transform);
 
             var prev = UiKit.CreateButton(canvas.transform, "PrevButton", "<", UiKit.ButtonNormal, 40f, out _);
             UiKit.Anchor((RectTransform)prev.transform, new Vector2(0.5f, 0f), new Vector2(-330f, 60f), new Vector2(110f, 90f));
@@ -352,9 +477,55 @@ namespace RedlineLegends.Editor
             var upgradeTemplate = BuildUpgradeRow(upgradeContent);
 
             controller.EditorWire(turntable.transform, name, cls, rating, stats, credits, status, prev, next, action, actionLabel, back,
-                testDrive, upgradeContent, upgradeTemplate);
+                testDrive, upgradeContent, upgradeTemplate, tune, tuningPanel, paintPrev, paintNext, paintLabel);
+            tuningPanel.gameObject.SetActive(false);
 
             Save(scene, GaragePath);
+        }
+
+        private static TuningPanel BuildTuningPanel(Transform parent)
+        {
+            var root = UiKit.CreatePanel(parent, "TuningPanel", new Color(0.04f, 0.04f, 0.06f, 0.96f));
+            UiKit.Stretch((RectTransform)root.transform);
+            var panel = root.gameObject.AddComponent<TuningPanel>();
+            var title = UiKit.CreateText(root.transform, "Title", "TUNING", 48f, UiKit.TextMain, TextAlignmentOptions.Left, FontStyles.Bold);
+            UiKit.Anchor((RectTransform)title.transform, new Vector2(0f, 1f), new Vector2(80f, -36f), new Vector2(900f, 64f));
+            var rating = UiKit.CreateText(root.transform, "Rating", "", 28f, UiKit.Accent, TextAlignmentOptions.Left, FontStyles.Bold);
+            UiKit.Anchor((RectTransform)rating.transform, new Vector2(0f, 1f), new Vector2(80f, -100f), new Vector2(1000f, 40f));
+            var close = UiKit.CreateButton(root.transform, "Close", "CLOSE", UiKit.ButtonNormal, 28f, out _);
+            UiKit.Anchor((RectTransform)close.transform, new Vector2(1f, 1f), new Vector2(-60f, -36f), new Vector2(200f, 64f));
+
+            var left = UiKit.CreateRect(root.transform, "Left");
+            UiKit.AnchorRange(left, new Vector2(0f, 0f), new Vector2(0.5f, 1f), new Vector2(80f, 120f), new Vector2(-20f, -150f));
+            var right = UiKit.CreateRect(root.transform, "Right");
+            UiKit.AnchorRange(right, new Vector2(0.5f, 0f), new Vector2(1f, 1f), new Vector2(20f, 120f), new Vector2(-60f, -150f));
+
+            float y = 0f;
+            var fd = BuildSliderRow(left, "Final drive", y, 860f); y -= 72f;
+            var susp = BuildSliderRow(left, "Suspension", y, 860f); y -= 72f;
+            var ride = BuildSliderRow(left, "Ride height", y, 860f); y -= 72f;
+            var grip = BuildSliderRow(left, "Grip bias", y, 860f); y -= 72f;
+            var nos = BuildSliderRow(left, "Nitrous", y, 860f);
+            foreach (RectTransform child in left) { child.anchorMin = new Vector2(0f, 1f); child.anchorMax = new Vector2(0f, 1f); child.pivot = new Vector2(0f, 1f); }
+
+            y = 0f;
+            var gears = new SliderRow[6];
+            for (int i = 0; i < gears.Length; i++)
+            {
+                gears[i] = BuildSliderRow(right, "Gear " + (i + 1), y, 860f);
+                y -= 72f;
+            }
+            foreach (RectTransform child in right) { child.anchorMin = new Vector2(0f, 1f); child.anchorMax = new Vector2(0f, 1f); child.pivot = new Vector2(0f, 1f); }
+            var locked = UiKit.CreateText(right, "Locked", "", 26f, UiKit.TextDim, TextAlignmentOptions.Left);
+            UiKit.Anchor((RectTransform)locked.transform, new Vector2(0f, 1f), new Vector2(0f, 0f), new Vector2(860f, 64f));
+
+            var apply = UiKit.CreateButton(root.transform, "Apply", "APPLY", UiKit.Accent, 30f, out _);
+            UiKit.Anchor((RectTransform)apply.transform, new Vector2(0.5f, 0f), new Vector2(180f, 36f), new Vector2(320f, 72f));
+            var reset = UiKit.CreateButton(root.transform, "Reset", "RESET", UiKit.ButtonNormal, 30f, out _);
+            UiKit.Anchor((RectTransform)reset.transform, new Vector2(0.5f, 0f), new Vector2(-180f, 36f), new Vector2(320f, 72f));
+
+            panel.EditorWire(title, rating, locked, fd, susp, ride, grip, nos, gears, apply, reset, close);
+            return panel;
         }
 
         private static UpgradeRow BuildUpgradeRow(Transform content)

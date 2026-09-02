@@ -193,6 +193,11 @@ namespace RedlineLegends.DragRace
             if (to <= from || State != DragState.Racing) return;
             _shiftCounts[(int)quality]++;
             PlayerShifted?.Invoke(quality);
+            if (quality == ShiftQuality.Perfect)
+            {
+                if (Services.TryGet<AchievementService>(out var achievements)) achievements.RecordPerfectShift();
+                if (Services.TryGet<HapticsService>(out var haptics)) haptics.Pulse(0.4f);
+            }
         }
 
         private void OnSettingsChanged(SettingsData settings)
@@ -313,7 +318,11 @@ namespace RedlineLegends.DragRace
                 {
                     r.Finished = true;
                     r.FinishTime = RaceTime;
-                    if (r.IsLocalPlayer) PlayerTrapSpeedKmh = tel.SpeedKmh;
+                    if (r.IsLocalPlayer)
+                    {
+                        PlayerTrapSpeedKmh = tel.SpeedKmh;
+                        if (Services.TryGet<AchievementService>(out var achievements)) achievements.RecordTopSpeed(tel.SpeedKmh);
+                    }
                     RacerFinished?.Invoke(r);
                     if (r.IsLocalPlayer)
                     {

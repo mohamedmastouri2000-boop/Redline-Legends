@@ -21,6 +21,8 @@ namespace RedlineLegends.Progression
 
         public event Action<RaceEventDefinition, RewardResult> EventCompleted;
         public event Action<ChampionshipDefinition> ChampionshipCompleted;
+        /// <summary>Raised with the full outcome after records and rewards are applied (achievements listen).</summary>
+        public event Action<RaceOutcome> OutcomeRecorded;
 
         public ProgressionService(SaveService save, ContentCatalog catalog, PlayerProfileService profile)
         {
@@ -153,6 +155,7 @@ namespace RedlineLegends.Progression
                 _profile.RecordRaceEntered(false);
             }
 
+            OutcomeRecorded?.Invoke(outcome);
             _save.Save();
             return reward;
         }

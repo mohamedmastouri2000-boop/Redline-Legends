@@ -25,6 +25,7 @@ namespace RedlineLegends.Progression
         public event Action Changed;
         public event Action<string> VehiclePurchased;
         public event Action<string> SelectionChanged;
+        public event Action<string> UpgradeInstalled;
 
         public GarageService(SaveService save, ContentCatalog catalog, PlayerProfileService profile, ProgressionConfig config)
         {
@@ -146,6 +147,7 @@ namespace RedlineLegends.Progression
             if (_profile.Level < stage.RequiredPlayerLevel) return false;
             if (!_profile.TrySpendCredits(stage.Price)) return false;
             owned.UpgradeStages[(int)category] = next;
+            UpgradeInstalled?.Invoke(vehicleId);
             Changed?.Invoke();
             _save.Save();
             return true;

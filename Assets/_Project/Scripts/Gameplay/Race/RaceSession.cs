@@ -209,6 +209,8 @@ namespace RedlineLegends.Race
                     _player = state;
                     vehicle.name = "Vehicle_Player";
                     vehicle.ResetRequested += () => ResetRacer(state);
+                    vehicle.Shifted += OnPlayerShifted;
+                    vehicle.Collided += OnPlayerCollided;
                     if (cameraRig != null)
                     {
                         cameraRig.Follow(vehicle, definition.SupportsCockpitCamera);
@@ -221,6 +223,21 @@ namespace RedlineLegends.Race
             _ranking.AddRange(_racers);
             UpdateRanking();
             if (_player != null) LocalVehicleSpawned?.Invoke(_player.Vehicle);
+        }
+
+        private void OnPlayerShifted(int from, int to, float rpm, ShiftQuality quality)
+        {
+            if (to <= from || State != RaceState.Racing) return;
+            if (quality == ShiftQuality.Perfect)
+            {
+                if (Services.TryGet<AchievementService>(out var achievements)) achievements.RecordPerfectShift();
+                if (Services.TryGet<HapticsService>(out var haptics)) haptics.Pulse(0.4f);
+            }
+        }
+
+        private void OnPlayerCollided(float impulse, Vector3 point)
+        {
+            if (impulse > 2f && Services.TryGet<HapticsService>(out var haptics)) haptics.Pulse(Mathf.Clamp01(impulse / 10f));
         }
 
         private void OnSettingsChanged(Save.SettingsData settings)
@@ -236,6 +253,11 @@ namespace RedlineLegends.Race
         private void OnDestroy()
         {
             if (_settings != null) _settings.Changed -= OnSettingsChanged;
+            if (_player?.Vehicle != null)
+            {
+                _player.Vehicle.Shifted -= OnPlayerShifted;
+                _player.Vehicle.Collided -= OnPlayerCollided;
+            }
             if (layout != null)
                 for (int i = 0; i < layout.Checkpoints.Length; i++)
                     layout.Checkpoints[i].Passed -= OnCheckpointPassed;
@@ -307,6 +329,8 @@ namespace RedlineLegends.Race
                 _rankingTimer = 0f;
                 UpdateProgress();
                 UpdateRanking();
+                if (_player?.Vehicle != null && !IsPractice && Services.TryGet<AchievementService>(out var achievements))
+                    achievements.RecordTopSpeed(_player.Vehicle.Telemetry.SpeedKmh);
             }
             UpdateWrongWayAndStuck(dt);
             if (State != RaceState.Racing) return;

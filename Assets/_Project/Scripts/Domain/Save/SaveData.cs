@@ -133,6 +133,20 @@ namespace RedlineLegends.Save
         public bool Unlocked => UnlockedUtcTicks != 0;
     }
 
+    /// <summary>Running lifetime counters that achievements and the profile screen read.</summary>
+    [Serializable]
+    public sealed class PlayerStatsData
+    {
+        public int RacesEntered;
+        public int RacesWon;
+        public int DragWins;
+        public int PerfectShifts;
+        public float TopSpeedKmh;
+        public long CreditsEarned;
+        public int UpgradesInstalled;
+        public float DistanceDrivenMeters;
+    }
+
     /// <summary>
     /// Root of the persisted profile. Only mutable player state lives here; balance and content
     /// stay in ScriptableObjects and are looked up by the ids stored in this file.
@@ -150,6 +164,7 @@ namespace RedlineLegends.Save
         public ProgressionData Progression = new ProgressionData();
         public SettingsData Settings = new SettingsData();
         public List<AchievementData> Achievements = new List<AchievementData>();
+        public PlayerStatsData Stats = new PlayerStatsData();
 
         public static SaveData CreateNew(SettingsData defaultSettings, int startingCredits)
         {
@@ -179,6 +194,7 @@ namespace RedlineLegends.Save
             Progression.CompletedTutorials ??= new List<string>();
             Settings ??= new SettingsData();
             Achievements ??= new List<AchievementData>();
+            Stats ??= new PlayerStatsData();
             if (string.IsNullOrEmpty(Profile.ProfileId)) Profile.ProfileId = Guid.NewGuid().ToString("N");
             if (Profile.Level < 1) Profile.Level = 1;
             for (int i = 0; i < Garage.Owned.Count; i++)
