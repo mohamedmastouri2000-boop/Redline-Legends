@@ -52,9 +52,11 @@ namespace RedlineLegends.Editor
                 var turntable = GameObject.Find("Turntable");
                 var instance = (GameObject)PrefabUtility.InstantiatePrefab(car.VisualPrefab);
                 instance.transform.SetParent(turntable != null ? turntable.transform : null, false);
-                instance.transform.localRotation = Quaternion.Euler(0f, 35f, 0f);
                 VehicleVisualUtility.ApplyPaint(instance, car, 0);
-                Render(Camera.main, Path.Combine(dir, (shot++).ToString("00") + "_garage_" + car.Id + ".png"));
+                instance.transform.localRotation = Quaternion.Euler(0f, 35f, 0f);
+                Render(Camera.main, Path.Combine(dir, (shot++).ToString("00") + "_garage_" + car.Id + "_rear.png"));
+                instance.transform.localRotation = Quaternion.Euler(0f, 215f, 0f);
+                Render(Camera.main, Path.Combine(dir, (shot++).ToString("00") + "_garage_" + car.Id + "_front.png"));
             }
 
             // Main menu with its UI and the showcase car.
@@ -181,6 +183,7 @@ namespace RedlineLegends.Editor
             var rt = new RenderTexture(Width, Height, 24, RenderTextureFormat.ARGB32) { antiAliasing = 4 };
             var previous = camera.targetTexture;
             camera.targetTexture = rt;
+            camera.Render(); // warm-up: the first frame after a scene load has stale shadows/probes
             camera.Render();
             camera.targetTexture = previous;
             var tex = new Texture2D(Width, Height, TextureFormat.RGB24, false);

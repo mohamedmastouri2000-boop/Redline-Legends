@@ -46,7 +46,7 @@ Texture2D:
     offset: 0
     size: 0
     path: 
---- !u!213 &7030897269366889506
+--- !u!213 &1567642066754577997
 Sprite:
   serializedVersion: 2
   m_ObjectHideFlags: 0

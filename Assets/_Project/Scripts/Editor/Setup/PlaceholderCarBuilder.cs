@@ -73,23 +73,24 @@ namespace RedlineLegends.Editor
             body.transform.SetParent(root.transform, false);
 
             // Lofted body hull (paint + glass submeshes) plus detail parts.
-            var profile = CarMeshBuilder.ProfileFor(shape, cls);
+            var profile = CarMeshBuilder.ProfileFor(shape, cls, vehicleId);
             EditorPaths.EnsureFolder(EditorPaths.VehiclePrefabs + "/Meshes");
             var bodyMesh = CarMeshBuilder.BuildBody(profile, EditorPaths.VehiclePrefabs + "/Meshes/" + vehicleId + "_body.asset");
             body.GetComponent<MeshFilter>().sharedMesh = bodyMesh;
-            body.GetComponent<MeshRenderer>().sharedMaterials = new[] { paint, glass };
+            body.GetComponent<MeshRenderer>().sharedMaterials = new[] { paint, glass, trim };
             CarMeshBuilder.AddDetails(body.transform, profile, trim, lightFront, lightRear, glass, paint);
 
             // Wheels: pivot at hub so the controller can spin/steer them.
-            float half = shape.Wheelbase * 0.5f;
-            Wheel(root.transform, VehicleVisualUtility.WheelFL, new Vector3(-shape.Track * 0.5f, shape.WheelRadius, half), profile, tire, rim, trim);
-            Wheel(root.transform, VehicleVisualUtility.WheelFR, new Vector3(shape.Track * 0.5f, shape.WheelRadius, half), profile, tire, rim, trim);
-            Wheel(root.transform, VehicleVisualUtility.WheelRL, new Vector3(-shape.Track * 0.5f, shape.WheelRadius, -half), profile, tire, rim, trim);
-            Wheel(root.transform, VehicleVisualUtility.WheelRR, new Vector3(shape.Track * 0.5f, shape.WheelRadius, -half), profile, tire, rim, trim);
+            float half = profile.Wheelbase * 0.5f;
+            var wheelMesh = CarMeshBuilder.BuildWheelMesh(profile, EditorPaths.VehiclePrefabs + "/Meshes/" + vehicleId + "_wheel.asset");
+            Wheel(root.transform, VehicleVisualUtility.WheelFL, new Vector3(-profile.Track * 0.5f, profile.WheelRadius, half), profile, wheelMesh, tire, rim, trim, true);
+            Wheel(root.transform, VehicleVisualUtility.WheelFR, new Vector3(profile.Track * 0.5f, profile.WheelRadius, half), profile, wheelMesh, tire, rim, trim, false);
+            Wheel(root.transform, VehicleVisualUtility.WheelRL, new Vector3(-profile.Track * 0.5f, profile.WheelRadius, -half), profile, wheelMesh, tire, rim, trim, true);
+            Wheel(root.transform, VehicleVisualUtility.WheelRR, new Vector3(profile.Track * 0.5f, profile.WheelRadius, -half), profile, wheelMesh, tire, rim, trim, false);
 
-            float cabinZ = (profile.CabinStart + profile.RoofFront) * 0.5f * profile.Length * 0.5f;
-            Anchor(root.transform, VehicleVisualUtility.CockpitCameraAnchor, new Vector3(-0.35f, profile.RoofHeight - 0.18f, cabinZ));
-            Anchor(root.transform, VehicleVisualUtility.ExhaustAnchor, new Vector3(shape.Width * 0.22f, profile.SillHeight + 0.1f, -shape.Length * 0.5f - 0.08f));
+            float cabinZ = (profile.CabinFront + profile.RoofFront) * 0.5f * profile.Length * 0.5f;
+            Anchor(root.transform, VehicleVisualUtility.CockpitCameraAnchor, new Vector3(-0.35f, profile.RoofY - 0.18f, cabinZ));
+            Anchor(root.transform, VehicleVisualUtility.ExhaustAnchor, new Vector3(profile.Width * 0.22f, profile.Sill + 0.12f, -profile.Length * 0.5f - 0.08f));
 
             var prefab = PrefabUtility.SaveAsPrefabAsset(root, path);
             Object.DestroyImmediate(root);
@@ -108,12 +109,12 @@ namespace RedlineLegends.Editor
             return go;
         }
 
-        private static void Wheel(Transform parent, string name, Vector3 hub, CarMeshBuilder.Profile profile, Material tire, Material rim, Material trim)
+        private static void Wheel(Transform parent, string name, Vector3 hub, CarMeshBuilder.Profile profile, Mesh wheelMesh, Material tire, Material rim, Material trim, bool leftSide)
         {
             var pivot = new GameObject(name);
             pivot.transform.SetParent(parent, false);
             pivot.transform.localPosition = hub;
-            CarMeshBuilder.BuildWheel(pivot.transform, profile, tire, rim, trim);
+            CarMeshBuilder.BuildWheel(pivot.transform, profile, wheelMesh, tire, rim, trim, leftSide);
         }
 
         private static void Anchor(Transform parent, string name, Vector3 localPosition)
