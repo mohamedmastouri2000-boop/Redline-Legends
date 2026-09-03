@@ -74,12 +74,18 @@ namespace RedlineLegends.Editor
             for (int i = 1; i < samples.Count; i++) bounds.Encapsulate(samples[i].Position);
 
             // Rolling terrain replaces the flat plane: level beside the road, hills toward the horizon.
-            var rock = MaterialFactory.Textured(prefix + "_Cliff", ProceduralTextures.Concrete(), spec.CliffColor * 1.4f, 0f, 0.2f, new Vector2(4f, 4f));
+            var rock = MaterialFactory.Textured(prefix + "_Cliff", ProceduralTextures.Ground(), spec.CliffColor * 1.5f, 0f, 0.12f, new Vector2(10f, 10f));
             var terrain = TerrainBuilder.Build(trackRoot.transform, samples, bounds, ground, meshFolder, prefix,
                 margin: 900f, cell: 10f, nearFlat: spec.TerrainNear, farHills: spec.TerrainFar, seed: spec.Id.GetHashCode() % 977,
                 steepMaterial: rock, blendDistance: spec.TerrainBlend, farDistance: spec.TerrainFarDistance);
 
             TrackDressing.Dress(spec, samples, trackRoot.transform, bounds, terrain.HeightAt);
+            if (spec.SkylinePeaks > 0)
+            {
+                var skyRng = new System.Random(spec.Id.GetHashCode() ^ 0x5157);
+                TrackDressing.Skyline(trackRoot.transform, bounds, prefix, skyRng, spec.SkylineColor, spec.SkylineSnow,
+                    spec.SkylineRadius, spec.SkylineMinHeight, spec.SkylineMaxHeight, spec.SkylinePeaks);
+            }
 
             // ---- layout
             var linePoints = new Vector3[samples.Count];
@@ -145,6 +151,7 @@ namespace RedlineLegends.Editor
             line.GetComponent<MeshRenderer>().sharedMaterial = MaterialFactory.Opaque("Track_Line", Color.white, 0f, 0.3f);
             Object.DestroyImmediate(line.GetComponent<Collider>());
             line.isStatic = true;
+            StartGantry(trackRoot.transform, start, prefix);
 
             layout.EditorInitialize(spec.Id, gates.ToArray(), slots, racingLine, spec.Loop, null, 5f);
 
@@ -164,6 +171,7 @@ namespace RedlineLegends.Editor
             session.EditorWire(layout, rig);
 
             var ui = RaceUiBuilder.Build(session, rig);
+            RaceUiBuilder.AddTrackMap(ui, session, samples, spec.Loop, meshFolder, prefix);
             var screen = ui.Canvas.gameObject.AddComponent<RaceScreenController>();
             screen.EditorWire(session, ui.Hud, ui.Countdown, ui.PausePanel, ui.ResumeButton, ui.RestartButton, ui.QuitButton,
                 ui.Results, ui.Controls.gameObject, ui.Tutorial);
@@ -171,6 +179,34 @@ namespace RedlineLegends.Editor
 
             SceneBuilder.FinalizeLighting();
             EditorSceneManager.SaveScene(scene, ScenePath(spec));
+        }
+
+        /// <summary>Overhead start/finish gantry: two posts, a beam and a lit banner.</summary>
+        private static void StartGantry(Transform parent, TrackMeshBuilder.Sample start, string prefix)
+        {
+            var post = MaterialFactory.Opaque("Track_GantryPost", new Color(0.35f, 0.36f, 0.4f), 0.7f, 0.5f);
+            var banner = MaterialFactory.Emissive("Track_GantryBanner", new Color(0.85f, 0.12f, 0.1f), new Color(1.2f, 0.15f, 0.1f));
+            float halfW = start.HalfWidth + 3.2f;
+            var rot = Quaternion.LookRotation(start.Forward, Vector3.up);
+            var root = new GameObject("StartGantry");
+            root.transform.SetParent(parent, false);
+            root.transform.SetPositionAndRotation(start.Position, rot);
+            void Part(string name, Vector3 localPos, Vector3 size, Material mat)
+            {
+                var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                go.name = name;
+                go.transform.SetParent(root.transform, false);
+                go.transform.localPosition = localPos;
+                go.transform.localScale = size;
+                go.GetComponent<MeshRenderer>().sharedMaterial = mat;
+                go.isStatic = true;
+                go.layer = GameLayers.Track;
+                if (size.y < 2f) Object.DestroyImmediate(go.GetComponent<Collider>());
+            }
+            Part("PostL", new Vector3(-halfW, 3.6f, 0f), new Vector3(0.5f, 7.2f, 0.5f), post);
+            Part("PostR", new Vector3(halfW, 3.6f, 0f), new Vector3(0.5f, 7.2f, 0.5f), post);
+            Part("Beam", new Vector3(0f, 7.0f, 0f), new Vector3(halfW * 2f + 0.5f, 0.4f, 0.6f), post);
+            Part("Banner", new Vector3(0f, 6.1f, 0f), new Vector3(halfW * 1.6f, 1.4f, 0.12f), banner);
         }
 
         private static Checkpoint CreateGate(Transform parent, TrackMeshBuilder.Sample s, int index)

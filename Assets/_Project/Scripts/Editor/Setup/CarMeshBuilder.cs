@@ -257,6 +257,30 @@ namespace RedlineLegends.Editor
             float mirrorY = p.ShoulderHeight + 0.1f;
             Box(body, "MirrorL", paint, new Vector3(-p.Width * 0.5f - 0.1f, mirrorY, mirrorZ), new Vector3(0.2f, 0.09f, 0.14f), Quaternion.identity);
             Box(body, "MirrorR", paint, new Vector3(p.Width * 0.5f + 0.1f, mirrorY, mirrorZ), new Vector3(0.2f, 0.09f, 0.14f), Quaternion.identity);
+            // Cabin interior: an opaque dark block just under the shoulder line so the glass shows a
+            // cabin, not the wheel liners and floor behind it. Seats sit under the flat roof span and
+            // the dash under the windscreen base, so nothing pokes through the glass.
+            float cabinRearZ = (p.RearGlassStart + 0.03f) * halfL, cabinFrontZ = (p.CabinEnd - 0.03f) * halfL;
+            float cabinHalfW = Mathf.Max(0.3f, p.Width * 0.5f - p.GlassInset - 0.12f);
+            float cabinTop = p.ShoulderHeight - 0.02f;
+            Box(body, "Interior", trim, new Vector3(0f, (p.SillHeight + 0.02f + cabinTop) * 0.5f, (cabinRearZ + cabinFrontZ) * 0.5f),
+                new Vector3(cabinHalfW * 2f, cabinTop - p.SillHeight - 0.02f, cabinFrontZ - cabinRearZ), Quaternion.identity);
+            Box(body, "Dash", trim, new Vector3(0f, cabinTop - 0.05f, cabinFrontZ - 0.3f), new Vector3(cabinHalfW * 1.9f, 0.1f, 0.5f), Quaternion.identity);
+            float seatZ = Mathf.Lerp(p.RoofRear, p.RoofFront, 0.3f) * halfL;
+            float seatH = Mathf.Min(0.3f, p.RoofHeight - p.ShoulderHeight - 0.08f);
+            Box(body, "SeatL", trim, new Vector3(-cabinHalfW * 0.45f, cabinTop + seatH * 0.5f, seatZ), new Vector3(0.45f, seatH, 0.12f), Quaternion.Euler(-10f, 0f, 0f));
+            Box(body, "SeatR", trim, new Vector3(cabinHalfW * 0.45f, cabinTop + seatH * 0.5f, seatZ), new Vector3(0.45f, seatH, 0.12f), Quaternion.Euler(-10f, 0f, 0f));
+            // Wheel-well liners: dark blocks inboard of each tyre so the arch reads as a closed
+            // well instead of a window through the car.
+            float linerX = p.Track * 0.5f - p.WheelWidth * 0.5f - 0.22f;
+            // Stays under the arch top (see BuildBody) so nothing pokes through the deck or bonnet.
+            float linerH = Mathf.Min(p.WheelRadius * 2f + 0.07f, p.ShoulderHeight - 0.06f) - 0.05f;
+            foreach (float zSign in new[] { -1f, 1f })
+            foreach (float xSign in new[] { -1f, 1f })
+            {
+                Box(body, "WellLiner", trim, new Vector3(xSign * linerX, linerH * 0.5f + 0.02f, zSign * p.Wheelbase * 0.5f),
+                    new Vector3(0.44f, linerH, p.WheelRadius * 2f + 0.2f), Quaternion.identity);
+            }
             // Side skirts between the arches
             float skirtLength = Mathf.Max(0.6f, p.Wheelbase - p.WheelRadius * 2f - 0.5f);
             Box(body, "SkirtL", trim, new Vector3(-p.Width * 0.49f, p.SillHeight + 0.02f, 0f), new Vector3(0.05f, 0.08f, skirtLength), Quaternion.identity);
@@ -280,6 +304,8 @@ namespace RedlineLegends.Editor
             Cylinder(pivot, "Hub", rim, Vector3.zero, r * 0.16f, w * 1.1f, Quaternion.Euler(0f, 0f, 90f));
             // Brake disc and caliper visible through the spokes (rim face is offset outward).
             Cylinder(pivot, "BrakeDisc", trim, Vector3.zero, r * 0.55f, w * 0.3f, Quaternion.Euler(0f, 0f, 90f));
+            var caliper = Box(pivot, "Caliper", trim, new Vector3(0f, r * 0.2f, -r * 0.42f), new Vector3(w * 0.34f, r * 0.42f, r * 0.2f), Quaternion.identity);
+            caliper.GetComponent<MeshRenderer>().sharedMaterial = rim;
             // Spokes: five thin bars on each face.
             for (int i = 0; i < 5; i++)
             {

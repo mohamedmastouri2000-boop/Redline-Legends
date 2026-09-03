@@ -40,7 +40,9 @@ namespace RedlineLegends.Editor
                 float noise = Fbm(p.x * 0.004f + seed, p.z * 0.004f - seed, 4) * 2f - 1f;
                 float ridge = Fbm(p.x * 0.0012f - seed * 0.7f, p.z * 0.0012f + seed * 0.3f, 3) * 2f - 1f;
                 float amplitude = Mathf.Lerp(nearFlat, farHills, far * far);
-                float h = roadY - 0.25f + Smooth(t) * (noise * amplitude * 0.35f + Mathf.Max(0f, ridge) * amplitude);
+                // Squared ridge: soft onset, so distant hills swell instead of standing up like a wall.
+                float ridgeUp = Mathf.Max(0f, ridge);
+                float h = roadY - 0.25f + Smooth(t) * (noise * amplitude * 0.45f + ridgeUp * ridgeUp * amplitude);
                 return h;
             };
 

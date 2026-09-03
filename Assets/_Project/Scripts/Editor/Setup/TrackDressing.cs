@@ -245,10 +245,79 @@ namespace RedlineLegends.Editor
             }
         }
 
+        /// <summary>
+        /// Ring of low-poly peaks around the whole track, far enough that fog tints them into a
+        /// horizon. Snow caps on the highest third when requested.
+        /// </summary>
+        public static void Skyline(Transform parent, Bounds bounds, string prefix, System.Random rng, Color rock, bool snow,
+            float radius, float minHeight, float maxHeight, int count)
+        {
+            var rockMat = MaterialFactory.Opaque(prefix + "_Peak", rock, 0f, 0.1f);
+            var snowMat = MaterialFactory.Opaque(prefix + "_Snow", new Color(0.92f, 0.94f, 0.98f), 0f, 0.2f);
+            var cone = Cone(8, prefix + "_PeakMesh");
+            string folder = EditorPaths.Root + "/Tracks/" + prefix;
+            EditorPaths.EnsureFolder(folder);
+            AssetDatabase.CreateAsset(cone, folder + "/" + cone.name + ".asset");
+            var group = new GameObject("Skyline");
+            group.transform.SetParent(parent, false);
+            Vector3 centre = new Vector3(bounds.center.x, 0f, bounds.center.z);
+            float reach = Mathf.Max(bounds.extents.x, bounds.extents.z) + radius;
+            for (int i = 0; i < count; i++)
+            {
+                float angle = (i + (float)rng.NextDouble() * 0.8f) / count * Mathf.PI * 2f;
+                float dist = reach * (0.85f + (float)rng.NextDouble() * 0.5f);
+                float h = minHeight + (float)rng.NextDouble() * (maxHeight - minHeight);
+                float baseR = h * (1.6f + (float)rng.NextDouble() * 1.4f);
+                var pos = centre + new Vector3(Mathf.Cos(angle) * dist, -h * 0.08f, Mathf.Sin(angle) * dist);
+                var peak = new GameObject("Peak" + i, typeof(MeshFilter), typeof(MeshRenderer));
+                peak.transform.SetParent(group.transform, false);
+                peak.transform.SetPositionAndRotation(pos, Quaternion.Euler(0f, (float)rng.NextDouble() * 360f, 0f));
+                peak.transform.localScale = new Vector3(baseR, h, baseR * (0.7f + (float)rng.NextDouble() * 0.5f));
+                peak.GetComponent<MeshFilter>().sharedMesh = cone;
+                peak.GetComponent<MeshRenderer>().sharedMaterial = rockMat;
+                peak.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                peak.isStatic = true;
+                if (snow && h > minHeight + (maxHeight - minHeight) * 0.45f)
+                {
+                    var cap = new GameObject("Snow", typeof(MeshFilter), typeof(MeshRenderer));
+                    cap.transform.SetParent(peak.transform, false);
+                    cap.transform.localPosition = new Vector3(0f, 0.7f, 0f);
+                    cap.transform.localScale = new Vector3(0.31f, 0.301f, 0.31f);
+                    cap.GetComponent<MeshFilter>().sharedMesh = cone;
+                    cap.GetComponent<MeshRenderer>().sharedMaterial = snowMat;
+                    cap.GetComponent<MeshRenderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                    cap.isStatic = true;
+                }
+            }
+        }
+
+        /// <summary>Unit cone: base radius 1 at y=0, apex at y=1, flat-shaded sides for a faceted peak.</summary>
+        private static Mesh Cone(int sides, string name)
+        {
+            var verts = new List<Vector3>();
+            var tris = new List<int>();
+            for (int i = 0; i < sides; i++)
+            {
+                float a0 = i / (float)sides * Mathf.PI * 2f, a1 = (i + 1) / (float)sides * Mathf.PI * 2f;
+                int b = verts.Count;
+                verts.Add(new Vector3(Mathf.Cos(a0), 0f, Mathf.Sin(a0)));
+                verts.Add(new Vector3(0f, 1f, 0f));
+                verts.Add(new Vector3(Mathf.Cos(a1), 0f, Mathf.Sin(a1)));
+                tris.Add(b); tris.Add(b + 1); tris.Add(b + 2);
+            }
+            var mesh = new Mesh { name = name };
+            mesh.SetVertices(verts);
+            mesh.SetTriangles(tris, 0);
+            mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
+            return mesh;
+        }
+
         private static void Trees(Transform parent, List<TrackMeshBuilder.Sample> samples, System.Random rng, string prefix, int count, float minOffset, float maxOffset)
         {
             var trunk = MaterialFactory.Opaque(prefix + "_Trunk", new Color(0.3f, 0.22f, 0.15f), 0f, 0.2f);
             var leaves = MaterialFactory.Opaque(prefix + "_Leaves", new Color(0.12f, 0.32f, 0.16f), 0f, 0.15f);
+            var leaves2 = MaterialFactory.Opaque(prefix + "_Leaves2", new Color(0.28f, 0.45f, 0.18f), 0f, 0.15f);
             int placed = 0, attempts = 0;
             while (placed < count && attempts < count * 6)
             {
@@ -260,13 +329,26 @@ namespace RedlineLegends.Editor
                 if (!IsClear(samples, pos, 6f)) continue;
                 float h = 9f + (float)rng.NextDouble() * 12f;
                 pos.y = -1f;
-                Prop(parent, "Trunk" + placed, PrimitiveType.Cylinder, pos + Vector3.up * h * 0.22f, new Vector3(0.5f, h * 0.22f, 0.5f), Quaternion.identity, trunk, false);
-                // Conifer: three stacked, shrinking crowns read as a tree from a moving car.
-                for (int tier = 0; tier < 3; tier++)
+                bool conifer = rng.Next(3) != 0;
+                if (conifer)
                 {
-                    float y = h * (0.35f + tier * 0.22f);
-                    float w = (4.6f - tier * 1.3f) * (0.8f + (float)rng.NextDouble() * 0.4f);
-                    Prop(parent, "Crown" + placed + "_" + tier, PrimitiveType.Capsule, pos + Vector3.up * y, new Vector3(w, h * 0.16f, w), Quaternion.identity, leaves, false);
+                    Prop(parent, "Trunk" + placed, PrimitiveType.Cylinder, pos + Vector3.up * h * 0.22f, new Vector3(0.5f, h * 0.22f, 0.5f), Quaternion.identity, trunk, false);
+                    // Conifer: three stacked, shrinking crowns read as a tree from a moving car.
+                    for (int k = 0; k < 3; k++)
+                    {
+                        float y = h * (0.35f + k * 0.22f);
+                        float r = h * (0.26f - k * 0.06f);
+                        Prop(parent, "Crown" + placed + "_" + k, PrimitiveType.Capsule, pos + Vector3.up * y, new Vector3(r * 2f, h * 0.16f, r * 2f), Quaternion.identity, leaves, false);
+                    }
+                }
+                else
+                {
+                    // Broadleaf: shorter trunk, one big round crown with a second offset lobe.
+                    float th = h * 0.75f;
+                    Prop(parent, "Trunk" + placed, PrimitiveType.Cylinder, pos + Vector3.up * th * 0.3f, new Vector3(0.7f, th * 0.3f, 0.7f), Quaternion.identity, trunk, false);
+                    float r = th * 0.42f;
+                    Prop(parent, "Crown" + placed + "_0", PrimitiveType.Sphere, pos + Vector3.up * th * 0.75f, new Vector3(r * 2f, r * 1.7f, r * 2f), Quaternion.identity, leaves2, false);
+                    Prop(parent, "Crown" + placed + "_1", PrimitiveType.Sphere, pos + Vector3.up * th * 0.62f + new Vector3(r * 0.6f, 0f, r * 0.3f), new Vector3(r * 1.5f, r * 1.3f, r * 1.5f), Quaternion.identity, leaves2, false);
                 }
                 placed++;
             }

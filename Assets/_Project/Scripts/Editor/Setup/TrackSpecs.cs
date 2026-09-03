@@ -28,6 +28,13 @@ namespace RedlineLegends.Editor
         /// <summary>Distance at which the hills reach full height.</summary>
         public float TerrainFarDistance = 700f;
         public Color CliffColor = new Color(0.42f, 0.4f, 0.38f);
+        /// <summary>Distant peaks around the horizon (0 disables, e.g. city tracks).</summary>
+        public int SkylinePeaks = 40;
+        public float SkylineRadius = 1500f;
+        public float SkylineMinHeight = 120f;
+        public float SkylineMaxHeight = 340f;
+        public bool SkylineSnow;
+        public Color SkylineColor = new Color(0.36f, 0.4f, 0.42f);
         /// <summary>Night scenes light the world with explicit ambient colours instead of the dark sky.</summary>
         public bool NightAmbient;
         public Color AmbientSky = new Color(0.3f, 0.36f, 0.55f);
@@ -78,7 +85,7 @@ namespace RedlineLegends.Editor
         public static CircuitSpec SunsetLoop => new CircuitSpec
         {
             Id = ContentGenerator.CircuitTrackId, SceneName = ContentGenerator.CircuitSceneName, DisplayName = "Sunset Loop",
-            Theme = TrackTheme.Coast, Dressing = "coast",
+            Theme = TrackTheme.Coast, Dressing = "coast", SkylinePeaks = 22, SkylineMaxHeight = 200f, SkylineColor = new Color(0.4f, 0.36f, 0.4f),
             Control = new[]
             {
                 new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 120f), new Vector3(0f, 0f, 240f), new Vector3(-25f, 0f, 320f),
@@ -94,7 +101,7 @@ namespace RedlineLegends.Editor
         public static CircuitSpec MeridianDowntown => new CircuitSpec
         {
             Id = "trk_city_circuit", SceneName = "Track_MeridianDowntown", DisplayName = "Meridian Downtown",
-            Theme = TrackTheme.ModernCity, Dressing = "city", HalfWidth = 7f, TerrainNear = 0.5f, TerrainFar = 20f,
+            Theme = TrackTheme.ModernCity, Dressing = "city", HalfWidth = 7f, TerrainNear = 0.5f, TerrainFar = 20f, SkylinePeaks = 0,
             Control = new[]
             {
                 new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 200f), new Vector3(0f, 0f, 400f), new Vector3(60f, 0f, 460f),
@@ -109,7 +116,7 @@ namespace RedlineLegends.Editor
         public static CircuitSpec NeonLoop => new CircuitSpec
         {
             Id = "trk_night_run", SceneName = "Track_NeonLoop", DisplayName = "Neon Loop",
-            Theme = TrackTheme.NightCity, Dressing = "night", HalfWidth = 7f,
+            Theme = TrackTheme.NightCity, Dressing = "night", HalfWidth = 7f, SkylinePeaks = 0,
             Control = new[]
             {
                 new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 150f), new Vector3(40f, 0f, 280f), new Vector3(150f, 0f, 340f),
@@ -128,7 +135,7 @@ namespace RedlineLegends.Editor
         {
             Id = "trk_dune_pass", SceneName = "Track_DunePass", DisplayName = "Dune Pass",
             Theme = TrackTheme.Desert, Dressing = "desert", HalfWidth = 7.5f, MaxSpeedMs = 85f, TerrainNear = 4f, TerrainFar = 90f,
-            TerrainBlend = 200f, CliffColor = new Color(0.6f, 0.48f, 0.35f),
+            TerrainBlend = 200f, CliffColor = new Color(0.6f, 0.48f, 0.35f), SkylineColor = new Color(0.62f, 0.5f, 0.36f), SkylineMaxHeight = 220f,
             Control = new[]
             {
                 new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 300f), new Vector3(-80f, 4f, 520f), new Vector3(-260f, 8f, 600f),
@@ -145,6 +152,7 @@ namespace RedlineLegends.Editor
             Id = "trk_alpine_climb", SceneName = "Track_AlpineClimb", DisplayName = "Alpine Climb",
             Theme = TrackTheme.Mountains, Dressing = "mountain", Loop = false, HalfWidth = 6f, GridSlots = 8, TerrainNear = 6f, TerrainFar = 95f,
             TerrainBlend = 260f, TerrainFarDistance = 1400f, CliffColor = new Color(0.38f, 0.4f, 0.36f),
+            SkylinePeaks = 56, SkylineRadius = 1300f, SkylineMinHeight = 260f, SkylineMaxHeight = 620f, SkylineSnow = true, SkylineColor = new Color(0.34f, 0.36f, 0.38f),
             // A climb that never doubles back over itself: stacked switchbacks turned the terrain
             // between them into a cliff wall, so every bend is at least 150 m from any other.
             Control = new[]
@@ -163,7 +171,7 @@ namespace RedlineLegends.Editor
         public static CircuitSpec CargoYard => new CircuitSpec
         {
             Id = "trk_cargo_yard", SceneName = "Track_CargoYard", DisplayName = "Cargo Yard",
-            Theme = TrackTheme.Industrial, Dressing = "industrial", HalfWidth = 6f, TerrainNear = 0.5f, TerrainFar = 15f,
+            Theme = TrackTheme.Industrial, Dressing = "industrial", HalfWidth = 6f, TerrainNear = 0.5f, TerrainFar = 15f, SkylinePeaks = 16, SkylineMaxHeight = 160f,
             Control = new[]
             {
                 new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 120f), new Vector3(-40f, 0f, 180f), new Vector3(-120f, 0f, 180f),

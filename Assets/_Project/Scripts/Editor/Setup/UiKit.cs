@@ -20,7 +20,7 @@ namespace RedlineLegends.Editor
         public static readonly Color AccentDim = new Color(0.55f, 0.12f, 0.11f, 1f);
         public static readonly Color TextMain = new Color(0.96f, 0.96f, 0.97f, 1f);
         public static readonly Color TextDim = new Color(0.7f, 0.72f, 0.78f, 1f);
-        public static readonly Color ButtonNormal = new Color(0.19f, 0.19f, 0.24f, 1f);
+        public static readonly Color ButtonNormal = new Color(0.22f, 0.22f, 0.28f, 1f);
 
         private static Sprite Rounded => ProceduralTextures.RoundedRect();
 

@@ -64,6 +64,9 @@ namespace RedlineLegends.Editor
             mat.SetFloat(ClearCoatMask, 1f);
             mat.SetFloat(ClearCoatSmoothness, 0.95f);
             mat.EnableKeyword("_CLEARCOAT");
+            // Two-sided: the lofted body is an open shell around the wheel wells, so back faces
+            // must render or the car looks see-through from low angles.
+            mat.SetFloat("_Cull", (float)UnityEngine.Rendering.CullMode.Off);
             EditorUtility.SetDirty(mat);
             return mat;
         }

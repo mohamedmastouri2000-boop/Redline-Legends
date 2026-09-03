@@ -1,6 +1,7 @@
 using RedlineLegends.Cameras;
 using RedlineLegends.UI;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -125,6 +126,100 @@ namespace RedlineLegends.Editor
                 PausePanel = pausePanel.gameObject, ResumeButton = resume, RestartButton = restart, QuitButton = quit, Results = results,
                 Tutorial = tutorial
             };
+        }
+
+        /// <summary>
+        /// Minimap under the race box: the racing line is rasterised into a sprite at build time
+        /// and saved next to the track meshes; a dot follows the local car at runtime.
+        /// </summary>
+        public static void AddTrackMap(Result ui, MonoBehaviour localRacerSource, System.Collections.Generic.List<TrackMeshBuilder.Sample> samples,
+            bool loop, string assetFolder, string prefix)
+        {
+            const int size = 256;
+            const float pad = 14f;
+            float minX = float.MaxValue, maxX = float.MinValue, minZ = float.MaxValue, maxZ = float.MinValue;
+            foreach (var s in samples)
+            {
+                minX = Mathf.Min(minX, s.Position.x); maxX = Mathf.Max(maxX, s.Position.x);
+                minZ = Mathf.Min(minZ, s.Position.z); maxZ = Mathf.Max(maxZ, s.Position.z);
+            }
+            float span = Mathf.Max(maxX - minX, maxZ - minZ, 1f);
+            // Square world window centred on the track so the map is not stretched.
+            var worldMin = new Vector2((minX + maxX) * 0.5f - span * 0.5f, (minZ + maxZ) * 0.5f - span * 0.5f);
+            var worldSize = new Vector2(span, span);
+
+            var tex = new Texture2D(size, size, TextureFormat.RGBA32, false) { name = prefix + "_Map" };
+            var pixels = new Color[size * size];
+            for (int i = 0; i < pixels.Length; i++) pixels[i] = Color.clear;
+            Vector2 ToPixel(Vector3 p) => new Vector2(
+                Mathf.Lerp(pad, size - pad, (p.x - worldMin.x) / worldSize.x),
+                Mathf.Lerp(pad, size - pad, (p.z - worldMin.y) / worldSize.y));
+            int segments = loop ? samples.Count : samples.Count - 1;
+            for (int i = 0; i < segments; i++)
+            {
+                var a = ToPixel(samples[i].Position);
+                var b = ToPixel(samples[(i + 1) % samples.Count].Position);
+                Line(pixels, size, a, b, 3.2f);
+            }
+            var startPx = ToPixel(samples[0].Position);
+            Disc(pixels, size, startPx, 5f, new Color(0.93f, 0.18f, 0.16f, 1f));
+            tex.SetPixels(pixels);
+            tex.Apply(false, false);
+            tex.wrapMode = TextureWrapMode.Clamp;
+            tex.filterMode = FilterMode.Bilinear;
+            string texPath = assetFolder + "/" + tex.name + ".asset";
+            AssetDatabase.CreateAsset(tex, texPath);
+            var sprite = Sprite.Create(tex, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect);
+            sprite.name = prefix + "_MapSprite";
+            AssetDatabase.AddObjectToAsset(sprite, tex);
+
+            var root = UiKit.SafeRoot(ui.Canvas);
+            var panel = UiKit.CreatePanel(root, "TrackMap", new Color(0.02f, 0.02f, 0.04f, 0.5f));
+            panel.raycastTarget = false;
+            UiKit.Anchor((RectTransform)panel.transform, new Vector2(0f, 1f), new Vector2(30f, -152f), new Vector2(220f, 220f));
+            var map = UiKit.CreatePanel(panel.transform, "Line", Color.white, false);
+            map.raycastTarget = false;
+            map.sprite = sprite;
+            map.preserveAspect = true;
+            UiKit.Stretch((RectTransform)map.transform, 6f, 6f, 6f, 6f);
+            var dot = UiKit.CreatePanel(map.transform, "Player", UiKit.Accent, false);
+            dot.raycastTarget = false;
+            dot.sprite = ProceduralTextures.Circle();
+            var dotRect = (RectTransform)dot.transform;
+            dotRect.anchorMin = dotRect.anchorMax = Vector2.zero;
+            dotRect.pivot = new Vector2(0.5f, 0.5f);
+            dotRect.sizeDelta = new Vector2(16f, 16f);
+            var ring = UiKit.CreatePanel(dot.transform, "Ring", Color.white, false);
+            ring.raycastTarget = false;
+            ring.sprite = ProceduralTextures.Ring();
+            UiKit.Stretch((RectTransform)ring.transform, -3f, -3f, -3f, -3f);
+            var widget = panel.gameObject.AddComponent<TrackMap>();
+            float mapPad = pad / size * (220f - 12f);
+            widget.EditorWire(localRacerSource, (RectTransform)map.transform, dotRect, worldMin, worldSize, mapPad);
+        }
+
+        private static void Line(Color[] px, int size, Vector2 a, Vector2 b, float width)
+        {
+            float len = Vector2.Distance(a, b);
+            int steps = Mathf.Max(1, Mathf.CeilToInt(len));
+            for (int i = 0; i <= steps; i++)
+                Disc(px, size, Vector2.Lerp(a, b, i / (float)steps), width * 0.5f, Color.white);
+        }
+
+        private static void Disc(Color[] px, int size, Vector2 c, float r, Color color)
+        {
+            int x0 = Mathf.Max(0, Mathf.FloorToInt(c.x - r - 1)), x1 = Mathf.Min(size - 1, Mathf.CeilToInt(c.x + r + 1));
+            int y0 = Mathf.Max(0, Mathf.FloorToInt(c.y - r - 1)), y1 = Mathf.Min(size - 1, Mathf.CeilToInt(c.y + r + 1));
+            for (int y = y0; y <= y1; y++)
+            for (int x = x0; x <= x1; x++)
+            {
+                float d = Vector2.Distance(new Vector2(x + 0.5f, y + 0.5f), c);
+                float a = Mathf.Clamp01(r - d + 0.5f);
+                if (a <= 0f) continue;
+                var existing = px[y * size + x];
+                px[y * size + x] = Color.Lerp(existing, color, a);
+                px[y * size + x].a = Mathf.Max(existing.a, a * color.a);
+            }
         }
 
         /// <summary>Light tree, reaction time, shift feedback and the lane gap bar for drag scenes.</summary>
