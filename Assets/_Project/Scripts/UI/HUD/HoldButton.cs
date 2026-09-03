@@ -82,6 +82,7 @@ namespace RedlineLegends.UI
 
 #if UNITY_EDITOR
         public void EditorWire(Image target) { image = target; }
+        public void EditorWire(Image target, Color normal, Color held) { image = target; normalColor = normal; heldColor = held; }
 #endif
     }
 }

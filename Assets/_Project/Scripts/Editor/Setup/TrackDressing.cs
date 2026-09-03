@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using RedlineLegends.Core;
+using UnityEditor;
 using UnityEngine;
 
 namespace RedlineLegends.Editor
@@ -11,8 +12,11 @@ namespace RedlineLegends.Editor
     /// </summary>
     public static class TrackDressing
     {
-        public static void Dress(CircuitSpec spec, List<TrackMeshBuilder.Sample> samples, Transform root, Bounds bounds)
+        private static System.Func<Vector3, float> _heightAt;
+
+        public static void Dress(CircuitSpec spec, List<TrackMeshBuilder.Sample> samples, Transform root, Bounds bounds, System.Func<Vector3, float> heightAt = null)
         {
+            _heightAt = heightAt ?? (p => 0f);
             var rng = new System.Random(spec.Id.GetHashCode());
             var parent = new GameObject("Dressing");
             parent.transform.SetParent(root, false);
@@ -22,7 +26,8 @@ namespace RedlineLegends.Editor
             {
                 case "coast":
                     Sea(parent.transform, bounds, prefix);
-                    Scatter(parent.transform, samples, rng, 70, 40f, 160f, 6f, 20f, 0.6f, MaterialFactory.Opaque(prefix + "_Rock", new Color(0.45f, 0.4f, 0.36f), 0f, 0.35f), true, "Rock");
+                    Scatter(parent.transform, samples, rng, 24, 40f, 160f, 3f, 8f, 0.7f, MaterialFactory.Opaque(prefix + "_Rock", new Color(0.4f, 0.37f, 0.34f), 0f, 0.3f), true, "Rock");
+                    Trees(parent.transform, samples, rng, prefix, 90, 18f, 120f);
                     break;
                 case "city":
                     Buildings(parent.transform, samples, rng, prefix, 140, 14f, 60f, 12f, 48f, new Color(0.55f, 0.58f, 0.62f), false);
@@ -32,12 +37,11 @@ namespace RedlineLegends.Editor
                     Lamps(parent.transform, samples, prefix, 45f, new Color(3.5f, 2.6f, 1.6f), 4);
                     break;
                 case "desert":
-                    Scatter(parent.transform, samples, rng, 90, 30f, 220f, 12f, 40f, 0.35f, MaterialFactory.Opaque(prefix + "_Dune", new Color(0.82f, 0.7f, 0.46f), 0f, 0.15f), false, "Dune");
-                    Scatter(parent.transform, samples, rng, 40, 20f, 120f, 3f, 9f, 0.7f, MaterialFactory.Opaque(prefix + "_Rock", new Color(0.5f, 0.42f, 0.35f), 0f, 0.3f), true, "Rock");
+                    Scatter(parent.transform, samples, rng, 30, 20f, 140f, 2f, 7f, 0.7f, MaterialFactory.Opaque(prefix + "_Rock", new Color(0.5f, 0.42f, 0.35f), 0f, 0.3f), true, "Rock");
                     break;
                 case "mountain":
-                    Scatter(parent.transform, samples, rng, 120, 25f, 200f, 10f, 45f, 0.9f, MaterialFactory.Opaque(prefix + "_Rock", new Color(0.4f, 0.4f, 0.42f), 0f, 0.3f), true, "Rock");
-                    Trees(parent.transform, samples, rng, prefix, 220, 12f, 120f);
+                    Scatter(parent.transform, samples, rng, 40, 25f, 200f, 3f, 9f, 0.8f, MaterialFactory.Opaque(prefix + "_Rock", new Color(0.4f, 0.4f, 0.42f), 0f, 0.3f), true, "Rock");
+                    Trees(parent.transform, samples, rng, prefix, 320, 12f, 160f);
                     break;
                 case "industrial":
                     Containers(parent.transform, samples, rng, prefix, 120);
@@ -67,8 +71,10 @@ namespace RedlineLegends.Editor
             return true;
         }
 
+        /// <summary>Props are authored with y relative to flat ground; lift them onto the terrain under their footprint.</summary>
         private static GameObject Prop(Transform parent, string name, PrimitiveType type, Vector3 pos, Vector3 scale, Quaternion rot, Material mat, bool collider)
         {
+            pos.y += _heightAt(pos) + 0.25f;
             var go = GameObject.CreatePrimitive(type);
             go.name = name;
             go.transform.SetParent(parent, false);
@@ -94,7 +100,7 @@ namespace RedlineLegends.Editor
                 Vector3 pos = s.Position + s.Right * side * (s.HalfWidth + offset);
                 float size = minSize + (float)rng.NextDouble() * (maxSize - minSize);
                 if (!IsClear(samples, pos, size * 0.6f + 8f)) continue;
-                pos.y = Mathf.Max(0f, s.Position.y) + size * heightRatio * 0.35f - 0.5f;
+                pos.y = size * heightRatio * 0.35f - 0.5f;
                 Prop(parent, name + placed, PrimitiveType.Sphere, pos, new Vector3(size, size * heightRatio, size),
                     Quaternion.Euler(0f, (float)rng.NextDouble() * 360f, 0f), mat, collider);
                 placed++;
@@ -104,13 +110,26 @@ namespace RedlineLegends.Editor
         private static void Buildings(Transform parent, List<TrackMeshBuilder.Sample> samples, System.Random rng, string prefix, int count,
             float minOffset, float maxOffset, float minHeight, float maxHeight, Color color, bool lit)
         {
-            var mats = new[]
-            {
-                MaterialFactory.Opaque(prefix + "_Building0", color, 0.1f, 0.4f),
-                MaterialFactory.Opaque(prefix + "_Building1", color * 0.8f, 0.2f, 0.6f),
-                MaterialFactory.Opaque(prefix + "_Building2", color * 1.15f, 0.05f, 0.3f),
-            };
-            var windows = lit ? MaterialFactory.Emissive(prefix + "_Windows", new Color(0.1f, 0.1f, 0.12f), new Color(1.6f, 1.3f, 0.8f)) : null;
+            var facade = ProceduralTextures.Facade();
+            var glow = ProceduralTextures.FacadeEmission();
+            // Building meshes carry UVs in window bays (one texture tile = 4 m), so the material tiles 1:1.
+            var tiling = Vector2.one;
+            var mats = lit
+                ? new[]
+                {
+                    MaterialFactory.TexturedEmissive(prefix + "_Building0", facade, glow, color * 1.6f, new Color(6f, 4.8f, 2.8f), tiling),
+                    MaterialFactory.TexturedEmissive(prefix + "_Building1", facade, glow, color * 1.2f, new Color(3.5f, 4f, 6f), tiling),
+                    MaterialFactory.TexturedEmissive(prefix + "_Building2", facade, glow, color * 1.9f, new Color(6.5f, 3.5f, 2f), tiling),
+                }
+                : new[]
+                {
+                    MaterialFactory.Textured(prefix + "_Building0", facade, color * 1.6f, 0.1f, 0.4f, tiling),
+                    MaterialFactory.Textured(prefix + "_Building1", facade, color * 1.25f, 0.2f, 0.55f, tiling),
+                    MaterialFactory.Textured(prefix + "_Building2", facade, color * 1.9f, 0.05f, 0.3f, tiling),
+                };
+            string meshFolder = EditorPaths.Root + "/Tracks/" + prefix;
+            EditorPaths.EnsureFolder(meshFolder);
+            var meshes = new Dictionary<string, Mesh>();
             int placed = 0, attempts = 0;
             while (placed < count && attempts < count * 6)
             {
@@ -118,18 +137,78 @@ namespace RedlineLegends.Editor
                 var s = samples[rng.Next(samples.Count)];
                 float side = rng.Next(2) == 0 ? -1f : 1f;
                 float offset = minOffset + (float)rng.NextDouble() * (maxOffset - minOffset);
-                float w = 14f + (float)rng.NextDouble() * 22f, d = 14f + (float)rng.NextDouble() * 22f;
-                float h = minHeight + (float)rng.NextDouble() * (maxHeight - minHeight);
+                // Quantised footprints and heights so a few dozen meshes serve a whole city.
+                float w = 16f + rng.Next(6) * 4f, d = 16f + rng.Next(6) * 4f;
+                float h = Mathf.Max(8f, Mathf.Round((minHeight + (float)rng.NextDouble() * (maxHeight - minHeight)) / 4f) * 4f);
                 Vector3 pos = s.Position + s.Right * side * (s.HalfWidth + offset + w * 0.5f);
                 if (!IsClear(samples, pos, Mathf.Max(w, d) * 0.75f + 4f)) continue;
                 pos.y = h * 0.5f;
                 var rot = Quaternion.LookRotation(s.Forward, Vector3.up);
-                Prop(parent, "Building" + placed, PrimitiveType.Cube, pos, new Vector3(w, h, d), rot, mats[placed % mats.Length], true);
-                if (lit && windows != null)
-                    Prop(parent, "Windows" + placed, PrimitiveType.Cube, pos + rot * Vector3.right * (-side * (w * 0.5f + 0.05f)),
-                        new Vector3(0.1f, h * 0.8f, d * 0.8f), rot, windows, false);
+                var size = new Vector3(w, h, d);
+                string key = w + "x" + h + "x" + d;
+                if (!meshes.TryGetValue(key, out var mesh))
+                {
+                    mesh = MetricBox(size, 4f, prefix + "_Bld_" + key);
+                    AssetDatabase.CreateAsset(mesh, meshFolder + "/" + mesh.name + ".asset");
+                    meshes[key] = mesh;
+                }
+                Building(parent, "Building" + placed, pos, size, rot, mesh, mats[placed % mats.Length]);
                 placed++;
             }
+        }
+
+        private static GameObject Building(Transform parent, string name, Vector3 pos, Vector3 size, Quaternion rot, Mesh mesh, Material mat)
+        {
+            pos.y += _heightAt(pos) + 0.25f;
+            var go = new GameObject(name, typeof(MeshFilter), typeof(MeshRenderer), typeof(BoxCollider));
+            go.transform.SetParent(parent, false);
+            go.transform.SetPositionAndRotation(pos, rot);
+            go.GetComponent<MeshFilter>().sharedMesh = mesh;
+            go.GetComponent<BoxCollider>().size = size;
+            go.GetComponent<MeshRenderer>().sharedMaterial = mat;
+            go.isStatic = true;
+            go.layer = GameLayers.Track;
+            return go;
+        }
+
+        /// <summary>
+        /// Axis-aligned box centred on the origin whose UVs are in metres / bay, so one texture tile
+        /// spans `bay` metres on every face regardless of the building's size.
+        /// </summary>
+        private static Mesh MetricBox(Vector3 size, float bay, string name)
+        {
+            var verts = new List<Vector3>(24);
+            var uvs = new List<Vector2>(24);
+            var normals = new List<Vector3>(24);
+            var tris = new List<int>(36);
+            Vector3 h = size * 0.5f;
+            void Face(Vector3 n, Vector3 a, Vector3 b)
+            {
+                float hn = Mathf.Abs(Vector3.Dot(h, n)), ha = Mathf.Abs(Vector3.Dot(h, a)), hb = Mathf.Abs(Vector3.Dot(h, b));
+                int start = verts.Count;
+                Vector3 c = n * hn;
+                verts.Add(c - a * ha - b * hb); uvs.Add(new Vector2(0f, 0f));
+                verts.Add(c + a * ha - b * hb); uvs.Add(new Vector2(2f * ha / bay, 0f));
+                verts.Add(c + a * ha + b * hb); uvs.Add(new Vector2(2f * ha / bay, 2f * hb / bay));
+                verts.Add(c - a * ha + b * hb); uvs.Add(new Vector2(0f, 2f * hb / bay));
+                for (int i = 0; i < 4; i++) normals.Add(n);
+                tris.Add(start); tris.Add(start + 1); tris.Add(start + 2);
+                tris.Add(start); tris.Add(start + 2); tris.Add(start + 3);
+            }
+            // (normal, u axis, v axis) chosen with Cross(u, v) == normal so every face winds outward.
+            Face(Vector3.forward, Vector3.right, Vector3.up);
+            Face(Vector3.back, Vector3.left, Vector3.up);
+            Face(Vector3.right, Vector3.back, Vector3.up);
+            Face(Vector3.left, Vector3.forward, Vector3.up);
+            Face(Vector3.up, Vector3.right, Vector3.back);
+            Face(Vector3.down, Vector3.right, Vector3.forward);
+            var mesh = new Mesh { name = name };
+            mesh.SetVertices(verts);
+            mesh.SetUVs(0, uvs);
+            mesh.SetNormals(normals);
+            mesh.SetTriangles(tris, 0);
+            mesh.RecalculateBounds();
+            return mesh;
         }
 
         private static void Lamps(Transform parent, List<TrackMeshBuilder.Sample> samples, string prefix, float spacing, Color emission, int realLights)
@@ -179,10 +258,16 @@ namespace RedlineLegends.Editor
                 float offset = minOffset + (float)rng.NextDouble() * (maxOffset - minOffset);
                 Vector3 pos = s.Position + s.Right * side * (s.HalfWidth + offset);
                 if (!IsClear(samples, pos, 6f)) continue;
-                float h = 8f + (float)rng.NextDouble() * 10f;
-                pos.y = s.Position.y - 1f;
-                Prop(parent, "Trunk" + placed, PrimitiveType.Cylinder, pos + Vector3.up * h * 0.25f, new Vector3(0.6f, h * 0.25f, 0.6f), Quaternion.identity, trunk, false);
-                Prop(parent, "Crown" + placed, PrimitiveType.Capsule, pos + Vector3.up * h * 0.65f, new Vector3(3.5f, h * 0.4f, 3.5f), Quaternion.identity, leaves, false);
+                float h = 9f + (float)rng.NextDouble() * 12f;
+                pos.y = -1f;
+                Prop(parent, "Trunk" + placed, PrimitiveType.Cylinder, pos + Vector3.up * h * 0.22f, new Vector3(0.5f, h * 0.22f, 0.5f), Quaternion.identity, trunk, false);
+                // Conifer: three stacked, shrinking crowns read as a tree from a moving car.
+                for (int tier = 0; tier < 3; tier++)
+                {
+                    float y = h * (0.35f + tier * 0.22f);
+                    float w = (4.6f - tier * 1.3f) * (0.8f + (float)rng.NextDouble() * 0.4f);
+                    Prop(parent, "Crown" + placed + "_" + tier, PrimitiveType.Capsule, pos + Vector3.up * y, new Vector3(w, h * 0.16f, w), Quaternion.identity, leaves, false);
+                }
                 placed++;
             }
         }

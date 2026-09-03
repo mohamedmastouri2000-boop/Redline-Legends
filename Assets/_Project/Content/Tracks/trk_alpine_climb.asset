@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: Alpine Climb
   sceneName: Track_AlpineClimb
   theme: 3
-  lengthMeters: 2143.604
+  lengthMeters: 2445.8252
   isLoop: 0
   supportsDrag: 0
   maxParticipants: 8

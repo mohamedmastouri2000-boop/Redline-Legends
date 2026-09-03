@@ -49,6 +49,8 @@ namespace RedlineLegends.UI
         [SerializeField] private Color rpmRedline = new Color(0.95f, 0.2f, 0.15f);
         [SerializeField] private Color shiftOff = new Color(0.3f, 0.3f, 0.3f, 0.6f);
         [SerializeField] private Color shiftOn = new Color(0.2f, 1f, 0.3f, 1f);
+        /// <summary>Fraction of the rpm image's fill that full rpm reaches (0.75 for a 270-degree dial).</summary>
+        [SerializeField] private float rpmSweep = 1f;
 
         private VehicleController _vehicle;
         private SettingsService _settings;
@@ -134,7 +136,7 @@ namespace RedlineLegends.UI
             }
             if (rpmFill != null)
             {
-                rpmFill.fillAmount = tel.RpmNormalized;
+                rpmFill.fillAmount = tel.RpmNormalized * rpmSweep;
                 rpmFill.color = tel.RpmNormalized > 0.9f || tel.LimiterActive ? rpmRedline : rpmNormal;
             }
             if (shiftLight != null)
@@ -154,6 +156,8 @@ namespace RedlineLegends.UI
             shiftLight = shift; nitrousFill = nos; nitrousGroup = nosGroup; lapText = lap; positionText = position; timerText = timer;
             infoText = info; raceProgressFill = progress; pauseButton = pause; cameraButton = camera; resetButton = reset;
         }
+
+        public void EditorSetRpmSweep(float sweep) { rpmSweep = sweep; }
 #endif
     }
 }

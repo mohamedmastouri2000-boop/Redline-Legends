@@ -248,7 +248,7 @@ namespace RedlineLegends.Editor
         private static List<VehicleDefinition> GenerateVehicles(Dictionary<string, VehicleUpgradeDefinition> upgrades, VehicleAudioDefinition audio)
         {
             var paint = MaterialFactory.CarPaint("Car_Paint", new Color(0.78f, 0.14f, 0.18f));
-            var glass = MaterialFactory.Glass("Car_Glass", new Color(0.05f, 0.08f, 0.1f, 0.55f));
+            var glass = MaterialFactory.Glass("Car_Glass", new Color(0.1f, 0.13f, 0.17f, 0.66f));
             var tire = MaterialFactory.Opaque("Car_Tire", new Color(0.05f, 0.05f, 0.05f), 0f, 0.35f);
             var rim = MaterialFactory.Opaque("Car_Rim", new Color(0.75f, 0.76f, 0.78f), 0.9f, 0.7f);
             var trim = MaterialFactory.Opaque("Car_Trim", new Color(0.08f, 0.08f, 0.09f), 0.1f, 0.5f);

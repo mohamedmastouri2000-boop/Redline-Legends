@@ -34,6 +34,13 @@ namespace RedlineLegends.Editor
             SceneBuilder.ApplyLighting(sun);
             RenderSettings.skybox = sky;
             RenderSettings.ambientIntensity = spec.AmbientIntensity;
+            if (spec.NightAmbient)
+            {
+                RenderSettings.ambientMode = AmbientMode.Trilight;
+                RenderSettings.ambientSkyColor = spec.AmbientSky;
+                RenderSettings.ambientEquatorColor = spec.AmbientEquator;
+                RenderSettings.ambientGroundColor = spec.AmbientGround;
+            }
             RenderSettings.fog = spec.Fog;
             RenderSettings.fogMode = FogMode.Exponential;
             RenderSettings.fogColor = spec.FogColor;
@@ -50,12 +57,14 @@ namespace RedlineLegends.Editor
             var samples = TrackMeshBuilder.SampleSpline(spec.Control, halfWidths, spec.Loop, 4f);
             string prefix = spec.SceneName.Replace("Track_", "");
 
-            var road = MaterialFactory.Opaque(prefix + "_Asphalt", spec.Asphalt, 0f, 0.42f);
-            road.mainTexture = TrackSceneBuilder.GetOrCreateCheckerTexture();
-            EditorUtility.SetDirty(road);
-            var kerb = MaterialFactory.Opaque(prefix + "_Kerb", spec.Kerb, 0f, 0.45f);
-            var barrier = MaterialFactory.Opaque(prefix + "_Barrier", spec.Barrier, 0.2f, 0.5f);
-            var ground = MaterialFactory.Opaque(prefix + "_Ground", spec.Ground, 0f, 0.2f);
+            // Road UVs: u across the width, v = metres / 8, so one asphalt tile (with markings) spans 8 m.
+            var road = MaterialFactory.Textured(prefix + "_Asphalt", ProceduralTextures.Asphalt(), spec.Asphalt * 2.4f, 0f, 0.38f, Vector2.one);
+            var kerbTint = Color.Lerp(spec.Ground, Color.white, 0.35f) * 1.6f;
+            var kerb = spec.KerbEmission.maxColorComponent > 0.01f
+                ? MaterialFactory.TexturedEmissive(prefix + "_Kerb", ProceduralTextures.Shoulder(), ProceduralTextures.ShoulderEmission(), kerbTint, spec.KerbEmission, Vector2.one)
+                : MaterialFactory.Textured(prefix + "_Kerb", ProceduralTextures.Shoulder(), kerbTint, 0f, 0.3f, Vector2.one);
+            var barrier = MaterialFactory.Textured(prefix + "_Barrier", ProceduralTextures.Concrete(), spec.Barrier * 0.9f, 0.1f, 0.35f, new Vector2(0.25f, 1f));
+            var ground = MaterialFactory.Textured(prefix + "_Ground", ProceduralTextures.Ground(), spec.Ground * 1.7f, 0f, 0.15f, new Vector2(60f, 60f));
 
             var trackRoot = new GameObject("Track");
             TrackMeshBuilder.BuildRoad(trackRoot.transform, samples, spec.Loop, 40, road, kerb, meshFolder, prefix, GameLayers.Track);
@@ -63,17 +72,14 @@ namespace RedlineLegends.Editor
 
             var bounds = new Bounds(samples[0].Position, Vector3.zero);
             for (int i = 1; i < samples.Count; i++) bounds.Encapsulate(samples[i].Position);
-            var groundPlane = GameObject.CreatePrimitive(PrimitiveType.Plane);
-            groundPlane.name = "Ground";
-            groundPlane.transform.SetParent(trackRoot.transform, false);
-            groundPlane.transform.position = new Vector3(bounds.center.x, -0.05f, bounds.center.z);
-            float extent = Mathf.Max(bounds.size.x, bounds.size.z) + 900f;
-            groundPlane.transform.localScale = new Vector3(extent / 10f, 1f, extent / 10f);
-            groundPlane.GetComponent<MeshRenderer>().sharedMaterial = ground;
-            groundPlane.isStatic = true;
-            groundPlane.layer = GameLayers.Track;
 
-            TrackDressing.Dress(spec, samples, trackRoot.transform, bounds);
+            // Rolling terrain replaces the flat plane: level beside the road, hills toward the horizon.
+            var rock = MaterialFactory.Textured(prefix + "_Cliff", ProceduralTextures.Concrete(), spec.CliffColor * 1.4f, 0f, 0.2f, new Vector2(4f, 4f));
+            var terrain = TerrainBuilder.Build(trackRoot.transform, samples, bounds, ground, meshFolder, prefix,
+                margin: 900f, cell: 10f, nearFlat: spec.TerrainNear, farHills: spec.TerrainFar, seed: spec.Id.GetHashCode() % 977,
+                steepMaterial: rock, blendDistance: spec.TerrainBlend, farDistance: spec.TerrainFarDistance);
+
+            TrackDressing.Dress(spec, samples, trackRoot.transform, bounds, terrain.HeightAt);
 
             // ---- layout
             var linePoints = new Vector3[samples.Count];
@@ -163,6 +169,7 @@ namespace RedlineLegends.Editor
                 ui.Results, ui.Controls.gameObject, ui.Tutorial);
             TrackSceneBuilder.CreateSkidMarks();
 
+            SceneBuilder.FinalizeLighting();
             EditorSceneManager.SaveScene(scene, ScenePath(spec));
         }
 

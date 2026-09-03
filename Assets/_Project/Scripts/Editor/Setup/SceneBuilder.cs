@@ -127,7 +127,17 @@ namespace RedlineLegends.Editor
 
         private static void Save(Scene scene, string path)
         {
+            FinalizeLighting();
             EditorSceneManager.SaveScene(scene, path);
+        }
+
+        /// <summary>
+        /// Auto-generate is off, so the ambient/reflection probes are never refreshed on their own;
+        /// without this every unbaked scene keeps a stale (dark) environment probe.
+        /// </summary>
+        public static void FinalizeLighting()
+        {
+            DynamicGI.UpdateEnvironment();
         }
 
         // ------------------------------------------------------------------ Bootstrap
@@ -150,55 +160,81 @@ namespace RedlineLegends.Editor
         public static void BuildMainMenu()
         {
             var scene = NewScene();
-            var camera = CreateCamera("Camera", new Vector3(0f, 0f, -10f), Vector3.zero, 60f, Color.black, false);
+            // A lit showcase stage behind the menu: the selected car turns slowly on the right half.
+            var sun = CreateSun(new Vector3(42f, -28f, 0f), new Color(1f, 0.96f, 0.9f), 2.6f, true);
+            ApplyLighting(sun);
+            RenderSettings.ambientMode = AmbientMode.Trilight;
+            RenderSettings.ambientSkyColor = new Color(0.5f, 0.55f, 0.68f);
+            RenderSettings.ambientEquatorColor = new Color(0.3f, 0.31f, 0.36f);
+            RenderSettings.ambientGroundColor = new Color(0.1f, 0.1f, 0.12f);
+            CreateGlobalVolume();
+            var stage = new Vector3(2.1f, 0f, 0.6f);
+            var camera = CreateCamera("Camera", new Vector3(0.4f, 1.5f, -7.2f), stage + new Vector3(0f, 0.55f, 0f), 40f, Color.black, true);
             camera.clearFlags = CameraClearFlags.SolidColor;
-            camera.backgroundColor = new Color(0.05f, 0.05f, 0.07f);
+            camera.backgroundColor = new Color(0.035f, 0.035f, 0.05f);
+            BuildStage(stage, out var turntable);
 
             var canvas = UiKit.CreateCanvas("MenuCanvas", 0);
+            var safe = UiKit.SafeRoot(canvas);
             var controller = canvas.gameObject.AddComponent<MainMenuController>();
             canvas.gameObject.AddComponent<UiClickSound>();
+            var showcase = canvas.gameObject.AddComponent<MenuShowcase>();
+            showcase.EditorWire(turntable);
 
-            var bg = UiKit.CreatePanel(canvas.transform, "Background", new Color(0.06f, 0.06f, 0.08f, 1f));
+            var bg = UiKit.CreatePanel(canvas.transform, "Background", new Color(0.04f, 0.04f, 0.06f, 0.97f));
             UiKit.Stretch((RectTransform)bg.transform);
-            var stripe = UiKit.CreatePanel(canvas.transform, "AccentStripe", UiKit.Accent);
+            bg.sprite = ProceduralTextures.MenuFade();
+            bg.type = Image.Type.Simple;
+            bg.raycastTarget = false;
+            var stripe = UiKit.CreatePanel(canvas.transform, "AccentStripe", UiKit.Accent, false);
             UiKit.AnchorRange((RectTransform)stripe.transform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, -6f), new Vector2(0f, 0f));
 
             // ---- Home
-            var home = UiKit.CreateRect(canvas.transform, "Home");
+            var home = UiKit.CreateRect(safe, "Home");
             UiKit.Stretch(home);
 
-            var title = UiKit.CreateText(home, "Title", "REDLINE LEGENDS", 64f, UiKit.TextMain, TextAlignmentOptions.Left, FontStyles.Bold);
+            var title = UiKit.CreateText(home, "Title", "REDLINE LEGENDS", 66f, UiKit.TextMain, TextAlignmentOptions.Left, FontStyles.Bold);
+            UiKit.Title(title);
             UiKit.Anchor((RectTransform)title.transform, new Vector2(0f, 1f), new Vector2(80f, -50f), new Vector2(1000f, 80f));
+            var subtitle = UiKit.CreateText(home, "Subtitle", "STREET  ·  CIRCUIT  ·  DRAG", 22f, UiKit.TextDim, TextAlignmentOptions.Left, FontStyles.Bold);
+            subtitle.characterSpacing = 6f;
+            UiKit.Anchor((RectTransform)subtitle.transform, new Vector2(0f, 1f), new Vector2(84f, -128f), new Vector2(800f, 30f));
 
             var profilePanel = UiKit.CreatePanel(home, "ProfileBar", UiKit.PanelMid);
             UiKit.Anchor((RectTransform)profilePanel.transform, new Vector2(1f, 1f), new Vector2(-60f, -40f), new Vector2(520f, 110f));
             var nameText = UiKit.CreateText(profilePanel.transform, "Name", "Racer", 30f, UiKit.TextMain, TextAlignmentOptions.Left, FontStyles.Bold);
-            UiKit.Anchor((RectTransform)nameText.transform, new Vector2(0f, 1f), new Vector2(16f, -10f), new Vector2(300f, 36f));
+            UiKit.Anchor((RectTransform)nameText.transform, new Vector2(0f, 1f), new Vector2(20f, -12f), new Vector2(300f, 36f));
             var levelText = UiKit.CreateText(profilePanel.transform, "Level", "LVL 1", 26f, UiKit.Accent, TextAlignmentOptions.Right, FontStyles.Bold);
-            UiKit.Anchor((RectTransform)levelText.transform, new Vector2(1f, 1f), new Vector2(-16f, -10f), new Vector2(180f, 36f));
+            UiKit.Anchor((RectTransform)levelText.transform, new Vector2(1f, 1f), new Vector2(-20f, -12f), new Vector2(180f, 36f));
             var creditsText = UiKit.CreateText(profilePanel.transform, "Credits", "0 CR", 26f, UiKit.TextDim, TextAlignmentOptions.Left);
-            UiKit.Anchor((RectTransform)creditsText.transform, new Vector2(0f, 1f), new Vector2(16f, -50f), new Vector2(300f, 32f));
+            UiKit.Anchor((RectTransform)creditsText.transform, new Vector2(0f, 1f), new Vector2(20f, -52f), new Vector2(300f, 32f));
             var xpBar = UiKit.CreateFillBar(profilePanel.transform, "XpBar", new Color(0.1f, 0.1f, 0.12f, 1f), UiKit.Accent, out var xpFill);
-            UiKit.AnchorRange((RectTransform)xpBar.transform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(16f, 10f), new Vector2(-16f, 18f));
+            UiKit.AnchorRange((RectTransform)xpBar.transform, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(20f, 12f), new Vector2(-20f, 20f));
 
-            float y = -220f;
+            float y = -200f;
             var circuitBtn = BigButton(home, "CircuitButton", "CIRCUIT RACING", ref y);
             var dragBtn = BigButton(home, "DragButton", "DRAG RACING", ref y);
             var garageBtn = BigButton(home, "GarageButton", "GARAGE", ref y);
             var achievementsBtn = BigButton(home, "AchievementsButton", "ACHIEVEMENTS", ref y);
             var settingsBtn = BigButton(home, "SettingsButton", "SETTINGS", ref y);
 
-            var carText = UiKit.CreateText(home, "SelectedCar", "Selected car", 28f, UiKit.TextDim, TextAlignmentOptions.Left);
-            UiKit.Anchor((RectTransform)carText.transform, new Vector2(0f, 0f), new Vector2(80f, 40f), new Vector2(900f, 40f));
+            var carPanel = UiKit.CreatePanel(home, "SelectedCarPanel", new Color(0f, 0f, 0f, 0.45f));
+            carPanel.raycastTarget = false;
+            UiKit.Anchor((RectTransform)carPanel.transform, new Vector2(1f, 0f), new Vector2(-60f, 40f), new Vector2(620f, 64f));
+            var carLabel = UiKit.CreateText(carPanel.transform, "Label", "SELECTED CAR", 18f, UiKit.Accent, TextAlignmentOptions.Left, FontStyles.Bold);
+            carLabel.characterSpacing = 4f;
+            UiKit.Anchor((RectTransform)carLabel.transform, new Vector2(0f, 1f), new Vector2(20f, -8f), new Vector2(400f, 22f));
+            var carText = UiKit.CreateText(carPanel.transform, "SelectedCar", "Selected car", 26f, UiKit.TextMain, TextAlignmentOptions.Left, FontStyles.Bold);
+            UiKit.Anchor((RectTransform)carText.transform, new Vector2(0f, 0f), new Vector2(20f, 6f), new Vector2(580f, 30f));
 
-            var banner = UiKit.CreateText(home, "ResultsBanner", "", 30f, UiKit.TextMain, TextAlignmentOptions.Center, FontStyles.Bold);
-            UiKit.Anchor((RectTransform)banner.transform, new Vector2(0.5f, 0f), new Vector2(0f, 110f), new Vector2(1200f, 44f));
+            var banner = UiKit.CreateText(home, "ResultsBanner", "", 28f, UiKit.TextMain, TextAlignmentOptions.Left, FontStyles.Bold);
+            UiKit.Anchor((RectTransform)banner.transform, new Vector2(0f, 0f), new Vector2(84f, 40f), new Vector2(900f, 40f));
 
             // ---- Event panels
-            var circuitPanel = BuildEventPanel(canvas.transform, "CircuitPanel");
-            var dragPanel = BuildEventPanel(canvas.transform, "DragPanel");
-            var settingsPanel = BuildSettingsPanel(canvas.transform);
-            var achievementsPanel = BuildAchievementsPanel(canvas.transform);
+            var circuitPanel = BuildEventPanel(safe, "CircuitPanel");
+            var dragPanel = BuildEventPanel(safe, "DragPanel");
+            var settingsPanel = BuildSettingsPanel(safe);
+            var achievementsPanel = BuildAchievementsPanel(safe);
 
             controller.EditorWire(home.gameObject, circuitPanel, dragPanel, circuitBtn, dragBtn, garageBtn,
                 nameText, creditsText, levelText, xpFill, carText, banner, settingsPanel, settingsBtn, achievementsPanel, achievementsBtn);
@@ -210,14 +246,65 @@ namespace RedlineLegends.Editor
             Save(scene, MainMenuPath);
         }
 
+        /// <summary>Floor, back wall, turntable disc and a three-point studio rig around a stage point.</summary>
+        private static void BuildStage(Vector3 centre, out Transform turntable)
+        {
+            var floorMat = MaterialFactory.Opaque("Garage_Floor", new Color(0.16f, 0.16f, 0.17f), 0.05f, 0.55f);
+            var wallMat = MaterialFactory.Opaque("Garage_Wall", new Color(0.09f, 0.09f, 0.1f), 0f, 0.3f);
+            var discMat = MaterialFactory.Opaque("Garage_Turntable", new Color(0.22f, 0.22f, 0.24f), 0.4f, 0.75f);
+
+            var floor = GameObject.CreatePrimitive(PrimitiveType.Plane);
+            floor.name = "Floor";
+            floor.transform.position = new Vector3(centre.x, 0f, centre.z);
+            floor.transform.localScale = new Vector3(6f, 1f, 6f);
+            floor.GetComponent<MeshRenderer>().sharedMaterial = floorMat;
+            floor.isStatic = true;
+
+            var backWall = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            backWall.name = "BackWall";
+            backWall.transform.position = new Vector3(centre.x, 4f, centre.z + 14f);
+            backWall.transform.localScale = new Vector3(60f, 8f, 0.5f);
+            backWall.GetComponent<MeshRenderer>().sharedMaterial = wallMat;
+            backWall.isStatic = true;
+
+            var disc = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            disc.name = "TurntableDisc";
+            disc.transform.position = centre + new Vector3(0f, 0.02f, 0f);
+            disc.transform.localScale = new Vector3(6.5f, 0.02f, 6.5f);
+            disc.GetComponent<MeshRenderer>().sharedMaterial = discMat;
+
+            var table = new GameObject("Turntable");
+            table.transform.position = centre + new Vector3(0f, 0.04f, 0f);
+            turntable = table.transform;
+
+            // Studio rig: cool fill from the left, warm rim from behind-right, a top pool on the turntable.
+            StudioLight("FillLight", centre + new Vector3(-6f, 4.5f, -4f), new Color(0.8f, 0.88f, 1f), 260f, 22f, 85f, centre);
+            StudioLight("RimLight", centre + new Vector3(6f, 3.5f, 6f), new Color(1f, 0.85f, 0.7f), 200f, 22f, 70f, centre);
+            StudioLight("TopLight", centre + new Vector3(0f, 7f, 0.5f), Color.white, 420f, 16f, 95f, centre);
+
+            var probeGo = new GameObject("ReflectionProbe", typeof(ReflectionProbe));
+            var probe = probeGo.GetComponent<ReflectionProbe>();
+            probe.mode = ReflectionProbeMode.Realtime;
+            probe.refreshMode = ReflectionProbeRefreshMode.OnAwake;
+            probe.timeSlicingMode = ReflectionProbeTimeSlicingMode.AllFacesAtOnce;
+            probe.resolution = 128;
+            probe.size = new Vector3(30f, 12f, 30f);
+            probeGo.transform.position = centre + new Vector3(0f, 1.2f, 0f);
+        }
+
         private static Button BigButton(Transform parent, string name, string label, ref float y)
         {
-            var button = UiKit.CreateButton(parent, name, label, UiKit.ButtonNormal, 32f, out _);
-            UiKit.Anchor((RectTransform)button.transform, new Vector2(0f, 1f), new Vector2(80f, y), new Vector2(560f, 92f));
+            var button = UiKit.CreateButton(parent, name, label, UiKit.ButtonNormal, 30f, out var text);
+            text.alignment = TextAlignmentOptions.Left;
+            text.characterSpacing = 3f;
+            UiKit.Stretch((RectTransform)text.transform, 36f, 4f, 8f, 4f);
+            UiKit.Anchor((RectTransform)button.transform, new Vector2(0f, 1f), new Vector2(80f, y), new Vector2(560f, 88f));
             var edge = UiKit.CreatePanel(button.transform, "Edge", UiKit.Accent);
             edge.raycastTarget = false;
-            UiKit.AnchorRange((RectTransform)edge.transform, Vector2.zero, new Vector2(0f, 1f), Vector2.zero, new Vector2(8f, 0f));
-            y -= 108f;
+            UiKit.AnchorRange((RectTransform)edge.transform, new Vector2(0f, 0.2f), new Vector2(0f, 0.8f), new Vector2(14f, 0f), new Vector2(20f, 0f));
+            var chevron = UiKit.CreateText(button.transform, "Chevron", ">", 30f, UiKit.TextDim, TextAlignmentOptions.Right, FontStyles.Bold);
+            UiKit.Stretch((RectTransform)chevron.transform, 8f, 4f, 24f, 4f);
+            y -= 100f;
             return button;
         }
 
@@ -256,10 +343,11 @@ namespace RedlineLegends.Editor
 
         private static SettingsPanel BuildSettingsPanel(Transform parent)
         {
-            var root = UiKit.CreatePanel(parent, "SettingsPanel", new Color(0.06f, 0.06f, 0.08f, 1f));
+            var root = UiKit.CreatePanel(parent, "SettingsPanel", new Color(0.05f, 0.05f, 0.07f, 0.97f), false);
             UiKit.Stretch((RectTransform)root.transform);
             var panel = root.gameObject.AddComponent<SettingsPanel>();
             var title = UiKit.CreateText(root.transform, "Title", "SETTINGS", 52f, UiKit.TextMain, TextAlignmentOptions.Left, FontStyles.Bold);
+            UiKit.Title(title);
             UiKit.Anchor((RectTransform)title.transform, new Vector2(0f, 1f), new Vector2(80f, -40f), new Vector2(800f, 70f));
             var back = UiKit.CreateButton(root.transform, "BackButton", "BACK", UiKit.ButtonNormal, 30f, out _);
             UiKit.Anchor((RectTransform)back.transform, new Vector2(1f, 1f), new Vector2(-60f, -40f), new Vector2(220f, 70f));
@@ -286,7 +374,7 @@ namespace RedlineLegends.Editor
             var shake = BuildSliderRow(left, "Camera shake", y, 860f); y -= 72f;
             var vib = BuildCycleRow(left, "Vibration", y, 860f); y -= 72f;
             var tut = BuildCycleRow(left, "Tutorials", y, 860f);
-            foreach (RectTransform child in left) { var a = child.anchorMin; child.anchorMin = new Vector2(0f, 1f); child.anchorMax = new Vector2(0f, 1f); child.pivot = new Vector2(0f, 1f); }
+            foreach (RectTransform child in left) { child.anchorMin = new Vector2(0f, 1f); child.anchorMax = new Vector2(0f, 1f); child.pivot = new Vector2(0f, 1f); }
 
             y = -8f;
             var gfx = BuildCycleRow(right, "Graphics", y, 860f); y -= 72f;
@@ -303,10 +391,11 @@ namespace RedlineLegends.Editor
 
         private static AchievementsPanel BuildAchievementsPanel(Transform parent)
         {
-            var root = UiKit.CreatePanel(parent, "AchievementsPanel", new Color(0.06f, 0.06f, 0.08f, 1f));
+            var root = UiKit.CreatePanel(parent, "AchievementsPanel", new Color(0.05f, 0.05f, 0.07f, 0.97f), false);
             UiKit.Stretch((RectTransform)root.transform);
             var panel = root.gameObject.AddComponent<AchievementsPanel>();
             var title = UiKit.CreateText(root.transform, "Title", "ACHIEVEMENTS", 52f, UiKit.TextMain, TextAlignmentOptions.Left, FontStyles.Bold);
+            UiKit.Title(title);
             UiKit.Anchor((RectTransform)title.transform, new Vector2(0f, 1f), new Vector2(80f, -40f), new Vector2(1000f, 70f));
             var back = UiKit.CreateButton(root.transform, "BackButton", "BACK", UiKit.ButtonNormal, 30f, out _);
             UiKit.Anchor((RectTransform)back.transform, new Vector2(1f, 1f), new Vector2(-60f, -40f), new Vector2(220f, 70f));
@@ -330,11 +419,12 @@ namespace RedlineLegends.Editor
 
         private static EventListPanel BuildEventPanel(Transform parent, string name)
         {
-            var root = UiKit.CreatePanel(parent, name, new Color(0.06f, 0.06f, 0.08f, 1f));
+            var root = UiKit.CreatePanel(parent, name, new Color(0.05f, 0.05f, 0.07f, 0.97f), false);
             UiKit.Stretch((RectTransform)root.transform);
             var panel = root.gameObject.AddComponent<EventListPanel>();
 
             var title = UiKit.CreateText(root.transform, "Title", "EVENTS", 52f, UiKit.TextMain, TextAlignmentOptions.Left, FontStyles.Bold);
+            UiKit.Title(title);
             UiKit.Anchor((RectTransform)title.transform, new Vector2(0f, 1f), new Vector2(80f, -40f), new Vector2(1000f, 70f));
 
             var back = UiKit.CreateButton(root.transform, "BackButton", "BACK", UiKit.ButtonNormal, 30f, out _);
@@ -371,65 +461,29 @@ namespace RedlineLegends.Editor
         public static void BuildGarage()
         {
             var scene = NewScene();
-            var sun = CreateSun(new Vector3(48f, -35f, 0f), new Color(1f, 0.96f, 0.9f), 2.2f, true);
+            var sun = CreateSun(new Vector3(48f, -35f, 0f), new Color(1f, 0.96f, 0.9f), 3.2f, true);
             ApplyLighting(sun);
+            RenderSettings.ambientMode = AmbientMode.Trilight;
+            RenderSettings.ambientSkyColor = new Color(0.55f, 0.6f, 0.7f);
+            RenderSettings.ambientEquatorColor = new Color(0.35f, 0.36f, 0.4f);
+            RenderSettings.ambientGroundColor = new Color(0.12f, 0.12f, 0.14f);
             CreateGlobalVolume();
 
             var camera = CreateCamera("Camera", new Vector3(0f, 1.45f, -6.2f), new Vector3(0f, 0.55f, 0f), 42f, Color.black, true);
+            camera.clearFlags = CameraClearFlags.SolidColor;
+            camera.backgroundColor = new Color(0.05f, 0.05f, 0.07f);
 
-            var floorMat = MaterialFactory.Opaque("Garage_Floor", new Color(0.16f, 0.16f, 0.17f), 0.05f, 0.55f);
-            var wallMat = MaterialFactory.Opaque("Garage_Wall", new Color(0.09f, 0.09f, 0.1f), 0f, 0.3f);
-            var discMat = MaterialFactory.Opaque("Garage_Turntable", new Color(0.22f, 0.22f, 0.24f), 0.4f, 0.75f);
-
-            var floor = GameObject.CreatePrimitive(PrimitiveType.Plane);
-            floor.name = "Floor";
-            floor.transform.localScale = new Vector3(6f, 1f, 6f);
-            floor.GetComponent<MeshRenderer>().sharedMaterial = floorMat;
-            floor.isStatic = true;
-
-            var backWall = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            backWall.name = "BackWall";
-            backWall.transform.position = new Vector3(0f, 4f, 14f);
-            backWall.transform.localScale = new Vector3(60f, 8f, 0.5f);
-            backWall.GetComponent<MeshRenderer>().sharedMaterial = wallMat;
-            backWall.isStatic = true;
-
-            var disc = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            disc.name = "TurntableDisc";
-            disc.transform.position = new Vector3(0f, 0.02f, 0f);
-            disc.transform.localScale = new Vector3(6.5f, 0.02f, 6.5f);
-            disc.GetComponent<MeshRenderer>().sharedMaterial = discMat;
-
-            var turntable = new GameObject("Turntable");
-            turntable.transform.position = new Vector3(0f, 0.04f, 0f);
-
-            var fill = new GameObject("FillLight", typeof(Light));
-            var fillLight = fill.GetComponent<Light>();
-            fillLight.type = LightType.Spot;
-            fillLight.color = new Color(0.85f, 0.9f, 1f);
-            fillLight.intensity = 60f;
-            fillLight.range = 18f;
-            fillLight.spotAngle = 80f;
-            fillLight.shadows = LightShadows.None;
-            fill.transform.position = new Vector3(-5f, 4.5f, -4f);
-            fill.transform.LookAt(new Vector3(0f, 0.6f, 0f));
-
-            var probeGo = new GameObject("ReflectionProbe", typeof(ReflectionProbe));
-            var probe = probeGo.GetComponent<ReflectionProbe>();
-            probe.mode = ReflectionProbeMode.Realtime;
-            probe.refreshMode = ReflectionProbeRefreshMode.OnAwake;
-            probe.timeSlicingMode = ReflectionProbeTimeSlicingMode.AllFacesAtOnce;
-            probe.resolution = 128;
-            probe.size = new Vector3(30f, 12f, 30f);
-            probeGo.transform.position = new Vector3(0f, 1.2f, 0f);
+            BuildStage(Vector3.zero, out var turntableTransform);
+            var turntable = turntableTransform.gameObject;
 
             // ---- UI
             var canvas = UiKit.CreateCanvas("GarageCanvas", 0);
-            var dragArea = UiKit.CreatePanel(canvas.transform, "DragArea", new Color(0f, 0f, 0f, 0f));
+            var safe = UiKit.SafeRoot(canvas);
+            var dragArea = UiKit.CreatePanel(canvas.transform, "DragArea", new Color(0f, 0f, 0f, 0f), false);
             UiKit.Stretch((RectTransform)dragArea.transform);
             var controller = dragArea.gameObject.AddComponent<GarageSceneController>();
 
-            var info = UiKit.CreatePanel(canvas.transform, "InfoPanel", UiKit.PanelDark);
+            var info = UiKit.CreatePanel(safe, "InfoPanel", UiKit.PanelDark);
             UiKit.AnchorRange((RectTransform)info.transform, new Vector2(0f, 0.28f), new Vector2(0f, 1f), new Vector2(40f, 0f), new Vector2(520f, -40f));
             var name = UiKit.CreateText(info.transform, "Name", "Car", 40f, UiKit.TextMain, TextAlignmentOptions.Left, FontStyles.Bold);
             UiKit.Anchor((RectTransform)name.transform, new Vector2(0f, 1f), new Vector2(20f, -16f), new Vector2(440f, 50f));
@@ -442,34 +496,34 @@ namespace RedlineLegends.Editor
             var status = UiKit.CreateText(info.transform, "Status", "", 22f, UiKit.TextDim, TextAlignmentOptions.Left);
             UiKit.Anchor((RectTransform)status.transform, new Vector2(0f, 0f), new Vector2(20f, 16f), new Vector2(440f, 60f));
 
-            var credits = UiKit.CreateText(canvas.transform, "Credits", "0 CR", 30f, UiKit.TextMain, TextAlignmentOptions.Right, FontStyles.Bold);
+            var credits = UiKit.CreateText(safe, "Credits", "0 CR", 30f, UiKit.TextMain, TextAlignmentOptions.Right, FontStyles.Bold);
             UiKit.Anchor((RectTransform)credits.transform, new Vector2(1f, 1f), new Vector2(-40f, -40f), new Vector2(400f, 40f));
 
-            var back = UiKit.CreateButton(canvas.transform, "BackButton", "BACK", UiKit.ButtonNormal, 28f, out _);
+            var back = UiKit.CreateButton(safe, "BackButton", "BACK", UiKit.ButtonNormal, 28f, out _);
             UiKit.Anchor((RectTransform)back.transform, new Vector2(1f, 1f), new Vector2(-40f, -90f), new Vector2(200f, 64f));
-            var testDrive = UiKit.CreateButton(canvas.transform, "TestDriveButton", "TEST DRIVE", UiKit.ButtonNormal, 26f, out _);
+            var testDrive = UiKit.CreateButton(safe, "TestDriveButton", "TEST DRIVE", UiKit.ButtonNormal, 26f, out _);
             UiKit.Anchor((RectTransform)testDrive.transform, new Vector2(1f, 1f), new Vector2(-40f, -164f), new Vector2(200f, 64f));
-            var tune = UiKit.CreateButton(canvas.transform, "TuneButton", "TUNE", UiKit.ButtonNormal, 26f, out _);
+            var tune = UiKit.CreateButton(safe, "TuneButton", "TUNE", UiKit.ButtonNormal, 26f, out _);
             UiKit.Anchor((RectTransform)tune.transform, new Vector2(1f, 1f), new Vector2(-40f, -238f), new Vector2(200f, 64f));
 
             // Paint selector under the info panel.
-            var paintPrev = UiKit.CreateButton(canvas.transform, "PaintPrev", "<", UiKit.ButtonNormal, 26f, out _);
+            var paintPrev = UiKit.CreateButton(safe, "PaintPrev", "<", UiKit.ButtonNormal, 26f, out _);
             UiKit.Anchor((RectTransform)paintPrev.transform, new Vector2(0f, 0f), new Vector2(40f, 200f), new Vector2(64f, 56f));
-            var paintLabel = UiKit.CreateText(canvas.transform, "PaintName", "Paint", 24f, UiKit.TextMain, TextAlignmentOptions.Center, FontStyles.Bold);
+            var paintLabel = UiKit.CreateText(safe, "PaintName", "Paint", 24f, UiKit.TextMain, TextAlignmentOptions.Center, FontStyles.Bold);
             UiKit.Anchor((RectTransform)paintLabel.transform, new Vector2(0f, 0f), new Vector2(110f, 200f), new Vector2(340f, 56f));
-            var paintNext = UiKit.CreateButton(canvas.transform, "PaintNext", ">", UiKit.ButtonNormal, 26f, out _);
+            var paintNext = UiKit.CreateButton(safe, "PaintNext", ">", UiKit.ButtonNormal, 26f, out _);
             UiKit.Anchor((RectTransform)paintNext.transform, new Vector2(0f, 0f), new Vector2(456f, 200f), new Vector2(64f, 56f));
 
-            var tuningPanel = BuildTuningPanel(canvas.transform);
+            var tuningPanel = BuildTuningPanel(safe);
 
-            var prev = UiKit.CreateButton(canvas.transform, "PrevButton", "<", UiKit.ButtonNormal, 40f, out _);
+            var prev = UiKit.CreateButton(safe, "PrevButton", "<", UiKit.ButtonNormal, 40f, out _);
             UiKit.Anchor((RectTransform)prev.transform, new Vector2(0.5f, 0f), new Vector2(-330f, 60f), new Vector2(110f, 90f));
-            var action = UiKit.CreateButton(canvas.transform, "ActionButton", "SELECT", UiKit.Accent, 32f, out var actionLabel);
+            var action = UiKit.CreateButton(safe, "ActionButton", "SELECT", UiKit.Accent, 32f, out var actionLabel);
             UiKit.Anchor((RectTransform)action.transform, new Vector2(0.5f, 0f), new Vector2(0f, 60f), new Vector2(520f, 90f));
-            var next = UiKit.CreateButton(canvas.transform, "NextButton", ">", UiKit.ButtonNormal, 40f, out _);
+            var next = UiKit.CreateButton(safe, "NextButton", ">", UiKit.ButtonNormal, 40f, out _);
             UiKit.Anchor((RectTransform)next.transform, new Vector2(0.5f, 0f), new Vector2(330f, 60f), new Vector2(110f, 90f));
 
-            var upgradesPanel = UiKit.CreatePanel(canvas.transform, "UpgradesPanel", UiKit.PanelDark);
+            var upgradesPanel = UiKit.CreatePanel(safe, "UpgradesPanel", UiKit.PanelDark);
             UiKit.AnchorRange((RectTransform)upgradesPanel.transform, new Vector2(1f, 0.2f), new Vector2(1f, 0.82f), new Vector2(-520f, 0f), new Vector2(-40f, 0f));
             var upgTitle = UiKit.CreateText(upgradesPanel.transform, "Title", "UPGRADES", 28f, UiKit.TextMain, TextAlignmentOptions.Left, FontStyles.Bold);
             UiKit.Anchor((RectTransform)upgTitle.transform, new Vector2(0f, 1f), new Vector2(20f, -12f), new Vector2(300f, 36f));
@@ -477,7 +531,7 @@ namespace RedlineLegends.Editor
             UiKit.AnchorRange((RectTransform)upgradeContent.parent, Vector2.zero, Vector2.one, new Vector2(12f, 12f), new Vector2(-12f, -56f));
             var upgradeTemplate = BuildUpgradeRow(upgradeContent);
 
-            var garageTutorial = UiKit.CreateTutorialOverlay(canvas.transform);
+            var garageTutorial = UiKit.CreateTutorialOverlay(safe);
             canvas.gameObject.AddComponent<UiClickSound>();
             controller.EditorWire(turntable.transform, name, cls, rating, stats, credits, status, prev, next, action, actionLabel, back,
                 testDrive, upgradeContent, upgradeTemplate, tune, tuningPanel, paintPrev, paintNext, paintLabel, garageTutorial);
@@ -486,12 +540,27 @@ namespace RedlineLegends.Editor
             Save(scene, GaragePath);
         }
 
+        private static void StudioLight(string name, Vector3 position, Color color, float intensity, float range, float angle, Vector3 target)
+        {
+            var go = new GameObject(name, typeof(Light));
+            var light = go.GetComponent<Light>();
+            light.type = LightType.Spot;
+            light.color = color;
+            light.intensity = intensity;
+            light.range = range;
+            light.spotAngle = angle;
+            light.shadows = LightShadows.None;
+            go.transform.position = position;
+            go.transform.LookAt(target + new Vector3(0f, 0.6f, 0f));
+        }
+
         private static TuningPanel BuildTuningPanel(Transform parent)
         {
-            var root = UiKit.CreatePanel(parent, "TuningPanel", new Color(0.04f, 0.04f, 0.06f, 0.96f));
+            var root = UiKit.CreatePanel(parent, "TuningPanel", new Color(0.04f, 0.04f, 0.06f, 0.96f), false);
             UiKit.Stretch((RectTransform)root.transform);
             var panel = root.gameObject.AddComponent<TuningPanel>();
             var title = UiKit.CreateText(root.transform, "Title", "TUNING", 48f, UiKit.TextMain, TextAlignmentOptions.Left, FontStyles.Bold);
+            UiKit.Title(title);
             UiKit.Anchor((RectTransform)title.transform, new Vector2(0f, 1f), new Vector2(80f, -36f), new Vector2(900f, 64f));
             var rating = UiKit.CreateText(root.transform, "Rating", "", 28f, UiKit.Accent, TextAlignmentOptions.Left, FontStyles.Bold);
             UiKit.Anchor((RectTransform)rating.transform, new Vector2(0f, 1f), new Vector2(80f, -100f), new Vector2(1000f, 40f));

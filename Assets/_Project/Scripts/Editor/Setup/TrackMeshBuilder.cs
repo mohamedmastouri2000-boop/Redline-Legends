@@ -99,20 +99,21 @@ namespace RedlineLegends.Editor
                         u += Vector3.Distance(samples[prevIdx].Position, s.Position) / 8f;
                     }
                     float kerb = shoulderWidth;
-                    // 4 verts per ring: shoulder L, road L, road R, shoulder R
+                    // 5 verts per ring: shoulder L (u=1), road L (u=0), road R (u=1), road R for the kerb (u=0), shoulder R (u=1).
+                    // The shoulder texture runs from the road edge (u=0, stripes) outward (u=1, run-off).
                     Vector3 lKerb = s.Position - s.Right * (s.HalfWidth + kerb) + Vector3.up * 0.04f;
                     Vector3 l = s.Position - s.Right * s.HalfWidth;
                     Vector3 r = s.Position + s.Right * s.HalfWidth;
                     Vector3 rKerb = s.Position + s.Right * (s.HalfWidth + kerb) + Vector3.up * 0.04f;
-                    verts.Add(lKerb); verts.Add(l); verts.Add(r); verts.Add(rKerb);
-                    uvs.Add(new Vector2(0f, u)); uvs.Add(new Vector2(0f, u)); uvs.Add(new Vector2(1f, u)); uvs.Add(new Vector2(1f, u));
-                    for (int v = 0; v < 4; v++) normals.Add(Vector3.up);
+                    verts.Add(lKerb); verts.Add(l); verts.Add(r); verts.Add(r); verts.Add(rKerb);
+                    uvs.Add(new Vector2(1f, u)); uvs.Add(new Vector2(0f, u)); uvs.Add(new Vector2(1f, u)); uvs.Add(new Vector2(0f, u)); uvs.Add(new Vector2(1f, u));
+                    for (int v = 0; v < 5; v++) normals.Add(Vector3.up);
                     if (k > 0)
                     {
-                        int a = (k - 1) * 4, b = k * 4;
-                        Quad(kerbTris, a, a + 1, b + 1, b);       // left kerb
+                        int a = (k - 1) * 5, b = k * 5;
+                        Quad(kerbTris, a, a + 1, b + 1, b);       // left shoulder
                         Quad(roadTris, a + 1, a + 2, b + 2, b + 1); // road
-                        Quad(kerbTris, a + 2, a + 3, b + 3, b + 2); // right kerb
+                        Quad(kerbTris, a + 3, a + 4, b + 4, b + 3); // right shoulder
                     }
                 }
                 var mesh = new Mesh { name = meshPrefix + "_Road" + chunkIndex };

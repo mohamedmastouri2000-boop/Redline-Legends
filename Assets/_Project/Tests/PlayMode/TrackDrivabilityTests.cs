@@ -81,6 +81,7 @@ namespace RedlineLegends.Tests
             var driver = new AIDriver(catalog.GetAIProfile("ai_pro"), session.Layout.RacingLine, car, autopilot, 11);
 
             int resets = 0;
+            int gatesPassed = 0;
             float stuck = 0f;
             int airborneSteps = 0, steps = 0;
             float lastLog = -10f;
@@ -92,6 +93,10 @@ namespace RedlineLegends.Tests
                     yield return new WaitForFixedUpdate();
                     driver.FixedTick(Time.fixedDeltaTime, session.RaceTime);
                     steps++;
+                    // Running maximum: a fast lap wraps NextCheckpoint to 0 (and a finished practice
+                    // lap ends the loop), so the count is sampled every step, not at the end.
+                    gatesPassed = Mathf.Max(gatesPassed, (session.Player.Lap - 1) * session.Layout.CheckpointCount + session.Player.NextCheckpoint);
+                    if (session.Player.Finished) gatesPassed = Mathf.Max(gatesPassed, session.Layout.CheckpointCount * session.Laps);
                     if (car.Telemetry.IsAirborne) airborneSteps++;
                     if (session.RaceTime - lastLog >= 3f)
                     {
@@ -117,7 +122,7 @@ namespace RedlineLegends.Tests
             }
 
             var p = session.Player;
-            int gatesPassed = (p.Lap - 1) * session.Layout.CheckpointCount + p.NextCheckpoint;
+            gatesPassed = Mathf.Max(gatesPassed, (p.Lap - 1) * session.Layout.CheckpointCount + p.NextCheckpoint);
             Debug.Log("[Drivability] " + trackId + " gates=" + gatesPassed + " resets=" + resets + " airborne=" + (100f * airborneSteps / Mathf.Max(1, steps)).ToString("0") + "%");
             Assert.GreaterOrEqual(gatesPassed, 4, trackId + ": autopilot passed only " + gatesPassed + " gates in 60 s.");
             Assert.LessOrEqual(resets, 1, trackId + ": autopilot got stuck " + resets + " times.");

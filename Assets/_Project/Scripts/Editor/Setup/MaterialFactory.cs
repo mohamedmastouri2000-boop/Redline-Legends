@@ -32,6 +32,28 @@ namespace RedlineLegends.Editor
             return mat;
         }
 
+        /// <summary>Opaque Lit with an albedo texture (tint multiplies), tiled per metre.</summary>
+        public static Material Textured(string fileName, Texture2D texture, Color tint, float metallic, float smoothness, Vector2 tiling)
+        {
+            var mat = Opaque(fileName, tint, metallic, smoothness);
+            mat.SetTexture("_BaseMap", texture);
+            mat.SetTextureScale("_BaseMap", tiling);
+            EditorUtility.SetDirty(mat);
+            return mat;
+        }
+
+        /// <summary>Textured Lit with an emission map (lit windows at night).</summary>
+        public static Material TexturedEmissive(string fileName, Texture2D albedo, Texture2D emission, Color tint, Color emissionColor, Vector2 tiling)
+        {
+            var mat = Textured(fileName, albedo, tint, 0.05f, 0.35f, tiling);
+            mat.EnableKeyword("_EMISSION");
+            mat.SetTexture("_EmissionMap", emission);
+            mat.SetColor(EmissionColor, emissionColor);
+            mat.globalIlluminationFlags = MaterialGlobalIlluminationFlags.RealtimeEmissive;
+            EditorUtility.SetDirty(mat);
+            return mat;
+        }
+
         /// <summary>Car paint: metallic base under a clear coat. Material name contains "Paint" so the paint system finds it.</summary>
         public static Material CarPaint(string fileName, Color color)
         {

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using RedlineLegends.Economy;
 using RedlineLegends.Race;
@@ -8,7 +9,10 @@ using UnityEngine.UI;
 
 namespace RedlineLegends.UI
 {
-    /// <summary>Post-race classification and the player's reward. Rows are cloned from a template.</summary>
+    /// <summary>
+    /// Post-race classification and the player's reward. Rows are cloned from a template; the
+    /// credit and XP figures count up over a second so the payout registers.
+    /// </summary>
     public sealed class ResultsPanel : MonoBehaviour
     {
         [SerializeField] private TMP_Text titleText;
@@ -17,8 +21,10 @@ namespace RedlineLegends.UI
         [SerializeField] private ResultRow rowTemplate;
         [SerializeField] private Button continueButton;
         [SerializeField] private Button restartButton;
+        [SerializeField] private float countUpSeconds = 1.1f;
 
         private readonly List<ResultRow> _rows = new List<ResultRow>();
+        private Coroutine _countUp;
 
         public Button ContinueButton => continueButton;
         public Button RestartButton => restartButton;
@@ -37,11 +43,15 @@ namespace RedlineLegends.UI
             else if (!player.Finished) titleText.text = "DID NOT FINISH";
             else titleText.text = player.Position == 1 ? "VICTORY" : "FINISHED P" + player.Position;
 
-            rewardText.text = practice || outcome.Aborted || player == null || !player.Finished
-                ? ""
-                : "+" + reward.Credits.ToString("N0") + " CR   +" + reward.Xp.ToString("N0") + " XP   " +
-                  UiText.Stars(reward.Stars) +
-                  (reward.NewPersonalBest ? "   NEW BEST" : "");
+            bool rewarded = !(practice || outcome.Aborted || player == null || !player.Finished);
+            if (_countUp != null) StopCoroutine(_countUp);
+            if (rewarded)
+            {
+                rewardText.text = RewardLine(0, 0, reward);
+                _countUp = isActiveAndEnabled ? StartCoroutine(CountUp(reward)) : null;
+                if (_countUp == null) rewardText.text = RewardLine(reward.Credits, reward.Xp, reward);
+            }
+            else rewardText.text = "";
 
             float leaderTime = outcome.Results.Count > 0 ? outcome.Results[0].TotalTimeSeconds : 0f;
             for (int i = 0; i < outcome.Results.Count; i++)
@@ -54,6 +64,26 @@ namespace RedlineLegends.UI
                 row.Set(result.Position, result.DisplayName, time, result.BestLapSeconds > 0f ? MathUtil.FormatRaceTime(result.BestLapSeconds) : "", result.ControlSource == ControlSource.LocalPlayer);
             }
             for (int i = outcome.Results.Count; i < _rows.Count; i++) _rows[i].gameObject.SetActive(false);
+        }
+
+        private static string RewardLine(long credits, long xp, RewardResult reward)
+        {
+            return "+" + credits.ToString("N0") + " CR   +" + xp.ToString("N0") + " XP   " + UiText.Stars(reward.Stars) +
+                   (reward.NewPersonalBest ? "   NEW BEST" : "");
+        }
+
+        private IEnumerator CountUp(RewardResult reward)
+        {
+            float t = 0f;
+            while (t < countUpSeconds)
+            {
+                t += Time.unscaledDeltaTime;
+                float k = 1f - Mathf.Pow(1f - Mathf.Clamp01(t / countUpSeconds), 3f);
+                rewardText.text = RewardLine((long)Mathf.Round(reward.Credits * k), (long)Mathf.Round(reward.Xp * k), reward);
+                yield return null;
+            }
+            rewardText.text = RewardLine(reward.Credits, reward.Xp, reward);
+            _countUp = null;
         }
 
         private ResultRow GetRow(int index)

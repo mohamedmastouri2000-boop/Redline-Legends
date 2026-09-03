@@ -151,6 +151,7 @@ namespace RedlineLegends.Editor
                 ui.Results, ui.Controls.gameObject, ui.Tutorial);
             CreateSkidMarks();
 
+            SceneBuilder.FinalizeLighting();
             EditorSceneManager.SaveScene(scene, HarborStripPath);
         }
 
@@ -210,6 +211,7 @@ namespace RedlineLegends.Editor
             hudController.EditorWire(session, ui.Hud, ui.PauseButton);
             CreateSkidMarks();
 
+            SceneBuilder.FinalizeLighting();
             EditorSceneManager.SaveScene(scene, ProvingGroundPath);
         }
 
