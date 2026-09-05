@@ -61,12 +61,19 @@ namespace RedlineLegends.Editor
             }
         }
 
+        public const string HandmadeFolder = EditorPaths.VehiclePrefabs + "/Handmade";
+
         public static GameObject BuildPrefab(string vehicleId, VehicleClass cls, Material paint, Material glass,
             Material tire, Material rim, Material trim, Material lightFront, Material lightRear)
         {
             var shape = ShapeFor(cls);
             string path = EditorPaths.VehiclePrefabs + "/" + vehicleId + "_visual.prefab";
             EditorPaths.EnsureFolder(EditorPaths.VehiclePrefabs);
+
+            // Hand-made models win: drop a prefab that follows the VehicleVisualUtility contract into
+            // Prefabs/Vehicles/Handmade/{id}_visual.prefab and regeneration leaves it alone.
+            var handmade = AssetDatabase.LoadAssetAtPath<GameObject>(HandmadeFolder + "/" + vehicleId + "_visual.prefab");
+            if (handmade != null) return handmade;
 
             var root = new GameObject(vehicleId + "_visual");
             var body = new GameObject("Body", typeof(MeshFilter), typeof(MeshRenderer));
